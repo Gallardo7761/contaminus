@@ -3,15 +3,17 @@ import PropTypes from "prop-types";
 
 const DataContext = createContext();
 
-export const DataProvider = ({ children, apiUrl }) => {
+export const DataProvider = ({ children, config }) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [dataLoading, setLoading] = useState(true);
+  const [dataError, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(apiUrl);
+        const queryParams = new URLSearchParams(config.params).toString();
+        const url = `${config.baseUrl}?${queryParams}`;
+        const response = await fetch(url);
         if (!response.ok) throw new Error("Error al obtener datos");
         const result = await response.json();
         setData(result);
@@ -23,10 +25,10 @@ export const DataProvider = ({ children, apiUrl }) => {
     };
 
     fetchData();
-  }, [apiUrl]);
+  }, [config]);
 
   return (
-    <DataContext.Provider value={{ data, loading, error }}>
+    <DataContext.Provider value={{ data, dataLoading, dataError }}>
       {children}
     </DataContext.Provider>
   );
@@ -34,7 +36,10 @@ export const DataProvider = ({ children, apiUrl }) => {
 
 DataProvider.propTypes = {
   children: PropTypes.node.isRequired,
-  apiUrl: PropTypes.string.isRequired,
+  config: PropTypes.shape({
+    baseUrl: PropTypes.string.isRequired,
+    params: PropTypes.object,
+  }).isRequired,
 };
 
 export const useData = () => useContext(DataContext);

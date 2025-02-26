@@ -5,8 +5,8 @@ const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
   const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [configLoading, setLoading] = useState(true);
+  const [configError, setError] = useState(null);
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -26,7 +26,7 @@ export const ConfigProvider = ({ children }) => {
   }, []);
 
   return (
-    <ConfigContext.Provider value={{ config, loading, error }}>
+    <ConfigContext.Provider value={{ config, configLoading, configError }}>
       {children}
     </ConfigContext.Provider>
   );

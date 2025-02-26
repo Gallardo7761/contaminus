@@ -4,4 +4,5 @@ contextlib2
 dotenv
 pydantic
 sqlalchemy
-db
+databases
+aiomysql

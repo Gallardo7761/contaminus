@@ -6,16 +6,28 @@ import PropTypes from "prop-types";
 
 import { useTheme } from "../contexts/ThemeContext.jsx";
 import { DataProvider, useData } from "../contexts/DataContext.jsx";
-import { ConfigProvider, useConfig } from "../contexts/ConfigContext.jsx";
+import { useConfig } from "../contexts/ConfigContext.jsx";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Filler);
 
 const HistoryCharts = () => {
+  const { config, configLoading, configError } = useConfig();
+  
+  if (configLoading) return <p>Cargando configuración...</p>;
+  if (configError) return <p>Error al cargar configuración: {configError}</p>;
+  if (!config) return <p>Configuración no disponible.</p>;
+
+  const BASE = config.appConfig.endpoints.baseUrl;
+  const ENDPOINT = config.appConfig.endpoints.sensors;
+
+  const reqConfig = {
+      baseUrl: `${BASE}/${ENDPOINT}`,
+      params: {}
+  }
+
   return (
-    <DataProvider apiUrl="https://contaminus.miarma.net/api/v1/sensors">
-      <ConfigProvider>
-        <HistoryChartsContent />
-      </ConfigProvider>
+    <DataProvider config={reqConfig}>
+      <HistoryChartsContent />
     </DataProvider>
   );
 };

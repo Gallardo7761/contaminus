@@ -39,6 +39,7 @@
     color: var(--primary-color);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: 600;
 }
 
 p.card-text {

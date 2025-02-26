@@ -1,7 +1,5 @@
 import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
 
-
-import { ConfigProvider } from '../contexts/ConfigContext.jsx';
 import { useConfig } from '../contexts/ConfigContext.jsx';
 
 import { DataProvider } from '../contexts/DataContext.jsx';
@@ -41,22 +39,40 @@ const PollutionCircles = ({ data }) => {
 };
 
 const PollutionMap = () => {
+  const { config, configLoading, configError } = useConfig();
+  
+  if (configLoading) return <p>Cargando configuración...</p>;
+  if (configError) return <p>Error al cargar configuración: {configError}</p>;
+  if (!config) return <p>Configuración no disponible.</p>;
+
+  const BASE = config.appConfig.endpoints.baseUrl;
+  const ENDPOINT = config.appConfig.endpoints.sensors;
+
+  const reqConfig = {
+      baseUrl: `${BASE}/${ENDPOINT}`,
+      params: {}
+  }
+
   return (
-    <DataProvider apiUrl="https://contaminus.miarma.net/api/v1/sensors">
-      <ConfigProvider>
-        <PollutionMapContent />
-      </ConfigProvider>
+    <DataProvider config={reqConfig}>
+      <PollutionMapContent />
     </DataProvider>
   );
 };
 
 const PollutionMapContent = () => {
-  const { config } = useConfig();
+  const { config, configLoading, configError } = useConfig();
+  const { data, dataLoading, dataError } = useData();
+
+  if (configLoading) return <p>Cargando configuración...</p>;
+  if (configError) return <p>Error al cargar configuración: {configError}</p>;
+  if (!config) return <p>Configuración no disponible.</p>;
+
+  if (dataLoading) return <p>Cargando datos...</p>;
+  if (dataError) return <p>Error al cargar datos: {configError}</p>;
+  if (!data) return <p>Datos no disponibles.</p>;
+
   const SEVILLA = config?.userConfig.city;
-
-  const { data, loading } = useData();
-
-  if (loading) return <p>Cargando datos...</p>;
 
   const pollutionData = data.map((sensor) => ({
     lat: sensor.lat,

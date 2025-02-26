@@ -4,9 +4,28 @@ import CardContainer from './CardContainer';
 import { DataProvider } from '../contexts/DataContext';
 import { useData } from '../contexts/DataContext';
 
+import { useConfig } from '../contexts/ConfigContext';
+
 const SummaryCards = () => {
+    const { config, configLoading, configError } = useConfig();
+
+    if (configLoading) return <p>Cargando configuración...</p>;
+    if (configError) return <p>Error al cargar configuración: {configError}</p>;
+    if (!config) return <p>Configuración no disponible.</p>;
+
+    const BASE = config.appConfig.endpoints.baseUrl;
+    const ENDPOINT = config.appConfig.endpoints.sensors;
+
+    const reqConfig = {
+        baseUrl: `${BASE}/${ENDPOINT}`,
+        params: {
+            _sort: 'timestamp',
+            _order: 'desc'
+        }
+    }
+
     return (
-        <DataProvider apiUrl="https://contaminus.miarma.net/api/v1/sensors?_sort=timestamp&_order=desc">
+        <DataProvider config={reqConfig}>
             <SummaryCardsContent />
         </DataProvider>
     );

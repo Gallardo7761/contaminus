@@ -12,7 +12,6 @@ const Home = () => {
             <Dashboard>
                 <SummaryCards />
                 <PollutionMap />
-                {/*  */}
                 <HistoryCharts />
             </Dashboard>
             <ThemeButton />
