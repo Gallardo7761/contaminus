@@ -8,6 +8,33 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import { DataProvider, useData } from "../contexts/DataContext.jsx";
 import { useConfig } from "../contexts/ConfigContext.jsx";
 
+/**
+ * HistoryCharts.jsx
+ * 
+ * Este archivo define el componente HistoryCharts, que muestra gráficos históricos de datos obtenidos de sensores.
+ * 
+ * Importaciones:
+ * - Line: Componente de react-chartjs-2 para renderizar gráficos de líneas.
+ * - ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler: Módulos de chart.js para configurar y registrar los elementos del gráfico.
+ * - CardContainer: Componente que actúa como contenedor para las tarjetas.
+ * - "../css/HistoryCharts.css": Archivo CSS que contiene los estilos para los gráficos históricos.
+ * - PropTypes: Librería para la validación de tipos de propiedades en componentes de React.
+ * - useTheme: Hook personalizado para acceder al contexto del tema.
+ * - DataProvider, useData: Funciones del contexto de datos para obtener y manejar datos.
+ * - useConfig: Hook personalizado para acceder al contexto de configuración.
+ * 
+ * Funcionalidad:
+ * - HistoryCharts: Componente que configura la solicitud de datos y utiliza el DataProvider para obtener datos de sensores.
+ *   - Muestra mensajes de carga y error según el estado de la configuración.
+ * - HistoryChartsContent: Componente que procesa los datos obtenidos y renderiza los gráficos históricos.
+ *   - Utiliza el hook `useData` para acceder a los datos de sensores.
+ *   - Renderiza gráficos de líneas con diferentes colores según el tipo de dato (temperatura, humedad, contaminación).
+ * 
+ * PropTypes:
+ * - HistoryChartsContent espera propiedades `options` (objeto), `timeLabels` (array) y `data` (array).
+ * 
+ */
+
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Filler);
 
 const HistoryCharts = () => {

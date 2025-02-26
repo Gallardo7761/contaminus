@@ -6,6 +6,29 @@ import { useData } from '../contexts/DataContext';
 
 import { useConfig } from '../contexts/ConfigContext';
 
+/**
+ * SummaryCards.jsx
+ * 
+ * Este archivo define el componente SummaryCards, que muestra tarjetas resumen con información relevante obtenida de sensores.
+ * 
+ * Importaciones:
+ * - PropTypes: Librería para la validación de tipos de propiedades en componentes de React.
+ * - CardContainer: Componente que actúa como contenedor para las tarjetas.
+ * - DataProvider, useData: Funciones del contexto de datos para obtener y manejar datos.
+ * - useConfig: Hook personalizado para acceder al contexto de configuración.
+ * 
+ * Funcionalidad:
+ * - SummaryCards: Componente que configura la solicitud de datos y utiliza el DataProvider para obtener datos de sensores.
+ *   - Muestra mensajes de carga y error según el estado de la configuración.
+ * - SummaryCardsContent: Componente que procesa los datos obtenidos y actualiza el contenido de las tarjetas.
+ *   - Utiliza el hook `useData` para acceder a los datos de sensores.
+ *   - Actualiza el contenido y estado de las tarjetas según los datos obtenidos.
+ * 
+ * PropTypes:
+ * - SummaryCards espera una propiedad `data` que es un array.
+ * 
+ */
+
 const SummaryCards = () => {
     const { config, configLoading, configError } = useConfig();
 

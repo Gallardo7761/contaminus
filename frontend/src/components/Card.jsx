@@ -3,6 +3,31 @@ import { useState, useEffect, useRef } from "react";
 import "../css/Card.css";
 import { useTheme } from "../contexts/ThemeContext";
 
+/**
+ * Card.jsx
+ * 
+ * Este archivo define el componente Card, que representa una tarjeta individual con un título, estado y contenido.
+ * 
+ * Importaciones:
+ * - PropTypes: Librería para la validación de tipos de propiedades en componentes de React.
+ * - useState, useEffect, useRef: Hooks de React para manejar estados, efectos secundarios y referencias.
+ * - "../css/Card.css": Archivo CSS que contiene los estilos para las tarjetas.
+ * - useTheme: Hook personalizado para acceder al contexto del tema.
+ * 
+ * Funcionalidad:
+ * - Card: Componente que renderiza una tarjeta con un título, estado y contenido.
+ *   - Utiliza el hook `useTheme` para aplicar la clase correspondiente al tema actual.
+ *   - Ajusta el título de la tarjeta según el tamaño de la tarjeta.
+ * 
+ * PropTypes:
+ * - Card espera una propiedad `title` que es un string requerido.
+ * - Card espera una propiedad `status` que es un string requerido.
+ * - Card espera una propiedad `children` que es un nodo de React requerido.
+ * - Card espera una propiedad `styleMode` que es opcional y puede ser "override" o una cadena vacía.
+ * - Card espera una propiedad `className` que es un string opcional.
+ * 
+ */
+
 const Card = ({ title, status, children, styleMode, className }) => {
     const cardRef = useRef(null);
     const [shortTitle, setShortTitle] = useState(title);
