@@ -1,0 +1,56 @@
+.card {
+    border-radius: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid var(--primary-color);
+}
+
+.card.light {
+    background: linear-gradient(145deg, #eeeeee, #dadada);
+}
+
+.card.light > div.card-content > p.card-text {
+    color: black;
+}
+
+.card.light > span.status {
+    background: #E0E0E0;
+}
+
+.card.dark {
+    background: linear-gradient(145deg, var(--card-gradient-primary), var(--card-gradient-secondary));
+}
+
+.card.dark > div.card-content > p.card-text {
+    color: white;
+}
+
+.card.dark > span.status {
+    background: #505050;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 20px var(--box-shadow);
+}
+
+.card>h3 {
+    font-size: 1.3em;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+p.card-text {
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+.card>span.status {
+    font-size: 0.9em;
+    color: #A0A0A0;
+    padding: 5px 10px;
+    background: var(--card-background);
+    border-radius: 20px;
+    display: inline-block;
+}

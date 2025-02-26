@@ -1,0 +1,7 @@
+uvicorn
+fastapi
+contextlib2
+dotenv
+pydantic
+sqlalchemy
+db

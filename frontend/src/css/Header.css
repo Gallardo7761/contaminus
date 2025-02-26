@@ -1,0 +1,40 @@
+header > h1 {
+    font-size: 2.8em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-family: 'Times New Roman', Times, serif;
+    font-stretch: condensed;
+}
+
+header.light > h1 {
+    color: black;
+}
+
+header.dark > h1 {
+    color: white;
+}
+
+header.light > p.subtitle {
+    color: #606060;
+}
+
+header.dark > p.subtitle {
+    color: #B0B0B0;
+}
+
+header > h1::after {
+    font-size: 1.2em;
+    content: 'US';
+    color: var(--primary-color);
+}
+
+header > .subtitle {
+    font-size: 1.2em;
+    color: #B0B0B0;
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

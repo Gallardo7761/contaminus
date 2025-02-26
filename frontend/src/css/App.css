@@ -1,0 +1,15 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+body.light {
+  background: white;
+  color: black;
+}
+
+body.dark {
+  background: linear-gradient(135deg, var(--gradient-primary), var(--gradient-secondary));
+  color: white;
+}

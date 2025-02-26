@@ -1,0 +1,75 @@
+{
+    "userConfig": {
+        "city": [
+            37.38283,
+            -5.97317
+        ]
+    },
+    "appConfig": {
+        "historyChartConfig": {
+            "timeLabels": [
+                "08:00",
+                "09:00",
+                "10:00",
+                "11:00",
+                "12:00",
+                "13:00",
+                "14:00"
+            ],
+            "chartOptionsDark": {
+                "responsive": true,
+                "maintainAspectRatio": false,
+                "scales": {
+                    "x": {
+                        "grid": {
+                            "color": "rgba(255, 255, 255, 0.1)"
+                        },
+                        "ticks": {
+                            "color": "#E0E0E0"
+                        }
+                    },
+                    "y": {
+                        "grid": {
+                            "color": "rgba(255, 255, 255, 0.1)"
+                        },
+                        "ticks": {
+                            "color": "#E0E0E0"
+                        }
+                    }
+                },
+                "plugins": {
+                    "legend": {
+                        "display": false
+                    }
+                }
+            },
+            "chartOptionsLight": {
+                "responsive": true,
+                "maintainAspectRatio": false,
+                "scales": {
+                    "x": {
+                        "grid": {
+                            "color": "rgba(0, 0, 0, 0.1)"
+                        },
+                        "ticks": {
+                            "color": "#333"
+                        }
+                    },
+                    "y": {
+                        "grid": {
+                            "color": "rgba(0, 0, 0, 0.1)"
+                        },
+                        "ticks": {
+                            "color": "#333"
+                        }
+                    }
+                },
+                "plugins": {
+                    "legend": {
+                        "display": false
+                    }
+                }
+            }
+        }
+    }
+}
