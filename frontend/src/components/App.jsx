@@ -45,13 +45,17 @@ const App = () => {
     setIsSideMenuOpen(!isSideMenuOpen);
   };
 
+  const closeSideMenu = () => {
+    setIsSideMenuOpen(false);
+  }
+
   return (
     <>
       {/* Planeo añadir un React Router */}
       <MenuButton onClick={toggleSideMenu} />
       <SideMenu isOpen={isSideMenuOpen} onClose={toggleSideMenu} />
       <ThemeButton />
-      <div className={isSideMenuOpen ? 'blur m-0 p-0' : 'm-0 p-0'}>
+      <div className={isSideMenuOpen ? 'blur m-0 p-0' : 'm-0 p-0'} onClick={closeSideMenu}>
         <Header title='Contamin' subtitle='Midiendo la calidad del aire y las calles en Sevilla 🌿🚛' />
         <Home />
       </div>
