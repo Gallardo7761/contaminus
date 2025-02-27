@@ -2,7 +2,7 @@
 - Descargar [MariaDB 10.6.21](https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.6.21&os=windows&cpu=x86_64&pkg=msi&mirror=raiolanetworks)
 - Descargar [DBeaver](https://dbeaver.io/download/)
 - Descargar Node.js
-    - Para descargar Node recomiendo fnm (Fast Node Manager) que lo podéis descargar [aquí](https://miarma.net/descargas/fnm.exe)
+    - Para descargar Node recomiendo fnm (Fast Node Manager) que lo podéis descargar [aquí](https://miarma.net/descargas)
     - Para instalarlo: `fnm install 23.7.0`
 
 # Para lanzar la API en local 
