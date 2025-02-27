@@ -24,7 +24,7 @@ const CardContainer = ({ cards, className }) => {
     return (
         <div className={`row justify-content-center g-0 ${className}`}>
             {cards.map((card, index) => (
-                <Card key={index} title={card.title} status={card.status} styleMode={card.styleMode} className={card.className}>
+                <Card key={index} title={card.title} status={card.status} styleMode={card.styleMode} className={card.className} titleIcon={card.titleIcon}>
                     <p className="card-text text-center">{card.content}</p>
                 </Card>
             ))}

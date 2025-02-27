@@ -42,6 +42,10 @@
     font-weight: 600;
 }
 
+.card > h3 > .svg-inline--fa {
+    margin-right: 10px;
+}
+
 p.card-text {
     font-size: 2.2em;
     font-weight: 600;

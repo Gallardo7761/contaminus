@@ -28,7 +28,7 @@ import { useTheme } from "../contexts/ThemeContext";
  * 
  */
 
-const Card = ({ title, status, children, styleMode, className }) => {
+const Card = ({ title, status, children, styleMode, className, titleIcon }) => {
     const cardRef = useRef(null);
     const [shortTitle, setShortTitle] = useState(title);
     const { theme } = useTheme();
@@ -57,7 +57,10 @@ const Card = ({ title, status, children, styleMode, className }) => {
             `col-xl-3 col-sm-6 d-flex flex-column align-items-center p-3 card-container ${className}`}
         >
             <div className={`card p-3 w-100 ${theme}`}>
-                <h3 className="text-center">{shortTitle}</h3>
+                <h3 className="text-center">
+                    {titleIcon}
+                    {shortTitle}
+                </h3>
                 <div className="card-content">{children}</div>
                 {status ? <span className="status text-center mt-2">{status}</span> : null}
             </div>
@@ -69,8 +72,9 @@ Card.propTypes = {
     title: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
-    styleMode: PropTypes.oneOf(["override", ""]), // Nueva prop opcional
-    className: PropTypes.string, // Nueva prop opcional
+    styleMode: PropTypes.oneOf(["override", ""]), 
+    className: PropTypes.string, 
+    titleIcon: PropTypes.node,
 };
 
 Card.defaultProps = {

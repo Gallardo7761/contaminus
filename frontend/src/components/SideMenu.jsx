@@ -30,9 +30,9 @@ const SideMenu = ({ isOpen, onClose }) => {
                 <FontAwesomeIcon icon={faTimes} />
             </button>
             <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#mapa">Mapa</a></li>
-                <li><a href="#historico">Histórico</a></li>
+                <li><a href="#inicio">ɪɴɪᴄɪᴏ</a></li>
+                <li><a href="#mapa">ᴍᴀᴘᴀ</a></li>
+                <li><a href="#historico">ʜɪsᴛᴏʀɪᴄᴏ</a></li>
             </ul>
         </div>
     );

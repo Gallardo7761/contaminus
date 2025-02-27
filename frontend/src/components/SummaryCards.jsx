@@ -5,6 +5,8 @@ import { DataProvider } from '../contexts/DataContext';
 import { useData } from '../contexts/DataContext';
 
 import { useConfig } from '../contexts/ConfigContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloud, faGauge, faTemperature0, faWater } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * SummaryCards.jsx
@@ -58,10 +60,10 @@ const SummaryCardsContent = () => {
     const { data } = useData();
 
     const CardsData = [
-        { id: 1, title: "🌡️ Temperatura", content: "N/A", status: "Esperando datos..." },
-        { id: 2, title: "💧 Humedad", content: "N/A", status: "Esperando datos..." },
-        { id: 3, title: "☁️ Contaminación", content: "N/A", status: "Esperando datos..." },
-        { id: 4, title: "🛤️ Carretera", content: "N/A", status: "Esperando datos..." }
+        { id: 1, title: "Temperatura", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faTemperature0} /> },
+        { id: 2, title: "Humedad", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faWater} /> },
+        { id: 3, title: "Contaminación", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faCloud} /> },
+        { id: 4, title: "Presión", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faGauge} />  }
     ];
 
     if (data) {
