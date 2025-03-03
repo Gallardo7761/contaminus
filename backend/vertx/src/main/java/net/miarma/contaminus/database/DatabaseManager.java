@@ -19,7 +19,7 @@ public class DatabaseManager {
                             config.getProperty("db.name"))
             .put("user", config.getProperty("db.user"))
             .put("password", config.getProperty("db.pwd"))
-            .put("max_pool_size", 5);
+            .put("max_pool_size", config.getProperty("db.poolSize"));	
 
         pool = JDBCPool.pool(vertx, dbConfig);
     }

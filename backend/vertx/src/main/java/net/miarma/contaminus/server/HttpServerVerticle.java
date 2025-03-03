@@ -1,14 +1,17 @@
 package net.miarma.contaminus.server;
 
+import java.util.Optional;
+
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.core.eventbus.DeliveryOptions;
-import io.vertx.core.eventbus.Message;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.database.QueryBuilder;
 
 public class HttpServerVerticle extends AbstractVerticle {    
     @Override
@@ -19,6 +22,7 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route("/*").handler(StaticHandler.create("webroot").setDefaultContentEncoding("UTF-8"));
         
         router.get(Constants.API_PREFIX + "/sensors").blockingHandler(this::getAllSensors);
+        router.get(Constants.API_PREFIX + "/sensors/:id").blockingHandler(this::getSensorById);
         router.get(Constants.API_PREFIX + "/status").handler(ctx -> 
             ctx.json(new JsonObject().put("status", "OK"))
         );
@@ -33,7 +37,27 @@ public class HttpServerVerticle extends AbstractVerticle {
     }
 
     private void getAllSensors(RoutingContext context) {
-        vertx.eventBus().request("db.query", "SELECT * FROM sensor_mq_data", new DeliveryOptions(), ar -> {
+    	Optional<String> sort = Optional.ofNullable(context.request().getParam("_sort"));
+    	Optional<String> order = Optional.ofNullable(context.request().getParam("_order"));
+    	// forma tela de rara que me ha dado chatgpt para parsear esto XD
+    	Optional<Integer> limit = Optional.ofNullable(context.request().getParam("_limit"))
+    		    .map(s -> {
+    		        try {
+    		            return Integer.parseInt(s);
+    		        } catch (NumberFormatException e) {
+    		            return null;
+    		        }
+    		    });
+    	
+    	
+    	String query = QueryBuilder
+    			.select("*")
+    			.from("sensor_mq_data")
+    			.orderBy(sort, order)
+    			.limit(limit)
+    			.build();
+    	
+        vertx.eventBus().request("db.query", query, new DeliveryOptions(), ar -> {
             if (ar.succeeded()) {
                 Message<Object> result = ar.result();
                 JsonArray jsonArray = (JsonArray) result.body();
@@ -43,4 +67,25 @@ public class HttpServerVerticle extends AbstractVerticle {
             }
         });
     }
+    
+    
+    private void getSensorById(RoutingContext context) {
+		String id = context.request().getParam("id");
+		
+		String query = QueryBuilder
+				.select("*")
+				.from("sensor_mq_data")
+				.where("id = " + id)
+				.build();
+		
+		vertx.eventBus().request("db.query", query, new DeliveryOptions(), ar -> {
+			if (ar.succeeded()) {
+				Message<Object> result = ar.result();
+				JsonArray jsonArray = (JsonArray) result.body();
+				context.json(jsonArray);
+			} else {
+				context.fail(500, ar.cause());
+			}
+		});
+	}
 }
