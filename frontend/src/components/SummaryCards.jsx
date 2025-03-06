@@ -45,7 +45,8 @@ const SummaryCards = () => {
         baseUrl: `${BASE}/${ENDPOINT}`,
         params: {
             _sort: 'timestamp',
-            _order: 'desc'
+            _order: 'desc',
+            _limit: 1
         }
     }
 

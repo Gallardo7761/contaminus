@@ -57,8 +57,16 @@ public class ConfigManager {
         }
     }
 
-    public String getProperty(String key) {
+    public String getStringProperty(String key) {
         return config.getProperty(key);
+    }
+    
+    public int getIntProperty(String key) {
+		return Integer.parseInt(config.getProperty(key));
+	}
+    
+    public boolean getBooleanProperty(String key) {
+		return Boolean.parseBoolean(config.getProperty(key));
     }
 
     public void setProperty(String key, String value) {

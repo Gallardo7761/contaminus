@@ -13,13 +13,13 @@ public class DatabaseManager {
         ConfigManager config = ConfigManager.getInstance();
 
         JsonObject dbConfig = new JsonObject()
-            .put("url", config.getProperty("db.protocol") + "//" +
-                            config.getProperty("db.host") + ":" +
-                            config.getProperty("db.port") + "/" +
-                            config.getProperty("db.name"))
-            .put("user", config.getProperty("db.user"))
-            .put("password", config.getProperty("db.pwd"))
-            .put("max_pool_size", config.getProperty("db.poolSize"));	
+            .put("url", config.getStringProperty("db.protocol") + "//" +
+                            config.getStringProperty("db.host") + ":" +
+                            config.getStringProperty("db.port") + "/" +
+                            config.getStringProperty("db.name"))
+            .put("user", config.getStringProperty("db.user"))
+            .put("password", config.getStringProperty("db.pwd"))
+            .put("max_pool_size", config.getStringProperty("db.poolSize"));	
 
         pool = JDBCPool.pool(vertx, dbConfig);
     }

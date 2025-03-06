@@ -29,8 +29,9 @@ public class QueryBuilder {
         return this;
     }
     
-    public QueryBuilder where(String condition) {
-        conditions.add(condition);
+    public QueryBuilder where(String conditionsString, Object... values) {
+    	conditionsString = conditionsString.replaceAll("\\?", "%s");
+        conditions.add(String.format(conditionsString, values));
         return this;
     }
     

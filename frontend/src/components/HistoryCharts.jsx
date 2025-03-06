@@ -69,13 +69,9 @@ const HistoryChartsContent = () => {
   const options = theme === "dark" ? optionsDark : optionsLight;
   
   const currentHour = new Date().getHours();
-  console.log("currentHour", currentHour);
-
   const timeLabels = [
     `${currentHour - 3}:00`, `${currentHour - 2}:00`, `${currentHour - 1}:00`, `${currentHour}:00`, `${currentHour + 1}:00`, `${currentHour + 2}:00`, `${currentHour + 3}:00`
   ]
-
-  //const timeLabels = config?.appConfig?.historyChartConfig?.timeLabels ?? [];
 
   if (loading) return <p>Cargando datos...</p>;
 

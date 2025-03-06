@@ -29,10 +29,12 @@ public class DatabaseVerticle extends AbstractVerticle {
             .execute()
             .onSuccess(_res -> {
                 Constants.LOGGER.info("✅ Database connection ok");
+                Constants.LOGGER.info("📡 DatabaseVerticle desplegado");
                 startPromise.complete();
             })
             .onFailure(err -> {
                 Constants.LOGGER.error("❌ Database connection failed");
+                Constants.LOGGER.error("❌ Error al desplegar DatabaseVerticle", err);
                 startPromise.fail(err);
             });
 
