@@ -1,5 +1,10 @@
 package net.miarma.contaminus.server;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
@@ -8,56 +13,42 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
-import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.common.Host;
 import net.miarma.contaminus.database.QueryBuilder;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
 public class ApiVerticle extends AbstractVerticle {
-    private ConfigManager configManager = ConfigManager.getInstance();
 
     @Override
     public void start(Promise<Void> startPromise) {
         Constants.LOGGER.info("🟢 Iniciando ApiVerticle...");
         Router router = Router.router(vertx);
-
-        Set<String> allowedHeaders = new HashSet<>();
-        allowedHeaders.add("x-requested-with");
-        allowedHeaders.add("Access-Control-Allow-Origin");
-        allowedHeaders.add("origin");
-        allowedHeaders.add("Content-Type");
-        allowedHeaders.add("accept");
-
-        Set<HttpMethod> allowedMethods = new HashSet<>();
-        allowedMethods.add(io.vertx.core.http.HttpMethod.GET);
-        allowedMethods.add(io.vertx.core.http.HttpMethod.POST);
-        allowedMethods.add(io.vertx.core.http.HttpMethod.OPTIONS);
+        
+        Set<HttpMethod> allowedMethods = new HashSet<>(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)); // Por ejemplo
+		Set<String> allowedHeaders = new HashSet<>(Arrays.asList("Content-Type", "Authorization"));
 
         router.route().handler(CorsHandler.create()
-                .addOrigin("http://"+configManager.getStringProperty("inet.host")+":"+configManager.getIntProperty("webserver.port"))
+                .addOrigin(Host.getOrigin())
                 .allowCredentials(true)
                 .allowedHeaders(allowedHeaders)
                 .allowedMethods(allowedMethods));
-
+        router.route().handler(BodyHandler.create());
         router.get(Constants.API_PREFIX + "/sensors").blockingHandler(this::getAllSensors);
         router.get(Constants.API_PREFIX + "/sensors/:id").blockingHandler(this::getSensorById);
+        router.post(Constants.API_PREFIX + "/sensors").blockingHandler(this::insertSensor);
         router.get(Constants.API_PREFIX + "/status").handler(ctx -> ctx.json(new JsonObject().put("status", "OK")));
 
         vertx.createHttpServer()
                 .requestHandler(router)
                 .listen(
-                        configManager.getIntProperty("api.port"),
-                        configManager.getStringProperty("inet.host"),
+                        Host.getApiPort(),
+                        Host.getHost(),
                         result -> {
                             if (result.succeeded()) {
                                 Constants.LOGGER.info(String.format(
-                                        "📡 ApiVerticle desplegado. (http://%s:%d)",
-                                        configManager.getStringProperty("inet.host"),
-                                        configManager.getIntProperty("api.port")
+                                    "📡 ApiVerticle desplegado. (http://%s:%d)", Host.getHost(), Host.getApiPort()
                                 ));
                                 startPromise.complete();
                             } else {
@@ -115,4 +106,38 @@ public class ApiVerticle extends AbstractVerticle {
             }
         });
     }
+    
+    private void insertSensor(RoutingContext context) {
+        JsonObject body = context.body().asJsonObject();
+
+        if (body == null) {
+            context.fail(400, new IllegalArgumentException("Body is missing or invalid"));
+            return;
+        }
+
+        String sensorType = body.getString("sensor_type");
+        Float lat = body.getFloat("lat");
+        Float lon = body.getFloat("lon");
+        Float value = body.getFloat("value");
+
+        if (sensorType == null || lat == null || lon == null || value == null) {
+            context.fail(400, new IllegalArgumentException("Missing required fields"));
+            return;
+        }
+
+        String query = QueryBuilder
+                .insert("sensor_mq_data", "sensor_type", "value", "lat", "lon")
+                .values(sensorType, value, lat, lon)
+                .build();
+        
+        vertx.eventBus().request("db.query", query, req -> {
+            if (req.succeeded()) {
+                context.json(new JsonObject().put("result", "OK"));
+            } else {
+                context.fail(500, req.cause());
+            }
+        });
+    }
+
+    
 }

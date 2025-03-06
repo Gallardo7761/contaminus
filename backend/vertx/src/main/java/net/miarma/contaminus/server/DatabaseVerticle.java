@@ -41,25 +41,41 @@ public class DatabaseVerticle extends AbstractVerticle {
         eventBus.consumer("db.query", this::handleDatabaseQuery);
     }
 
-    private void handleDatabaseQuery(Message<String> msg) {
+    @SuppressWarnings("unused")
+	private void handleDatabaseQuery(Message<String> msg) {
         String query = msg.body();
+        Constants.LOGGER.info("📥 Query: " + query);
 
-        pool.query(query).execute()
-            .onSuccess(res -> {
-                RowSet<Row> rows = res;
-                JsonArray jsonArray = new JsonArray();
-                for (Row row : rows) {
-                    jsonArray.add(new JsonObject()
-                        .put("id", row.getInteger("id"))
-                        .put("sensorType", row.getString("sensor_type"))
-                        .put("value", row.getFloat("value"))
-                        .put("lat", row.getFloat("lat"))
-                        .put("lon", row.getFloat("lon"))
-                        .put("timestamp", row.getLocalDateTime("timestamp").toString())
-                    );
-                }
-                msg.reply(jsonArray);
-            })
-            .onFailure(err -> msg.fail(500, err.getMessage()));
+        if(query == null || query.isEmpty()) {
+			msg.fail(400, "Empty query");
+			return;
+		}
+        
+        if(query.startsWith("SELECT")) {
+        	pool.query(query).execute()
+	            .onSuccess(res -> {
+	                RowSet<Row> rows = res;
+	                JsonArray jsonArray = new JsonArray();
+	                for (Row row : rows) {
+	                    jsonArray.add(new JsonObject()
+	                        .put("id", row.getInteger("id"))
+	                        .put("sensor_type", row.getString("sensor_type"))
+	                        .put("value", row.getFloat("value"))
+	                        .put("lat", row.getFloat("lat"))
+	                        .put("lon", row.getFloat("lon"))
+	                        .put("timestamp", row.getLocalDateTime("timestamp").toString())
+	                    );
+	                }
+	                msg.reply(jsonArray);
+	            })
+	            .onFailure(err -> msg.fail(500, err.getMessage()));
+        } else if(query.startsWith("INSERT")) {
+        	pool.query(msg.body()).execute()
+		        .onSuccess(_res -> msg.reply(new JsonObject().put("status", "success")))
+		        .onFailure(err -> msg.fail(500, err.getMessage()));
+		} else {
+			msg.fail(400, "Invalid operation");
+		}
+
     }
 }

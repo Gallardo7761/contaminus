@@ -4,7 +4,6 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.ThreadingModel;
-import net.miarma.contaminus.common.Constants;
 
 public class MainVerticle extends AbstractVerticle {
 	
