@@ -24,6 +24,37 @@ public class QueryBuilder {
         return qb;
     }
     
+    public static QueryBuilder insert(String table, String... columns) {
+		QueryBuilder qb = new QueryBuilder();
+		StringJoiner joiner = new StringJoiner(", ");
+		if (columns.length > 0) {
+			for (String column : columns) {
+				joiner.add(column);
+			}
+			qb.query.append("INSERT INTO ").append(table).append(" (").append(joiner).append(") ");
+		} else {
+			qb.query.append("INSERT INTO ").append(table).append(" ");
+		}
+		
+		return qb;
+	}
+    
+    public QueryBuilder values(Object... values) {
+        StringJoiner joiner = new StringJoiner(", ", "VALUES (", ")");
+        for (Object value : values) {
+            if(value instanceof String) {
+                joiner.add("'" + value + "'");
+            } else if(value == null) {
+				joiner.add("NULL");
+			}
+            else {
+                joiner.add(value.toString());
+            }
+        }
+        this.query.append(joiner).append(" ");
+        return this;
+    }
+    
     public QueryBuilder from(String table) {
         query.append("FROM ").append(table).append(" ");
         return this;
