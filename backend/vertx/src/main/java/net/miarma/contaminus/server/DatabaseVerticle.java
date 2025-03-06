@@ -37,8 +37,6 @@ public class DatabaseVerticle extends AbstractVerticle {
             });
 
         eventBus.consumer("db.query", this::handleDatabaseQuery);
-        
-        Constants.LOGGER.info("📡 DatabaseVerticle desplegado.");
     }
 
     private void handleDatabaseQuery(Message<String> msg) {
