@@ -23,8 +23,6 @@ frontend/*.njsproj
 frontend/*.sln
 frontend/*.sw?
 
-# Do not commit _pycache_ directories
-backend/__pycache__/
-backend/endpoints/__pycache__/
-backend/models/schemas/__pycache__/
-backend/models/sql/__pycache__/
+# Do not commit some backend directories
+backend/target/*
+backend/.settings/*
