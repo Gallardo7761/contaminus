@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS sensors(
 CREATE TABLE IF NOT EXISTS actuators (
 	actuatorId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	deviceId INT NOT NULL,
-	status BLOB NOT NULL,
+	status INT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
 	FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
 );
@@ -69,6 +69,46 @@ CREATE TABLE IF NOT EXISTS air_values (
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
 	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
 );
+
+CREATE OR REPLACE VIEW v_sensor_values AS
+SELECT 
+    s.sensorId,
+    s.deviceId,
+    s.sensorType,
+    s.unit,
+    s.status AS sensorStatus,
+    s.timestamp AS sensorTimestamp,
+    av.temperature,
+    av.humidity,
+    av.carbonMonoxide,
+    av.timestamp AS airValuesTimestamp,
+    gv.lat,
+    gv.lon,
+    gv.timestamp AS gpsTimestamp
+FROM sensors s
+LEFT JOIN air_values av ON s.sensorId = av.sensorId
+LEFT JOIN gps_values gv ON s.sensorId = gv.sensorId;
+
+CREATE OR REPLACE VIEW v_latest_values AS
+SELECT 
+    s.deviceId,
+    s.sensorId,
+    s.sensorType,
+    s.unit,
+    s.status AS sensorStatus,
+    s.timestamp AS sensorTimestamp,
+    av.temperature,
+    av.humidity,
+    av.carbonMonoxide,
+    av.timestamp AS airValuesTimestamp
+FROM sensors s
+LEFT JOIN air_values av 
+    ON s.sensorId = av.sensorId 
+    AND av.timestamp = (
+        SELECT MAX(timestamp) 
+        FROM air_values 
+        WHERE sensorId = s.sensorId
+    );
 
 -- Grupo único
 INSERT INTO groups (groupName) VALUES
@@ -100,11 +140,15 @@ INSERT INTO gps_values (sensorId, lat, lon) VALUES
 (1, 37.4010, -5.9980),  -- Isla de la Cartuja
 (1, 37.3431, -5.9812);  -- Bellavista
 
--- Datos de calidad del aire (sensores de aire)
+-- Para el sensor de humedad y temperatura (sensorId = 2)
 INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(2, 28.5, 60.2, 0.4),
-(2, 30.1, 55.8, 0.6),
-(2, 27.3, 65.4, 0.3),
-(3, 25.8, 50.7, 0.2),
-(3, 29.2, 58.9, 0.5);
+(2, 28.5, 60.2, NULL),   -- Temperatura y humedad, pero sin monóxido de carbono
+(2, 30.1, 55.8, NULL),
+(2, 27.3, 65.4, NULL);
+
+-- Para el sensor de monóxido de carbono (sensorId = 3)
+INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
+(3, NULL, NULL, 0.4),     -- Solo monóxido de carbono
+(3, NULL, NULL, 0.6),
+(3, NULL, NULL, 0.5);
 ```
