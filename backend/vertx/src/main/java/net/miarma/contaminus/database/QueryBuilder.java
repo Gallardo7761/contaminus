@@ -8,6 +8,9 @@ import java.util.StringJoiner;
 public class QueryBuilder {
     private StringBuilder query;
     private List<String> conditions;
+    private String sort;
+    private String order;
+    private String limit;
     
     public QueryBuilder() {
         this.query = new StringBuilder();
@@ -68,16 +71,16 @@ public class QueryBuilder {
     
     public QueryBuilder orderBy(Optional<String> column, Optional<String> order) {
         if (column.isPresent()) {
-            query.append("ORDER BY ").append(column.get()).append(" ");
+        	sort = "ORDER BY " + column.get() + " ";
             if (order.isPresent()) {
-                query.append(order.get().equalsIgnoreCase("asc") ? "ASC" : "DESC").append(" ");
+            	sort += order.get().equalsIgnoreCase("asc") ? "ASC" : "DESC" + " ";
             }
         }
         return this;
     }
     
-    public QueryBuilder limit(Optional<Integer> limit) {
-        limit.ifPresent(value -> query.append("LIMIT ").append(value).append(" "));
+    public QueryBuilder limit(Optional<Integer> limitParam) {
+    	limit = limitParam.isPresent() ? "LIMIT " + limitParam.get() + " " : "";
         return this;
     }
     
@@ -89,6 +92,15 @@ public class QueryBuilder {
                 joiner.add(condition);
             }
             query.append(joiner).append(" ");
+        }
+        if (order != null && !order.isEmpty()) {
+        	query.append(order);
+        }
+        if (sort != null && !sort.isEmpty()) {
+        	query.append(sort);
+        }
+        if (limit != null && !limit.isEmpty()) {
+        	query.append(limit);
         }
         return query.toString().trim() + ";";
     }

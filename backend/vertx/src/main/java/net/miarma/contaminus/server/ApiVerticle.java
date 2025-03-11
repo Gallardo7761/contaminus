@@ -35,9 +35,9 @@ public class ApiVerticle extends AbstractVerticle {
                 .allowedHeaders(allowedHeaders)
                 .allowedMethods(allowedMethods));
         router.route().handler(BodyHandler.create());
-        router.get(Constants.API_PREFIX + "/sensors").blockingHandler(this::getAllSensors);
-        router.get(Constants.API_PREFIX + "/sensors/:id").blockingHandler(this::getSensorById);
-        router.post(Constants.API_PREFIX + "/sensors").blockingHandler(this::insertSensor);
+        router.get(Constants.API_PREFIX + "/devices").blockingHandler(this::getAllDevices);
+        router.get(Constants.API_PREFIX + "/devices/:id").blockingHandler(this::getDeviceById);
+        router.post(Constants.API_PREFIX + "/devices").blockingHandler(this::insertSensor);
         router.get(Constants.API_PREFIX + "/status").handler(ctx -> ctx.json(new JsonObject().put("status", "OK")));
 
         vertx.createHttpServer()
@@ -58,7 +58,7 @@ public class ApiVerticle extends AbstractVerticle {
                         });
     }
 
-    private void getAllSensors(RoutingContext context) {
+    private void getAllDevices(RoutingContext context) {
         Optional<String> sort = Optional.ofNullable(context.request().getParam("_sort"));
         Optional<String> order = Optional.ofNullable(context.request().getParam("_order"));
         Optional<Integer> limit = Optional.ofNullable(context.request().getParam("_limit"))
@@ -72,7 +72,7 @@ public class ApiVerticle extends AbstractVerticle {
 
         String query = QueryBuilder
                 .select("*")
-                .from("sensor_mq_data")
+                .from("v_DevicesMeasures")
                 .orderBy(sort, order)
                 .limit(limit)
                 .build();
@@ -88,12 +88,25 @@ public class ApiVerticle extends AbstractVerticle {
         });
     }
 
-    private void getSensorById(RoutingContext context) {
+    private void getDeviceById(RoutingContext context) {
+    	Optional<String> sort = Optional.ofNullable(context.request().getParam("_sort"));
+        Optional<String> order = Optional.ofNullable(context.request().getParam("_order"));
+        Optional<Integer> limit = Optional.ofNullable(context.request().getParam("_limit"))
+                .map(s -> {
+                    try {
+                        return Integer.parseInt(s);
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                });
+        
         String id = context.request().getParam("id");
         String query = QueryBuilder
                 .select("*")
-                .from("sensor_mq_data")
-                .where("id = ?", id)
+                .from("v_DevicesMeasures")
+                .where("deviceId = ?", id)
+                .orderBy(sort, order)
+                .limit(limit)
                 .build();
 
         vertx.eventBus().request("db.query", query, req -> {
@@ -114,8 +127,9 @@ public class ApiVerticle extends AbstractVerticle {
             context.fail(400, new IllegalArgumentException("Body is missing or invalid"));
             return;
         }
-
-        String sensorType = body.getString("sensor_type");
+        
+        Integer deviceId = body.getInteger("deviceId");
+        String sensorType = body.getString("sensorType");
         Float lat = body.getFloat("lat");
         Float lon = body.getFloat("lon");
         Float value = body.getFloat("value");
@@ -126,8 +140,8 @@ public class ApiVerticle extends AbstractVerticle {
         }
 
         String query = QueryBuilder
-                .insert("sensor_mq_data", "sensor_type", "value", "lat", "lon")
-                .values(sensorType, value, lat, lon)
+                .insert("measures", "deviceId", "sensorType", "lat", "lon", "value")
+                .values(deviceId, sensorType, lat, lon, value)
                 .build();
         
         vertx.eventBus().request("db.query", query, req -> {

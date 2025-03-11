@@ -58,11 +58,13 @@ public class DatabaseVerticle extends AbstractVerticle {
 	                JsonArray jsonArray = new JsonArray();
 	                for (Row row : rows) {
 	                    jsonArray.add(new JsonObject()
-	                        .put("id", row.getInteger("id"))
-	                        .put("sensor_type", row.getString("sensor_type"))
-	                        .put("value", row.getFloat("value"))
+	                        .put("deviceId", row.getInteger("deviceId"))
+	                        .put("deviceName", row.getString("deviceName"))
+	                        .put("measureId", row.getInteger("measureId"))
+	                        .put("sensorType", row.getString("sensorType"))
 	                        .put("lat", row.getFloat("lat"))
 	                        .put("lon", row.getFloat("lon"))
+	                        .put("value", row.getFloat("value"))
 	                        .put("timestamp", row.getLocalDateTime("timestamp").toString())
 	                    );
 	                }
