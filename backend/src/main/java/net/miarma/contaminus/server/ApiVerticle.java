@@ -46,6 +46,8 @@ public class ApiVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.GET_DEVICES).handler(this::getDevicesHandler);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_BY_ID).handler(this::getDeviceByIdHandler);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_SENSORS).handler(this::getDeviceSensorsHandler);
+        router.route(HttpMethod.GET, Constants.GET_DEVICE_ACTUATORS).handler(this::getDeviceActuatorsHandler);
+        router.route(HttpMethod.GET, Constants.GET_DEVICE_LATEST_VALUES).handler(this::getDeviceLatestValuesHandler);
         router.route(HttpMethod.POST, Constants.POST_DEVICES).handler(this::postDeviceHandler);
         router.route(HttpMethod.PUT, Constants.PUT_DEVICE_BY_ID).handler(this::putDeviceByIdHandler);
 
@@ -182,6 +184,26 @@ public class ApiVerticle extends AbstractVerticle {
 				.build();
 		sendQuery(query, context);
 	}
+    
+    private void getDeviceActuatorsHandler(RoutingContext context) {
+		String deviceId = context.request().getParam("deviceId");
+		String query = QueryBuilder
+				.select("*")
+				.from("actuators")
+				.where("deviceId = ?", deviceId)
+				.build();
+		sendQuery(query, context);
+	}
+    
+    private void getDeviceLatestValuesHandler(RoutingContext context) {
+		String deviceId = context.request().getParam("deviceId");
+		String query = QueryBuilder
+				.select("*")
+				.from("v_latest_values")
+				.where("deviceId = ?", deviceId)
+				.build();
+		sendQuery(query, context);
+    }
 
     private void postDeviceHandler(RoutingContext context) {
     	JsonObject body = context.body().asJsonObject();

@@ -27,6 +27,8 @@ public class Constants {
 	public static final String GET_DEVICE_SENSORS = API_PREFIX + "/devices/:deviceId/sensors";
 	public static final String POST_DEVICES = API_PREFIX + "/devices";
 	public static final String PUT_DEVICE_BY_ID = API_PREFIX + "/devices/:deviceId";
+	public static final String GET_DEVICE_ACTUATORS = API_PREFIX + "/devices/:deviceId/actuators";
+	public static final String GET_DEVICE_LATEST_VALUES = API_PREFIX + "/devices/:deviceId/latest";
 
 	public static final String GET_SENSORS = API_PREFIX + "/sensors";
 	public static final String GET_SENSOR_BY_ID = API_PREFIX + "/sensors/:sensorId";
