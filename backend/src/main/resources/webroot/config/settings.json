@@ -7,9 +7,35 @@
     },
     "appConfig": {
         "endpoints": {
-            "baseUrl": "http://localhost:8081/api/v1",
-            "sensors": "sensors",
-            "sensor": "sensors/sensor"
+            "BASE_URL": "http://localhost:8081/api/v1",
+            "GET_GROUPS": "/groups",
+            "GET_GROUP_BY_ID": "/groups/{0}",
+            "GET_GROUP_DEVICES": "/groups/{0}/devices",
+            "POST_GROUPS": "/groups",
+            "PUT_GROUP_BY_ID": "/groups/{0}",
+            "GET_DEVICES": "/devices",
+            "GET_DEVICE_BY_ID": "/devices/{0}",
+            "GET_DEVICE_SENSORS": "/devices/{0}/sensors",
+            "GET_DEVICE_LATEST_VALUES": "/devices/{0}/latest",
+            "GET_DEVICE_POLLUTION_MAP": "/devices/{0}/pollution-map",
+            "GET_DEVICE_HISTORY": "/devices/{0}/history",
+            "POST_DEVICES": "/devices",
+            "PUT_DEVICE_BY_ID": "/devices/{0}",
+            "GET_SENSORS": "/sensors",
+            "GET_SENSOR_BY_ID": "/sensors/{0}",
+            "GET_SENSOR_VALUES": "/sensors/{0}/values",
+            "POST_SENSORS": "/sensors",
+            "PUT_SENSOR_BY_ID": "/sensors/{0}",
+            "GET_ACTUATORS": "/actuators",
+            "GET_ACTUATOR_BY_ID": "/actuators/{0}",
+            "POST_ACTUATORS": "/actuators",
+            "PUT_ACTUATOR_BY_ID": "/actuators/{0}",
+            "GET_GPS_VALUES": "/gps-values",
+            "GET_GPS_VALUE_BY_ID": "/gps-values/{0}",
+            "POST_GPS_VALUES": "/gps-values",
+            "GET_AIR_VALUES": "/air-values",
+            "GET_AIR_VALUE_BY_ID": "/air-values/{0}",
+            "POST_AIR_VALUES": "/air-values"
         },
         "historyChartConfig": {
             "chartOptionsDark": {
