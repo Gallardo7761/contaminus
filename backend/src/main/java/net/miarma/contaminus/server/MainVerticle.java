@@ -14,7 +14,7 @@ public class MainVerticle extends AbstractVerticle {
 		
 		getVertx().deployVerticle(new DatabaseVerticle(), options);
 		getVertx().deployVerticle(new ApiVerticle(), options);
-		//getVertx().deployVerticle(new HttpServerVerticle());
+		getVertx().deployVerticle(new HttpServerVerticle());
 	}
 	
 	@Override
