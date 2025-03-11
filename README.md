@@ -26,6 +26,13 @@ La encontraréis en `dist/`
 ```sql
 USE dad;
 
+DROP TABLE IF EXISTS gps_values;
+DROP TABLE IF EXISTS air_values;
+DROP TABLE IF EXISTS actuators;
+DROP TABLE IF EXISTS sensors;
+DROP TABLE IF EXISTS devices;
+DROP TABLE IF EXISTS groups;
+
 CREATE TABLE IF NOT EXISTS groups(
 	groupId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	groupName VARCHAR(64) DEFAULT NULL
@@ -115,45 +122,65 @@ LEFT JOIN air_values av
         WHERE sensorId = s.sensorId
     );
 
--- Grupo único
-INSERT INTO groups (groupName) VALUES
-('ContaminUS');
+INSERT INTO groups (groupName) VALUES ('Grupo 1');
 
--- Dispositivos dentro del grupo 1
 INSERT INTO devices (groupId, deviceName) VALUES
-(1, 'Alpha'),
-(1, 'Beta'),
-(1, 'Gamma');
+(1, 'Dispositivo 1'),
+(1, 'Dispositivo 2'),
+(1, 'Dispositivo 3');
 
--- Sensores asignados a los dispositivos
+-- Sensores para el Dispositivo 1
 INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(1, 'GPS', '', 1),
-(1, 'AirQuality', 'ppm', 1),
-(2, 'Temperature', '°C', 1),
-(2, 'Humidity', '%', 1),
-(3, 'CO Sensor', 'ppm', 1);
+(1, 'GPS', 'N/A', 1),
+(1, 'Temperature & Humidity', '°C/%', 1),
+(1, 'CO', 'ppm', 1);
 
--- Actuadores asignados a los dispositivos
-INSERT INTO actuators (deviceId, status) VALUES
-(1, 0x01),  -- Actuador encendido
-(2, 0x00),  -- Actuador apagado
-(3, 0x01);  -- Actuador encendido
+-- Sensores para el Dispositivo 2
+INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
+(2, 'GPS', 'N/A', 1),
+(2, 'Temperature & Humidity', '°C/%', 1),
+(2, 'CO', 'ppm', 1);
 
--- Datos de GPS (sensores tipo GPS)
+-- Sensores para el Dispositivo 3
+INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
+(3, 'GPS', 'N/A', 1),
+(3, 'Temperature & Humidity', '°C/%', 1),
+(3, 'CO', 'ppm', 1);
+
+-- Valores de GPS para el Dispositivo 1
 INSERT INTO gps_values (sensorId, lat, lon) VALUES
-(1, 37.3886, -5.9823),  -- Centro de Sevilla
-(1, 37.4010, -5.9980),  -- Isla de la Cartuja
-(1, 37.3431, -5.9812);  -- Bellavista
+(1, 37.3861, -5.9921),
+(2, 37.3870, -5.9900),
+(3, 37.3885, -5.9930);
 
--- Para el sensor de humedad y temperatura (sensorId = 2)
-INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(2, 28.5, 60.2, NULL),   -- Temperatura y humedad, pero sin monóxido de carbono
-(2, 30.1, 55.8, NULL),
-(2, 27.3, 65.4, NULL);
+-- Valores de GPS para el Dispositivo 2
+INSERT INTO gps_values (sensorId, lat, lon) VALUES
+(4, 37.3850, -5.9910),
+(5, 37.3865, -5.9935),
+(6, 37.3870, -5.9950);
 
--- Para el sensor de monóxido de carbono (sensorId = 3)
+-- Valores de GPS para el Dispositivo 3
+INSERT INTO gps_values (sensorId, lat, lon) VALUES
+(7, 37.3860, -5.9920),
+(8, 37.3875, -5.9915),
+(9, 37.3890, -5.9905);
+
+-- Valores de Temperatura, Humedad y CO para el Dispositivo 1
 INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(3, NULL, NULL, 0.4),     -- Solo monóxido de carbono
-(3, NULL, NULL, 0.6),
-(3, NULL, NULL, 0.5);
+(1, 22.5, 45.0, 0.02),
+(2, 23.0, 46.5, 0.01),
+(3, 21.8, 48.0, 0.03);
+
+-- Valores de Temperatura, Humedad y CO para el Dispositivo 2
+INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
+(4, 24.5, 50.0, 0.04),
+(5, 25.0, 49.5, 0.05),
+(6, 23.5, 47.0, 0.02);
+
+-- Valores de Temperatura, Humedad y CO para el Dispositivo 3
+INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
+(7, 21.0, 44.0, 0.01),
+(8, 22.0, 45.5, 0.03),
+(9, 21.5, 46.0, 0.02);
+
 ```
