@@ -29,7 +29,9 @@ public class Constants {
 	public static final String PUT_DEVICE_BY_ID = API_PREFIX + "/devices/:deviceId";
 	public static final String GET_DEVICE_ACTUATORS = API_PREFIX + "/devices/:deviceId/actuators";
 	public static final String GET_DEVICE_LATEST_VALUES = API_PREFIX + "/devices/:deviceId/latest";
-
+	public static final String GET_DEVICE_POLLUTION_MAP = API_PREFIX + "/devices/:deviceId/pollution-map";
+	public static final String GET_DEVICE_HISTORY = API_PREFIX + "/devices/:deviceId/history";
+	
 	public static final String GET_SENSORS = API_PREFIX + "/sensors";
 	public static final String GET_SENSOR_BY_ID = API_PREFIX + "/sensors/:sensorId";
 	public static final String GET_SENSOR_VALUES = API_PREFIX + "/sensors/:sensorId/values";
@@ -40,14 +42,7 @@ public class Constants {
 	public static final String GET_ACTUATOR_BY_ID = API_PREFIX + "/actuators/:actuatorId";
 	public static final String POST_ACTUATORS = API_PREFIX + "/actuators";
 	public static final String PUT_ACTUATOR_BY_ID = API_PREFIX + "/actuators/:actuatorId";
-
-	public static final String GET_GPS_VALUES = API_PREFIX + "/gps-values";
-	public static final String GET_GPS_VALUE_BY_ID = API_PREFIX + "/gps-values/:valueId";
-	public static final String POST_GPS_VALUES = API_PREFIX + "/gps-values";
-
-	public static final String GET_AIR_VALUES = API_PREFIX + "/air-values";
-	public static final String GET_AIR_VALUE_BY_ID = API_PREFIX + "/air-values/:valueId";
-	public static final String POST_AIR_VALUES = API_PREFIX + "/air-values";
+	
 	
 	private Constants() {
         throw new AssertionError("Utility class cannot be instantiated.");

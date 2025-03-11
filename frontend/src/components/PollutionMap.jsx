@@ -1,4 +1,5 @@
 import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
+import PropTypes from 'prop-types';
 
 import { useConfig } from '../contexts/ConfigContext.jsx';
 
@@ -57,18 +58,19 @@ const PollutionCircles = ({ data }) => {
   });
 };
 
-const PollutionMap = () => {
+const PollutionMap = ({ deviceId }) => {
   const { config, configLoading, configError } = useConfig();
   
   if (configLoading) return <p>Cargando configuración...</p>;
   if (configError) return <p>Error al cargar configuración: {configError}</p>;
   if (!config) return <p>Configuración no disponible.</p>;
 
-  const BASE = config.appConfig.endpoints.baseUrl;
-  const ENDPOINT = config.appConfig.endpoints.sensors;
+  const BASE = config.appConfig.endpoints.BASE_URL;
+  const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
+  let endp = ENDPOINT.replace('{0}', deviceId);
 
   const reqConfig = {
-      baseUrl: `${BASE}/${ENDPOINT}`,
+      baseUrl: `${BASE}/${endp}`,
       params: {}
   }
 
@@ -93,10 +95,10 @@ const PollutionMapContent = () => {
 
   const SEVILLA = config?.userConfig.city;
 
-  const pollutionData = data.map((sensor) => ({
-    lat: sensor.lat,
-    lng: sensor.lon,
-    level: sensor.value
+  const pollutionData = data.map((measure) => ({
+    lat: measure.lat,
+    lng: measure.lon,
+    level: measure.carbonMonoxide
   }));
 
   return (
@@ -116,6 +118,10 @@ const mapStyles = {
   height: '500px',
   width: '100%',
   borderRadius: '20px'
+};
+
+PollutionMap.propTypes = {
+  deviceId: PropTypes.number.isRequired
 };
 
 export default PollutionMap;

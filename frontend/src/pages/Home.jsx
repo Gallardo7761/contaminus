@@ -1,35 +1,41 @@
-import Dashboard from '../components/Dashboard.jsx'
-import PollutionMap from '../components/PollutionMap.jsx'
-import HistoryCharts from '../components/HistoryCharts.jsx'
-import SummaryCards from '../components/SummaryCards.jsx'
-
-/**
- * Home.jsx
- * 
- * Este archivo define el componente Home, que es una página principal de la aplicación.
- * 
- * Importaciones:
- * - Dashboard: Un componente que actúa como contenedor para los componentes principales de la página.
- * - PollutionMap: Un componente que muestra un mapa de la contaminación.
- * - HistoryCharts: Un componente que muestra gráficos históricos de la contaminación.
- * - SummaryCards: Un componente que muestra tarjetas resumen con información relevante.
- * 
- * Funcionalidad:
- * - El componente Home utiliza una estructura de JSX para organizar y renderizar los componentes importados.
- * - El componente Dashboard contiene los componentes SummaryCards, PollutionMap y HistoryCharts.
- * 
- */
+import '../css/Home.css';
 
 const Home = () => {
     return (
-        <>
-            <Dashboard>
-                <SummaryCards />
-                <PollutionMap />
-                <HistoryCharts />
-            </Dashboard>
-        </>
-    )
+        <div className="home-container">
+            <header className="hero-section">
+                <h1 className="hero-title">ContaminUS</h1>
+                <p className="hero-description">
+                    Proyecto universitario para monitorear la calidad del aire usando sensores IoT.
+                </p>
+                <button className="cta-button">Explorar Proyecto</button>
+            </header>
+
+            <section className="about-section">
+                <h2>Sobre el Proyecto</h2>
+                <p>
+                    ContaminUS es una solución basada en tecnologías IoT para medir la calidad del aire en tiempo real. 
+                    Este proyecto busca crear una herramienta accesible para estudiantes, investigadores y comunidades 
+                    interesadas en el monitoreo ambiental.
+                </p>
+                <div className="features">
+                    <div className="feature">
+                        <h3>Medición en tiempo real</h3>
+                        <p>Monitorea la calidad del aire con sensores MQ-135 y DHT11, mostrando datos precisos y actualizados.</p>
+                    </div>
+                    <div className="feature">
+                        <h3>Aplicación web interactiva</h3>
+                        <p>Visualiza los datos de calidad del aire mediante mapas interactivos y gráficos.</p>
+                    </div>
+                    <div className="feature">
+                        <h3>Colaboración en la universidad</h3>
+                        <p>El proyecto está orientado a estudiantes que deseen aprender y colaborar con el análisis de datos ambientales.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
 }
+
 
 export default Home;

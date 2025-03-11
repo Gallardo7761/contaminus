@@ -4,12 +4,20 @@
     left: -350px;
     width: 350px;
     height: 100%;
-    background-color: #333;
-    color: white;
     transition: left 0.3s ease;
     padding: 30px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.5);
     z-index: 1000;
+}
+
+.side-menu.light {
+    background-color: white;
+    color: black;
+}
+
+.side-menu.dark {
+    background-color: #333;
+    color: white;
 }
 
 .side-menu.open {
@@ -27,9 +35,16 @@
     right: 20px;
     background: none;
     border: none;
-    color: white;
     font-size: 30px;
     cursor: pointer;
+}
+
+.side-menu .close-btn.light {
+    color: black;
+}
+
+.side-menu .close-btn.dark {
+    color: white;
 }
 
 .side-menu .close-btn .fa-times {
@@ -39,25 +54,4 @@
 
 .side-menu .close-btn:hover {
     color: var(--primary-color);
-}
-
-.side-menu ul {
-    list-style: none;
-    padding: 0;
-}
-
-.side-menu ul li {
-    margin: 20px 0;
-}
-
-.side-menu ul li a:hover {
-    color: var(--primary-color);
-}
-
-.side-menu ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 30px;
-    font-weight: 600;
-    /*text-transform: uppercase;*/
 }

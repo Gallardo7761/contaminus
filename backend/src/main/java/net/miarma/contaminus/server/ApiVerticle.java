@@ -50,6 +50,8 @@ public class ApiVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.GET_DEVICE_LATEST_VALUES).handler(this::getDeviceLatestValuesHandler);
         router.route(HttpMethod.POST, Constants.POST_DEVICES).handler(this::postDeviceHandler);
         router.route(HttpMethod.PUT, Constants.PUT_DEVICE_BY_ID).handler(this::putDeviceByIdHandler);
+        router.route(HttpMethod.GET, Constants.GET_DEVICE_POLLUTION_MAP).handler(this::getPollutionMapHandler);
+        router.route(HttpMethod.GET, Constants.GET_DEVICE_HISTORY).handler(this::getDeviceHistoryHandler);
 
         // Sensor Routes
         router.route(HttpMethod.GET, Constants.GET_SENSORS).handler(this::getSensorsHandler);
@@ -245,6 +247,26 @@ public class ApiVerticle extends AbstractVerticle {
 		
 		sendQuery(query, context);
     }
+    
+    private void getPollutionMapHandler(RoutingContext context) {
+    	String deviceId = context.request().getParam("deviceId");
+		String query = QueryBuilder
+				.select("*")
+				.from("v_pollution_map")
+				.where("deviceId = ?", deviceId)
+				.build();
+		sendQuery(query, context);
+    }
+    
+    private void getDeviceHistoryHandler(RoutingContext context) {
+		String deviceId = context.request().getParam("deviceId");
+		String query = QueryBuilder
+				.select("*")
+				.from("v_sensor_history_by_device")
+				.where("deviceId = ?", deviceId)
+				.build();
+		sendQuery(query, context);
+	}
 
     // Sensor Handlers
     private void getSensorsHandler(RoutingContext context) {

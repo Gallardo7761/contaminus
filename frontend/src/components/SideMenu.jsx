@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
+import { DataProvider } from '../contexts/DataContext';
+import { useData } from '../contexts/DataContext';
+
+import { useConfig } from '../contexts/ConfigContext';
+import { useTheme } from "../contexts/ThemeContext";
+
+import Card from './Card';
+
 /** ⚠️ EN PRUEBAS ⚠️
  * SideMenu.jsx
  * 
@@ -24,21 +32,66 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
  *  ⚠️ EN PRUEBAS ⚠️ **/
 
 const SideMenu = ({ isOpen, onClose }) => {
+    const { config, configLoading, configError } = useConfig();
+
+    if (configLoading) return <p>Cargando configuración...</p>;
+    if (configError) return <p>Error al cargar configuración: {configError}</p>;
+    if (!config) return <p>Configuración no disponible.</p>;
+
+    const BASE = config.appConfig.endpoints.BASE_URL;
+    const ENDPOINT = config.appConfig.endpoints.GET_DEVICES;
+
+    const reqConfig = {
+        baseUrl: `${BASE}/${ENDPOINT}`,
+        params: {}
+    }
+
     return (
-        <div className={`side-menu ${isOpen ? 'open' : ''}`}>
+        <DataProvider config={reqConfig}>
+            <SideMenuContent isOpen={isOpen} onClose={onClose} />
+        </DataProvider>
+    );
+};
+
+const SideMenuContent = ({ isOpen, onClose }) => {
+    const { data, dataLoading, dataError } = useData();
+    const { theme } = useTheme();
+
+    if (dataLoading) return <p>Cargando datos...</p>;
+    if (dataError) return <p>Error al cargar datos: {dataError}</p>;
+    if (!data) return <p>Datos no disponibles.</p>;
+
+    return (
+        <div className={`side-menu ${isOpen ? 'open' : ''} ${theme}`}>
             <button className="close-btn" onClick={onClose}>
                 <FontAwesomeIcon icon={faTimes} />
             </button>
-            <ul>
-                <li><a href="#inicio">ɪɴɪᴄɪᴏ</a></li>
-                <li><a href="#mapa">ᴍᴀᴘᴀ</a></li>
-                <li><a href="#historico">ʜɪsᴛᴏʀɪᴄᴏ</a></li>
-            </ul>
+            <div className="d-flex flex-column gap-3 mt-5">
+                {data.map(device => {
+                    return (
+                        <a href={`/dashboard/${device.deviceId}`} key={device.deviceId} style={{ textDecoration: 'none' }}>
+                            <Card
+                                title={device.deviceName}
+                                status={`ID: ${device.deviceId}`}
+                                styleMode={"override"}
+                                className={"col-12"}
+                            >
+                                {[]}
+                            </Card>
+                        </a>
+                    );
+                })}
+            </div>
         </div>
     );
 };
 
 SideMenu.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired
+}
+
+SideMenuContent.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
 }

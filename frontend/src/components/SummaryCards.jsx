@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import CardContainer from './CardContainer';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCloud, faClock, faTemperature0, faWater } from '@fortawesome/free-solid-svg-icons';
+
 import { DataProvider } from '../contexts/DataContext';
 import { useData } from '../contexts/DataContext';
 
 import { useConfig } from '../contexts/ConfigContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloud, faGauge, faTemperature0, faWater } from '@fortawesome/free-solid-svg-icons';
+import { timestampToTime } from '../util/date.js';
 
 /**
  * SummaryCards.jsx
@@ -31,54 +33,59 @@ import { faCloud, faGauge, faTemperature0, faWater } from '@fortawesome/free-sol
  * 
  */
 
-const SummaryCards = () => {
+const SummaryCards = ({ deviceId }) => {
     const { config, configLoading, configError } = useConfig();
 
     if (configLoading) return <p>Cargando configuración...</p>;
     if (configError) return <p>Error al cargar configuración: {configError}</p>;
     if (!config) return <p>Configuración no disponible.</p>;
 
-    const BASE = config.appConfig.endpoints.baseUrl;
-    const ENDPOINT = config.appConfig.endpoints.sensors;
+    const BASE = config.appConfig.endpoints.BASE_URL;
+    const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_LATEST_VALUES;
+    const endp = ENDPOINT.replace('{0}', deviceId);
 
     const reqConfig = {
-        baseUrl: `${BASE}/${ENDPOINT}`,
-        params: {
-            _sort: 'timestamp',
-            _order: 'desc',
-            _limit: 1
-        }
+        baseUrl: `${BASE}/${endp}`,
+        params: {}
     }
 
     return (
         <DataProvider config={reqConfig}>
-            <SummaryCardsContent />
+            <SummaryCardsContent deviceId={deviceId} />
         </DataProvider>
     );
 }
 
 const SummaryCardsContent = () => {
-    const { data } = useData();
+    const { data, dataLoading, dataError } = useData();
+
+    if (dataLoading) return <p>Cargando datos...</p>;
+    if (dataError) return <p>Error al cargar datos: {dataError}</p>;
+    if (!data) return <p>Datos no disponibles.</p>;
 
     const CardsData = [
         { id: 1, title: "Temperatura", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faTemperature0} /> },
         { id: 2, title: "Humedad", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faWater} /> },
-        { id: 3, title: "Contaminación", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faCloud} /> },
-        { id: 4, title: "Presión", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faGauge} />  }
+        { id: 3, title: "Nivel de CO", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faCloud} /> },
+        { id: 4, title: "Actualizado a las", content: "N/A", status: "Esperando datos...", titleIcon: <FontAwesomeIcon icon={faClock} /> }
     ];
 
     if (data) {
-        data.forEach((sensor) => {
-            if (sensor.sensor_type === "MQ-135") {
-                CardsData[2].content = `${sensor.value} µg/m³`;
-                CardsData[2].status = sensor.value > 100 ? "Alta contaminación 😷" : "Aire moderado 🌤️";
-            } else if (sensor.sensor_type === "DHT-11") {
-                CardsData[1].content = `${sensor.humidity}%`;
-                CardsData[1].status = sensor.humidity > 70 ? "Humedad alta 🌧️" : "Nivel normal 🌤️";
-                CardsData[0].content = `${sensor.temperature}°C`;
-                CardsData[0].status = sensor.temperature > 30 ? "Calor intenso ☀️" : "Clima agradable 🌤️";
-            }
-        });
+        let coData = data[1];
+        let tempData = data[2];
+
+        let lastTime = timestampToTime(coData.airValuesTimestamp);
+        let lastDate = new Date(coData.airValuesTimestamp);
+
+        CardsData[0].content = tempData.temperature + "°C";
+        CardsData[0].status = "Temperatura actual";
+        CardsData[1].content = tempData.humidity + "%";
+        CardsData[1].status = "Humedad actual";
+        CardsData[2].content = coData.carbonMonoxide + " ppm";
+        CardsData[2].status = "Nivel de CO actual";
+        CardsData[3].content = lastTime.slice(0, 5);
+        CardsData[3].status = "Día " + lastDate.toLocaleDateString();
+
     }
 
     return (
@@ -87,7 +94,7 @@ const SummaryCardsContent = () => {
 }
 
 SummaryCards.propTypes = {
-    data: PropTypes.array
+    deviceId: PropTypes.number.isRequired
 };
 
 export default SummaryCards;
