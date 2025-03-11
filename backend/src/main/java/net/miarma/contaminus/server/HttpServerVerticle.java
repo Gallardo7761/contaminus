@@ -12,8 +12,13 @@ public class HttpServerVerticle extends AbstractVerticle {
     public void start() {
     	Constants.LOGGER.info("🟢 Iniciando HttpServerVerticle...");
         Router router = Router.router(vertx);
+        
         router.route("/*").handler(StaticHandler.create("webroot").setDefaultContentEncoding("UTF-8"));
         
+        router.route("/dashboard/*").handler(ctx -> {
+            ctx.reroute("/index.html");
+        });
+
         vertx.createHttpServer().requestHandler(router).listen(
         		Host.getWebserverPort(), Host.getHost(), result -> {
 			if (result.succeeded()) {
@@ -25,6 +30,4 @@ public class HttpServerVerticle extends AbstractVerticle {
 			}
 		});
     }
-
-    
 }
