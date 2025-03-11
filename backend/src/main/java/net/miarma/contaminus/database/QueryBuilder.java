@@ -42,6 +42,21 @@ public class QueryBuilder {
 		return qb;
 	}
     
+    public static QueryBuilder update(String table) {
+		QueryBuilder qb = new QueryBuilder();
+		qb.query.append("UPDATE ").append(table).append(" ");
+		return qb;
+	}
+    
+    public QueryBuilder set(String column, Object value) {
+		if(value instanceof String) {
+			query.append("SET ").append(column).append(" = '").append(value).append("' ");
+		} else {
+			query.append("SET ").append(column).append(" = ").append(value).append(" ");
+		}
+		return this;
+	}
+    
     public QueryBuilder values(Object... values) {
         StringJoiner joiner = new StringJoiner(", ", "VALUES (", ")");
         for (Object value : values) {
@@ -83,7 +98,7 @@ public class QueryBuilder {
     	limit = limitParam.isPresent() ? "LIMIT " + limitParam.get() + " " : "";
         return this;
     }
-    
+
     public String build() {
         if (!conditions.isEmpty()) {
             query.append("WHERE ");
@@ -104,4 +119,6 @@ public class QueryBuilder {
         }
         return query.toString().trim() + ";";
     }
+    
+    
 }

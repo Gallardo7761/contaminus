@@ -1,0 +1,53 @@
+package net.miarma.contaminus.common;
+
+import java.io.File;
+
+import io.vertx.core.impl.logging.Logger;
+import io.vertx.core.impl.logging.LoggerFactory;
+
+public class Constants {
+	public static final String APP_NAME = "ContaminUS";
+	public static final String API_PREFIX = "/api/v1";
+	public static final String HOME_DIR = System.getProperty("user.home") + File.separator;
+	public static final String BASE_DIR = HOME_DIR + 
+			(SystemInfo.getOS() == OSType.WINDOWS ? ".contaminus" :
+			 SystemInfo.getOS() == OSType.LINUX ? ".config" + File.separator + 
+				 "contaminus" : null);
+	public static final String CONFIG_FILE = BASE_DIR + File.separator + "config.properties";
+	public static final Logger LOGGER = LoggerFactory.getLogger(APP_NAME);
+	
+	public static final String GET_GROUPS = API_PREFIX + "/groups";
+	public static final String GET_GROUP_BY_ID = API_PREFIX + "/groups/:groupId";
+	public static final String GET_GROUP_DEVICES = API_PREFIX + "/groups/:groupId/devices";
+	public static final String POST_GROUPS = API_PREFIX + "/groups";
+	public static final String PUT_GROUP_BY_ID = API_PREFIX + "/groups/:groupId";
+
+	public static final String GET_DEVICES = API_PREFIX + "/devices";
+	public static final String GET_DEVICE_BY_ID = API_PREFIX + "/devices/:deviceId";
+	public static final String GET_DEVICE_SENSORS = API_PREFIX + "/devices/:deviceId/sensors";
+	public static final String POST_DEVICES = API_PREFIX + "/devices";
+	public static final String PUT_DEVICE_BY_ID = API_PREFIX + "/devices/:deviceId";
+
+	public static final String GET_SENSORS = API_PREFIX + "/sensors";
+	public static final String GET_SENSOR_BY_ID = API_PREFIX + "/sensors/:sensorId";
+	public static final String GET_SENSOR_VALUES = API_PREFIX + "/sensors/:sensorId/values";
+	public static final String POST_SENSORS = API_PREFIX + "/sensors";
+	public static final String PUT_SENSOR_BY_ID = API_PREFIX + "/sensors/:sensorId";
+
+	public static final String GET_ACTUATORS = API_PREFIX + "/actuators";
+	public static final String GET_ACTUATOR_BY_ID = API_PREFIX + "/actuators/:actuatorId";
+	public static final String POST_ACTUATORS = API_PREFIX + "/actuators";
+	public static final String PUT_ACTUATOR_BY_ID = API_PREFIX + "/actuators/:actuatorId";
+
+	public static final String GET_GPS_VALUES = API_PREFIX + "/gps-values";
+	public static final String GET_GPS_VALUE_BY_ID = API_PREFIX + "/gps-values/:valueId";
+	public static final String POST_GPS_VALUES = API_PREFIX + "/gps-values";
+
+	public static final String GET_AIR_VALUES = API_PREFIX + "/air-values";
+	public static final String GET_AIR_VALUE_BY_ID = API_PREFIX + "/air-values/:valueId";
+	public static final String POST_AIR_VALUES = API_PREFIX + "/air-values";
+	
+	private Constants() {
+        throw new AssertionError("Utility class cannot be instantiated.");
+    }
+}
