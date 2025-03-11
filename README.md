@@ -76,9 +76,9 @@ INSERT INTO groups (groupName) VALUES
 
 -- Dispositivos dentro del grupo 1
 INSERT INTO devices (groupId, deviceName) VALUES
-(1, 'Raspberry Pi Sensor Hub'),
-(1, 'ESP32 Outdoor Monitor'),
-(1, 'Arduino Air Quality Station');
+(1, 'Alpha'),
+(1, 'Beta'),
+(1, 'Gamma');
 
 -- Sensores asignados a los dispositivos
 INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
