@@ -72,12 +72,19 @@ CREATE TABLE IF NOT EXISTS gps_values(
 	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
 );
 
-CREATE TABLE IF NOT EXISTS air_values (
+CREATE TABLE IF NOT EXISTS weather_values (
 	valueId INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
 	sensorId INT NOT NULL,
 	temperature FLOAT NOT NULL,
 	humidity FLOAT NOT NULL,
-	carbonMonoxide FLOAT NOT NULL,
+	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
+);
+
+CREATE TABLE IF NOT EXISTS co_values (
+	valueId INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
+	sensorId INT NOT NULL,
+	value FLOAT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
 	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
 );
@@ -122,65 +129,79 @@ LEFT JOIN air_values av
         WHERE sensorId = s.sensorId
     );
 
+CREATE OR REPLACE VIEW v_pollution_map AS
+SELECT
+    g.lat,
+    g.lon,
+    a.carbonMonoxide,
+    d.deviceId,
+    d.deviceName
+FROM
+    gps_values g
+JOIN
+    air_values a ON g.sensorId = a.sensorId
+JOIN
+    sensors s ON a.sensorId = s.sensorId
+JOIN
+    devices d ON s.deviceId = d.deviceId
+WHERE
+    (g.sensorId, g.timestamp) IN (
+        SELECT sensorId, MAX(timestamp)
+        FROM gps_values
+        GROUP BY sensorId
+    )
+AND
+    (a.sensorId, a.timestamp) IN (
+        SELECT sensorId, MAX(timestamp)
+        FROM air_values
+        GROUP BY sensorId
+    );
+
+
+-- Insertar grupos
 INSERT INTO groups (groupName) VALUES ('Grupo 1');
 
+-- Insertar dispositivos
 INSERT INTO devices (groupId, deviceName) VALUES
 (1, 'Dispositivo 1'),
 (1, 'Dispositivo 2'),
 (1, 'Dispositivo 3');
 
 -- Sensores para el Dispositivo 1
+-- Cada dispositivo tiene un único sensor de cada tipo (GPS, Temperature & Humidity, CO)
 INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(1, 'GPS', 'N/A', 1),
-(1, 'Temperature & Humidity', '°C/%', 1),
-(1, 'CO', 'ppm', 1);
+(1, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 1
+(1, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 1
+(1, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 1
 
 -- Sensores para el Dispositivo 2
 INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(2, 'GPS', 'N/A', 1),
-(2, 'Temperature & Humidity', '°C/%', 1),
-(2, 'CO', 'ppm', 1);
+(2, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 2
+(2, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 2
+(2, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 2
 
 -- Sensores para el Dispositivo 3
 INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(3, 'GPS', 'N/A', 1),
-(3, 'Temperature & Humidity', '°C/%', 1),
-(3, 'CO', 'ppm', 1);
+(3, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 3
+(3, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 3
+(3, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 3
 
--- Valores de GPS para el Dispositivo 1
+-- Valores de GPS para los Dispositivos
+-- Cada dispositivo tiene un único sensor de GPS con latitud y longitud asociada
 INSERT INTO gps_values (sensorId, lat, lon) VALUES
-(1, 37.3861, -5.9921),
-(2, 37.3870, -5.9900),
-(3, 37.3885, -5.9930);
+(1, 37.3861, -5.9921),  -- GPS para Dispositivo 1
+(4, 37.3850, -5.9910),  -- GPS para Dispositivo 2
+(7, 37.3860, -5.9920);  -- GPS para Dispositivo 3
 
--- Valores de GPS para el Dispositivo 2
-INSERT INTO gps_values (sensorId, lat, lon) VALUES
-(4, 37.3850, -5.9910),
-(5, 37.3865, -5.9935),
-(6, 37.3870, -5.9950);
+-- Valores de Temperatura, Humedad y CO para los Dispositivos
+-- Cada dispositivo tiene un único sensor de aire (temperatura, humedad, CO) con valores asociados
+INSERT INTO weather_values (sensorId, temperature, humidity) VALUES
+(2, 22.5, 45.0),  -- Temperatura, Humedad para Dispositivo 1
+(5, 24.5, 50.0),  -- Temperatura, Humedad para Dispositivo 2
+(8, 21.0, 44.0);  -- Temperatura, Humedad para Dispositivo 3
 
--- Valores de GPS para el Dispositivo 3
-INSERT INTO gps_values (sensorId, lat, lon) VALUES
-(7, 37.3860, -5.9920),
-(8, 37.3875, -5.9915),
-(9, 37.3890, -5.9905);
-
--- Valores de Temperatura, Humedad y CO para el Dispositivo 1
-INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(1, 22.5, 45.0, 0.02),
-(2, 23.0, 46.5, 0.01),
-(3, 21.8, 48.0, 0.03);
-
--- Valores de Temperatura, Humedad y CO para el Dispositivo 2
-INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(4, 24.5, 50.0, 0.04),
-(5, 25.0, 49.5, 0.05),
-(6, 23.5, 47.0, 0.02);
-
--- Valores de Temperatura, Humedad y CO para el Dispositivo 3
-INSERT INTO air_values (sensorId, temperature, humidity, carbonMonoxide) VALUES
-(7, 21.0, 44.0, 0.01),
-(8, 22.0, 45.5, 0.03),
-(9, 21.5, 46.0, 0.02);
-
+INSERT INTO co_values (sensorId, value) VALUES
+(3, 0.02),  -- CO para Dispositivo 1
+(6, 0.04),  -- CO para Dispositivo 2
+(9, 0.01);  -- CO para Dispositivo 3
 ```
