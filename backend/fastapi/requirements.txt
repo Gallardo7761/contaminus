@@ -1,8 +1,0 @@
-uvicorn
-fastapi
-contextlib2
-dotenv
-pydantic
-sqlalchemy
-databases
-aiomysql
