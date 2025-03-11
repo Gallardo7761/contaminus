@@ -1,23 +1,28 @@
-# ⚠ REQUISITOS PREVIOS
+# ⚠ REQUISITOS PREVIOS (SÓLO DAD)
 - Descargar [MariaDB 10.6.21](https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.6.21&os=windows&cpu=x86_64&pkg=msi&mirror=raiolanetworks)
 - Descargar [DBeaver](https://dbeaver.io/download/)
+- Descargar [Postman](https://www.postman.com/downloads/)
+
+## Para lanzar la API con Vert.X 
+1. Run -> Run Configurations -> Java Application
+2. Como clase principal: `io.vertx.core.Launcher`
+3. Como argumentos: `net.miarma.contaminus.server.MainVerticle`
+
+# ⚠ REQUISITOS PREVIOS (DAD + Hack4Change)
 - Descargar Node.js
     - Para descargar Node recomiendo fnm (Fast Node Manager) que lo podéis descargar [aquí](https://miarma.net/descargas)
     - Para instalarlo: `fnm install 23.7.0`
+    -   
+## Para lanzar la web en modo desarrollador
+1. Abrir terminal (normalmente en VSCode) en la carpeta ContaminUS/frontend
+2. `npm install`
+3. `npm run dev`
 
-# Para lanzar la API en local 
-1. `pip install -r requirements.txt`
-2. `uvicorn main:app --reload --port <puerto que quieras>`
-
-# Para lanzar la web en modo desarrollador
-1. `npm install`
-2. `npm run dev`
-
-# Para transpilar la web de React a HTML/CSS/JS Vanilla
+## Para transpilar la web de React a HTML/CSS/JS Vanilla
 `npm run build` <br>
 La encontraréis en `dist/`
 
-# Script SQL
+# ⚙️ Script para crear la BD
 ```sql
 USE dad;
 
