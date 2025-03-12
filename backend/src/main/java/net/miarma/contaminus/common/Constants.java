@@ -1,19 +1,19 @@
 package net.miarma.contaminus.common;
 
-import java.io.File;
-
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 
 public class Constants {
 	public static final String APP_NAME = "ContaminUS";
 	public static final String API_PREFIX = "/api/v1";
-	public static final String HOME_DIR = System.getProperty("user.home") + File.separator;
+	public static final String HOME_DIR = SystemInfo.getOS() == OSType.WINDOWS ? 
+			"C:/Users/" + System.getProperty("user.name") + "/" :
+				System.getProperty("user.home");
 	public static final String BASE_DIR = HOME_DIR + 
 			(SystemInfo.getOS() == OSType.WINDOWS ? ".contaminus" :
-			 SystemInfo.getOS() == OSType.LINUX ? ".config" + File.separator + 
+			 SystemInfo.getOS() == OSType.LINUX ? ".config" + "/" + 
 				 "contaminus" : null);
-	public static final String CONFIG_FILE = BASE_DIR + File.separator + "config.properties";
+	public static final String CONFIG_FILE = BASE_DIR + "/" + "config.properties";
 	public static final Logger LOGGER = LoggerFactory.getLogger(APP_NAME);
 	
 	public static final String GET_GROUPS = API_PREFIX + "/groups";
