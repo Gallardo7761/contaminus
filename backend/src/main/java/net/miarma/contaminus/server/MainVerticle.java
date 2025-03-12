@@ -23,4 +23,8 @@ public class MainVerticle extends AbstractVerticle {
 			.forEach(v -> getVertx().undeploy(v));
 	}
 	
+	public static void main(String[] args) {
+		io.vertx.core.Launcher.executeCommand("run", MainVerticle.class.getName());
+	}
+	
 }
