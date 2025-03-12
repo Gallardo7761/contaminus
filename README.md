@@ -96,17 +96,17 @@ SELECT
     s.sensorType,
     s.unit,
     s.status AS sensorStatus,
-    s.timestamp AS sensorTimestamp,
-    av.temperature,
-    av.humidity,
-    av.carbonMonoxide,
-    av.timestamp AS airValuesTimestamp,
+    wv.temperature,
+    wv.humidity,
+    cv.value AS carbonMonoxide,
     gv.lat,
     gv.lon,
-    gv.timestamp AS gpsTimestamp
+    COALESCE(gv.timestamp, wv.timestamp, cv.timestamp) AS timestamp -- el primero no nulo
 FROM sensors s
-LEFT JOIN air_values av ON s.sensorId = av.sensorId
+LEFT JOIN weather_values wv ON s.sensorId = wv.sensorId
+LEFT JOIN co_values cv ON s.sensorId = cv.sensorId
 LEFT JOIN gps_values gv ON s.sensorId = gv.sensorId;
+
 
 CREATE OR REPLACE VIEW v_latest_values AS
 SELECT 
@@ -116,47 +116,95 @@ SELECT
     s.unit,
     s.status AS sensorStatus,
     s.timestamp AS sensorTimestamp,
-    av.temperature,
-    av.humidity,
-    av.carbonMonoxide,
-    av.timestamp AS airValuesTimestamp
+    wv.temperature,
+    wv.humidity,
+    cv.value AS carbonMonoxide,
+    gv.lat,
+    gv.lon,
+    COALESCE(gv.timestamp, wv.timestamp, cv.timestamp) AS airValuesTimestamp -- el primero no nulo
 FROM sensors s
-LEFT JOIN air_values av 
-    ON s.sensorId = av.sensorId 
-    AND av.timestamp = (
-        SELECT MAX(timestamp) 
-        FROM air_values 
-        WHERE sensorId = s.sensorId
-    );
+LEFT JOIN weather_values wv ON s.sensorId = wv.sensorId
+LEFT JOIN co_values cv ON s.sensorId = cv.sensorId
+LEFT JOIN gps_values gv ON s.sensorId = gv.sensorId
+WHERE (wv.timestamp = (SELECT MAX(timestamp) FROM weather_values WHERE sensorId = s.sensorId)
+       OR cv.timestamp = (SELECT MAX(timestamp) FROM co_values WHERE sensorId = s.sensorId)
+		OR gv.timestamp = (SELECT MAX(timestamp) FROM gps_values WHERE sensorId = s.sensorId));
 
-CREATE OR REPLACE VIEW v_pollution_map AS
-SELECT
+
+-- VISTAS AUXILIARES
+CREATE OR REPLACE VIEW v_co_by_device AS
+SELECT 
+    s.deviceId,
+    c.value AS carbonMonoxide,
+    c.timestamp
+FROM sensors s
+JOIN co_values c ON s.sensorId = c.sensorId
+WHERE s.sensorType = 'CO';
+
+CREATE OR REPLACE VIEW v_gps_by_device AS
+SELECT 
+    s.deviceId,
     g.lat,
     g.lon,
-    a.carbonMonoxide,
-    d.deviceId,
-    d.deviceName
-FROM
-    gps_values g
-JOIN
-    air_values a ON g.sensorId = a.sensorId
-JOIN
-    sensors s ON a.sensorId = s.sensorId
-JOIN
-    devices d ON s.deviceId = d.deviceId
-WHERE
-    (g.sensorId, g.timestamp) IN (
-        SELECT sensorId, MAX(timestamp)
-        FROM gps_values
-        GROUP BY sensorId
-    )
-AND
-    (a.sensorId, a.timestamp) IN (
-        SELECT sensorId, MAX(timestamp)
-        FROM air_values
-        GROUP BY sensorId
-    );
+    g.timestamp
+FROM sensors s
+JOIN gps_values g ON s.sensorId = g.sensorId
+WHERE s.sensorType = 'GPS';
 
+CREATE OR REPLACE VIEW v_weather_by_device AS
+SELECT 
+    s.deviceId,
+    w.temperature AS temperature,
+    w.humidity AS humidity,
+    w.timestamp
+FROM sensors s
+JOIN weather_values w ON s.sensorId = w.sensorId
+WHERE s.sensorType = 'Temperature & Humidity';
+-- VISTAS AUXILIARES
+
+CREATE OR REPLACE VIEW v_pollution_map AS
+SELECT 
+    d.deviceId,
+    d.deviceName,
+    g.lat,
+    g.lon,
+    c.carbonMonoxide,
+    c.timestamp
+FROM devices d
+LEFT JOIN v_co_by_device c ON d.deviceId = c.deviceId
+LEFT JOIN v_gps_by_device g ON d.deviceId = g.deviceId 
+    AND (g.timestamp <= c.timestamp OR g.timestamp IS NULL)
+WHERE c.carbonMonoxide IS NOT NULL
+ORDER BY d.deviceId, c.timestamp;
+
+CREATE OR REPLACE VIEW v_sensor_history_by_device AS
+SELECT 
+    d.deviceId,
+    d.deviceName,
+    w.temperature AS value,
+    'temperature' AS valueType,
+    w.timestamp
+FROM devices d
+JOIN v_weather_by_device w ON d.deviceId = w.deviceId
+UNION ALL
+SELECT 
+    d.deviceId,
+    d.deviceName,
+    w.humidity AS value,
+    'humidity' AS valueType,
+    w.timestamp
+FROM devices d
+JOIN v_weather_by_device w ON d.deviceId = w.deviceId
+UNION ALL
+SELECT 
+    d.deviceId,
+    d.deviceName,
+    c.carbonMonoxide AS value,
+    'carbonMonoxide' AS valueType,
+    c.timestamp
+FROM devices d
+JOIN v_co_by_device c ON d.deviceId = c.deviceId
+ORDER BY deviceId, timestamp;
 
 -- Insertar grupos
 INSERT INTO groups (groupName) VALUES ('Grupo 1');
