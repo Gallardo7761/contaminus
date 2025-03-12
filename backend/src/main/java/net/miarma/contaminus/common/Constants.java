@@ -8,7 +8,7 @@ public class Constants {
 	public static final String API_PREFIX = "/api/v1";
 	public static final String HOME_DIR = SystemInfo.getOS() == OSType.WINDOWS ? 
 			"C:/Users/" + System.getProperty("user.name") + "/" :
-				System.getProperty("user.home");
+				System.getProperty("user.home") + "/";
 	public static final String BASE_DIR = HOME_DIR + 
 			(SystemInfo.getOS() == OSType.WINDOWS ? ".contaminus" :
 			 SystemInfo.getOS() == OSType.LINUX ? ".config" + "/" + 
