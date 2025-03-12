@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import cleanPlugin from 'vite-plugin-clean'
 
 // https://vite.dev/config/
 export default defineConfig({
   server: {
     port: 8080,
   },
-  plugins: [react()],
+  plugins: [react(), cleanPlugin()],
   build: {
     rollupOptions: {
       output: {
@@ -17,7 +18,7 @@ export default defineConfig({
         }
       }
     },
-    outDir: 'dist',
+    outDir: '../backend/src/main/resources/webroot',
   },
   publicDir: 'public',
 })

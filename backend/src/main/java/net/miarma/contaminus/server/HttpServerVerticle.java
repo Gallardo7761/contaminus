@@ -13,24 +13,27 @@ public class HttpServerVerticle extends AbstractVerticle {
     	Constants.LOGGER.info("🟢 Iniciando HttpServerVerticle...");
 
         Router router = Router.router(vertx);
-        
-        router.route("/*").handler(StaticHandler.create(Constants.BASE_DIR + "/webroot")
-        		.setDefaultContentEncoding("UTF-8"));
-
+                
+        router.route("/*")
+        	.handler(
+    			StaticHandler.create("webroot")
+    			.setDefaultContentEncoding("UTF-8")
+			);
         
         router.route("/dashboard/*").handler(ctx -> {
             ctx.reroute("/index.html");
         });
 
         vertx.createHttpServer().requestHandler(router).listen(
-        		Host.getWebserverPort(), Host.getHost(), result -> {
-			if (result.succeeded()) {
-				Constants.LOGGER.info(String.format("📡 HttpServerVerticle desplegado. (http://%s:%d)", 
-						Host.getHost(), Host.getWebserverPort())
-				);
-			} else {
-				Constants.LOGGER.error("❌ Error al desplegar HttpServerVerticle", result.cause());
-			}
-		});
+    		Host.getWebserverPort(), Host.getHost(), result -> {
+				if (result.succeeded()) {
+					Constants.LOGGER.info(String.format("📡 HttpServerVerticle desplegado. (http://%s:%d)", 
+							Host.getHost(), Host.getWebserverPort())
+					);
+				} else {
+					Constants.LOGGER.error("❌ Error al desplegar HttpServerVerticle", result.cause());
+				}
+    		}
+		);
     }
 }
