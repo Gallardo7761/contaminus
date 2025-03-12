@@ -1,7 +1,5 @@
 package net.miarma.contaminus.common;
 
-import java.util.Set;
-
 public class Host {
 	static ConfigManager configManager = ConfigManager.getInstance();
 	static String host = configManager.getStringProperty("inet.host");
@@ -20,11 +18,4 @@ public class Host {
 	public static int getWebserverPort() {
 		return webserverPort;
 	}
-	
-	public static Set<String> getOrigins() {
-		return Set.of("http://" + origin + ":" + webserverPort, 
-				"https://" + origin + ":" + webserverPort);
-	}
-
-
 }

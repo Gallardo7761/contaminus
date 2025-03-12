@@ -30,7 +30,6 @@ public class ApiVerticle extends AbstractVerticle {
 		Set<String> allowedHeaders = new HashSet<>(Arrays.asList("Content-Type", "Authorization"));
 
         router.route().handler(CorsHandler.create()
-                .addOrigin("*")
                 .allowCredentials(true)
                 .allowedHeaders(allowedHeaders)
                 .allowedMethods(allowedMethods));
