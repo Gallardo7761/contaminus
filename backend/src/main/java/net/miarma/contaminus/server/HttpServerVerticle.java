@@ -13,7 +13,7 @@ public class HttpServerVerticle extends AbstractVerticle {
     	Constants.LOGGER.info("🟢 Iniciando HttpServerVerticle...");
         Router router = Router.router(vertx);
         
-        router.route("/*").handler(StaticHandler.create("webroot").setDefaultContentEncoding("UTF-8"));
+        router.route("/*").handler(StaticHandler.create(Constants.BASE_DIR + "webroot").setDefaultContentEncoding("UTF-8"));
         
         router.route("/dashboard/*").handler(ctx -> {
             ctx.reroute("/index.html");
