@@ -11,6 +11,7 @@ public class HttpServerVerticle extends AbstractVerticle {
     @Override
     public void start() {
     	Constants.LOGGER.info("🟢 Iniciando HttpServerVerticle...");
+
         Router router = Router.router(vertx);
         
         router.route("/*").handler(StaticHandler.create(Constants.BASE_DIR + "/webroot")

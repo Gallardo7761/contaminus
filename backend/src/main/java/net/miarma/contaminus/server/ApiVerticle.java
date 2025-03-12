@@ -25,11 +25,12 @@ public class ApiVerticle extends AbstractVerticle {
         Constants.LOGGER.info("🟢 Iniciando ApiVerticle...");
         Router router = Router.router(vertx);
         
-        Set<HttpMethod> allowedMethods = new HashSet<>(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)); // Por ejemplo
+        Set<HttpMethod> allowedMethods = new HashSet<>(
+        		Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.OPTIONS)); // Por ejemplo
 		Set<String> allowedHeaders = new HashSet<>(Arrays.asList("Content-Type", "Authorization"));
 
         router.route().handler(CorsHandler.create()
-                .addOrigin(Host.getOrigin())
+                .addOrigin("*")
                 .allowCredentials(true)
                 .allowedHeaders(allowedHeaders)
                 .allowedMethods(allowedMethods));

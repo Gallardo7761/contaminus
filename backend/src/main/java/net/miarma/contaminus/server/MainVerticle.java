@@ -9,12 +9,20 @@ public class MainVerticle extends AbstractVerticle {
 	
 	@Override
 	public void start(Promise<Void> startPromise) {
-		final DeploymentOptions options = new DeploymentOptions();
-		options.setThreadingModel(ThreadingModel.WORKER);
-		
-		getVertx().deployVerticle(new DatabaseVerticle(), options);
-		getVertx().deployVerticle(new ApiVerticle(), options);
-		getVertx().deployVerticle(new HttpServerVerticle());
+	    final DeploymentOptions options = new DeploymentOptions();
+	    options.setThreadingModel(ThreadingModel.WORKER);
+	    
+	    String enabledVerticles = System.getProperty("vertx.options", "");
+	    
+	    if (enabledVerticles.contains("db")) {
+	        getVertx().deployVerticle(new DatabaseVerticle(), options);
+	    }
+	    if (enabledVerticles.contains("api")) {
+	        getVertx().deployVerticle(new ApiVerticle(), options);
+	    }
+	    if (enabledVerticles.contains("http")) {
+	        getVertx().deployVerticle(new HttpServerVerticle());
+	    }
 	}
 	
 	@Override
@@ -24,7 +32,8 @@ public class MainVerticle extends AbstractVerticle {
 	}
 	
 	public static void main(String[] args) {
-		io.vertx.core.Launcher.executeCommand("run", MainVerticle.class.getName());
+	    System.setProperty("vertx.options", String.join(",", args));
+	    io.vertx.core.Launcher.executeCommand("run", MainVerticle.class.getName());
 	}
 	
 }
