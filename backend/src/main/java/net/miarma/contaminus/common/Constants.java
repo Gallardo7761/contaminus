@@ -1,23 +1,18 @@
 package net.miarma.contaminus.common;
 
 import io.vertx.core.impl.logging.Logger;
-import io.vertx.core.impl.logging.LoggerFactory;
-import net.miarma.contaminus.util.SystemUtil;
+import net.miarma.contaminus.database.DatabaseManager;
 
 public class Constants {
 	public static final String APP_NAME = "ContaminUS";
 	public static final int API_VERSION = 1;
-	public static final String API_PREFIX = "/api/v" + API_VERSION;
-	public static final String HOME_DIR = SystemUtil.getOS() == OSType.WINDOWS ? 
-			"C:/Users/" + System.getProperty("user.name") + "/" :
-				System.getProperty("user.home").contains("root") ? "/root/" : 
-					"/home/" + System.getProperty("user.name") + "/";
-	public static final String BASE_DIR = HOME_DIR + 
-		    (SystemUtil.getOS() == OSType.WINDOWS ? ".contaminus" :
-		    SystemUtil.getOS() == OSType.LINUX ? ".config/contaminus" :
-		    ".contaminus");
-	public static final String CONFIG_FILE = BASE_DIR + "/" + "config.properties";
-	public static final Logger LOGGER = LoggerFactory.getLogger(APP_NAME);
+	public static final String API_PREFIX = "/api/v" + Constants.API_VERSION;
+    public static String HOME_DIR;
+    public static String BASE_DIR;
+    public static String CONFIG_FILE;
+    public static ConfigManager CONFIG;
+    public static DatabaseManager DB;
+    public static Logger LOGGER;
 	
 	/* API Endpoints */
 	public static final String GET_GROUPS = API_PREFIX + "/groups";

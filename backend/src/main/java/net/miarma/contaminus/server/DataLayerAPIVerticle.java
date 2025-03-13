@@ -31,7 +31,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 		
 		configManager = ConfigManager.getInstance();		
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		dbManager = DatabaseManager.getInstance();
+		dbManager = new DatabaseManager(vertx);
 		
 		Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(

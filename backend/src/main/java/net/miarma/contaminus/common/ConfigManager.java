@@ -11,20 +11,7 @@ public class ConfigManager {
     private ConfigManager() {
 		this.configFile = new File(Constants.CONFIG_FILE);
         this.config = new Properties();
-        
-        if (!configFile.exists()) {
-            try {
-                createFiles();
-            } catch (IOException e) {
-                Constants.LOGGER.error("Error creating configuration files: ", e);
-            }
-        }
-
         loadConfig();
-    }
-    
-    public static void init() {
-		ConfigManager.getInstance();
     }
 
     public static synchronized ConfigManager getInstance() {
@@ -32,25 +19,6 @@ public class ConfigManager {
             instance = new ConfigManager();
         }
         return instance;
-    }
-
-    private void createFiles() throws IOException {
-        File baseDir = new File(Constants.BASE_DIR);
-        if (!baseDir.exists()) baseDir.mkdirs();
-
-        try (InputStream defaultConfigStream = getClass().getClassLoader().getResourceAsStream("default.properties");
-             FileOutputStream fos = new FileOutputStream(configFile)) {
-
-            if (defaultConfigStream != null) {
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = defaultConfigStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
-                }
-            } else {
-                Constants.LOGGER.error("File not found: default.properties");
-            }
-        }
     }
 
     private void loadConfig() {
