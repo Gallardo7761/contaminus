@@ -29,9 +29,9 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
     public void start(Promise<Void> startPromise) {
 		Constants.LOGGER.info("📡 Iniciando DataLayerAPIVerticle...");
 		
-		configManager = ConfigManager.getInstance();
+		configManager = ConfigManager.getInstance();		
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		dbManager = new DatabaseManager(vertx);
+		dbManager = DatabaseManager.getInstance();
 		
 		Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(

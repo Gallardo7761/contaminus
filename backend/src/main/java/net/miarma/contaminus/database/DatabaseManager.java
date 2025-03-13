@@ -18,22 +18,27 @@ import net.miarma.contaminus.common.Constants;
 
 public class DatabaseManager {
     private final JDBCPool pool;
+    private final Vertx vertx = Vertx.vertx();
     
-	public DatabaseManager(Vertx vertx) {
+    private static DatabaseManager instance;
+    
+    public static DatabaseManager getInstance() {
+		if (instance == null) {
+			instance = new DatabaseManager();
+		}
+		return instance;
+	}
+    
+	private DatabaseManager() {
         ConfigManager config = ConfigManager.getInstance();
-        
-        JDBCConnectOptions jdbcOptions = new JDBCConnectOptions()
-			.setJdbcUrl(config.getStringProperty("db.protocol") + "//" +
-							config.getStringProperty("db.host") + ":" +
-							config.getStringProperty("db.port") + "/" +
-							config.getStringProperty("db.name"))
-			.setUser(config.getStringProperty("db.user"))
-			.setPassword(config.getStringProperty("db.pwd"));
-
-        PoolOptions poolOptions = new PoolOptions()
-			.setMaxSize(Integer.parseInt(config.getStringProperty("db.poolSize")));
-			
-        pool = JDBCPool.pool(vertx, jdbcOptions, poolOptions);
+        pool = JDBCPool.pool(vertx,
+        	new JDBCConnectOptions()
+        		.setJdbcUrl(config.getJdbcUrl())
+        		.setUser(config.getStringProperty("db.user"))
+        		.setPassword(config.getStringProperty("db.pwd")),
+        	new PoolOptions()
+        		.setMaxSize(5)
+		);
     }
 	
 	public Future<RowSet<Row>> testConnection() {

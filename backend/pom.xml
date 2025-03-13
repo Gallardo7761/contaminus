@@ -55,6 +55,13 @@
   	 <version>2.12.1</version>
   	</dependency>
   	
+  	<!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-agroal -->
+	<dependency>
+	    <groupId>io.quarkus</groupId>
+	    <artifactId>quarkus-agroal</artifactId>
+	    <version>3.19.3</version>
+	</dependency>
+	
   </dependencies>
   
   <build>

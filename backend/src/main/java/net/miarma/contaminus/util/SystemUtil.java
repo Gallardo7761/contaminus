@@ -7,9 +7,9 @@ public class SystemUtil {
 	static ConfigManager configManager = ConfigManager.getInstance();
 	static String host = configManager.getStringProperty("inet.host");
 	static String origin = configManager.getStringProperty("inet.origin");
-	static int dataApiPort = configManager.getIntProperty("data-api.port");
-	static int logicApiPort = configManager.getIntProperty("logic-api.port");
-	static int webserverPort = configManager.getIntProperty("webserver.port");
+	static int dataApiPort = 8081;
+	static int logicApiPort = 8082;
+	static int webserverPort = 8080;
 	
 	public static String getHost() {
 		return host;

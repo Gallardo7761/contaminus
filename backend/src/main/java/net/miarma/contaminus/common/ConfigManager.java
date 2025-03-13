@@ -61,6 +61,14 @@ public class ConfigManager {
         }
     }
 
+    public String getJdbcUrl() {
+		return String.format("%s://%s:%s/%s",
+				config.getProperty("db.protocol"),
+				config.getProperty("db.host"),
+				config.getProperty("db.port"),
+				config.getProperty("db.name"));
+	}
+    
     public String getStringProperty(String key) {
         return config.getProperty(key);
     }

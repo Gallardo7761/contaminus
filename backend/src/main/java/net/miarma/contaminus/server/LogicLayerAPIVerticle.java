@@ -32,7 +32,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 
     	configManager = ConfigManager.getInstance();
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		dbManager = new DatabaseManager(vertx);
+		dbManager = DatabaseManager.getInstance();
 		
         Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(
