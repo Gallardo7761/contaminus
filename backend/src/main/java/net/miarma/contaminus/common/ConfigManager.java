@@ -9,9 +9,9 @@ public class ConfigManager {
     private final Properties config;
 
     private ConfigManager() {
-        this.configFile = new File(Constants.CONFIG_FILE);
+		this.configFile = new File(Constants.CONFIG_FILE);
         this.config = new Properties();
-
+        
         if (!configFile.exists()) {
             try {
                 createFiles();
@@ -21,6 +21,10 @@ public class ConfigManager {
         }
 
         loadConfig();
+    }
+    
+    public static void init() {
+		ConfigManager.getInstance();
     }
 
     public static synchronized ConfigManager getInstance() {

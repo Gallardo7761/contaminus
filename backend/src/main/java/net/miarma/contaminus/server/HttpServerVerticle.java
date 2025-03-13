@@ -4,13 +4,13 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
 import net.miarma.contaminus.common.Constants;
-import net.miarma.contaminus.common.Host;
+import net.miarma.contaminus.util.SystemUtil;
 
 public class HttpServerVerticle extends AbstractVerticle {   
 	
     @Override
     public void start() {
-    	Constants.LOGGER.info("🟢 Iniciando HttpServerVerticle...");
+    	Constants.LOGGER.info("📡 Iniciando HttpServerVerticle...");
 
         Router router = Router.router(vertx);
                 
@@ -25,13 +25,13 @@ public class HttpServerVerticle extends AbstractVerticle {
         });
 
         vertx.createHttpServer().requestHandler(router).listen(
-    		Host.getWebserverPort(), Host.getHost(), result -> {
+        		SystemUtil.getWebserverPort(), SystemUtil.getHost(), result -> {
 				if (result.succeeded()) {
-					Constants.LOGGER.info(String.format("📡 HttpServerVerticle desplegado. (http://%s:%d)", 
-							Host.getHost(), Host.getWebserverPort())
+					Constants.LOGGER.info(String.format("🟢 HttpServerVerticle desplegado. (http://%s:%d)", 
+							SystemUtil.getHost(), SystemUtil.getWebserverPort())
 					);
 				} else {
-					Constants.LOGGER.error("❌ Error al desplegar HttpServerVerticle", result.cause());
+					Constants.LOGGER.error("🔴 Error al desplegar HttpServerVerticle", result.cause());
 				}
     		}
 		);

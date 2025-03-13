@@ -11,16 +11,16 @@ public class MainVerticle extends AbstractVerticle {
 	public void start(Promise<Void> startPromise) {
 	    final DeploymentOptions options = new DeploymentOptions();
 	    options.setThreadingModel(ThreadingModel.WORKER);
-	    
+	    	    
 	    String enabledVerticles = System.getProperty("vertx.options", "");
-	    
-	    if (enabledVerticles.contains("db")) {
-	        getVertx().deployVerticle(new DatabaseVerticle(), options);
+	    	    
+	    if (enabledVerticles.contains("data")) {
+	        getVertx().deployVerticle(new DataLayerAPIVerticle(), options);
 	    }
-	    if (enabledVerticles.contains("api")) {
-	        getVertx().deployVerticle(new ApiVerticle(), options);
+	    if (enabledVerticles.contains("business")) {
+	        getVertx().deployVerticle(new LogicLayerAPIVerticle(), options);
 	    }
-	    if (enabledVerticles.contains("http")) {
+	    if (enabledVerticles.contains("web")) {
 	        getVertx().deployVerticle(new HttpServerVerticle());
 	    }
 	}
