@@ -8,7 +8,7 @@ import { DataProvider } from '../contexts/DataContext';
 import { useData } from '../contexts/DataContext';
 
 import { useConfig } from '../contexts/ConfigContext';
-import { timestampToTime } from '../util/date.js';
+import { timestampToTime, formatTime } from '../util/date.js';
 
 /**
  * SummaryCards.jsx
@@ -83,7 +83,7 @@ const SummaryCardsContent = () => {
         CardsData[1].status = "Humedad actual";
         CardsData[2].content = coData.carbonMonoxide + " ppm";
         CardsData[2].status = "Nivel de CO actual";
-        CardsData[3].content = lastTime.slice(0, 5);
+        CardsData[3].content = formatTime(lastTime);
         CardsData[3].status = "Día " + lastDate.toLocaleDateString();
 
     }

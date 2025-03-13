@@ -25,7 +25,7 @@ public class DatabaseVerticle extends AbstractVerticle {
     private EventBus eventBus;
 	private Gson gson = new GsonBuilder()
 			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer())
-	        .create();;
+	        .create();
 
 
     @SuppressWarnings("unused")

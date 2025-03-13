@@ -20,6 +20,13 @@
 	 <version>4.5.13</version>
 	</dependency>
 	
+	<!-- Vert.X Web Client -->
+	<dependency>
+	 <groupId>io.vertx</groupId>
+	 <artifactId>vertx-web-client</artifactId>
+	 <version>4.5.13</version>
+	</dependency>
+	
 	<!-- Vert.X MQTT -->
     <dependency>
         <groupId>io.vertx</groupId>
