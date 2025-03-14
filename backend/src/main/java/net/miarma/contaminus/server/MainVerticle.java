@@ -91,9 +91,11 @@ public class MainVerticle extends AbstractVerticle {
         final DeploymentOptions options = new DeploymentOptions();
         options.setThreadingModel(ThreadingModel.WORKER);
 
-        vertx.deployVerticle(new DataLayerAPIVerticle(pool), options, result -> { // Pasa el pool
+        vertx.deployVerticle(new DataLayerAPIVerticle(pool), options, result -> {
             if (result.succeeded()) {
             	Constants.LOGGER.info("🟢 DatabaseVerticle desplegado");
+            	Constants.LOGGER.info("\t🔗 API URL: " + configManager.getHost() 
+            		+ ":" + configManager.getDataApiPort());
             } else {
             	Constants.LOGGER.error("🔴 Error deploying DataLayerAPIVerticle: " + result.cause());
             }
@@ -102,6 +104,8 @@ public class MainVerticle extends AbstractVerticle {
         vertx.deployVerticle(new LogicLayerAPIVerticle(), options, result -> {
         	if (result.succeeded()) {
             	Constants.LOGGER.info("🟢 LogicLayerAPIVerticle desplegado");
+            	Constants.LOGGER.info("\t🔗 API URL: " + configManager.getHost() 
+            		+ ":" +  configManager.getLogicApiPort());
             } else {
             	Constants.LOGGER.error("🔴 Error deploying LogicLayerAPIVerticle: " + result.cause());
             }
@@ -110,6 +114,8 @@ public class MainVerticle extends AbstractVerticle {
         vertx.deployVerticle(new WebServerVerticle(), result -> {
         	if (result.succeeded()) {
             	Constants.LOGGER.info("🟢 WebServerVerticle desplegado");
+            	Constants.LOGGER.info("\t🔗 WEB SERVER URL: " + configManager.getHost() 
+            		+ ":" +  configManager.getWebserverPort());
             } else {
             	Constants.LOGGER.error("🔴 Error deploying WebServerVerticle: " + result.cause());
             }

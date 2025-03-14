@@ -71,6 +71,11 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.POST, Constants.POST_ACTUATORS).handler(this::addActuator);
         router.route(HttpMethod.PUT, Constants.PUT_ACTUATOR_BY_ID).handler(this::updateActuator);
     	       
+        vertx.createHttpServer()
+	        .requestHandler(router)
+	        .listen(configManager.getDataApiPort(), configManager.getHost());
+    
+        startPromise.complete();
     }
 
 	private void getAllGroups(RoutingContext context) {
