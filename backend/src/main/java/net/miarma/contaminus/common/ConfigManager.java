@@ -4,49 +4,20 @@ import java.io.*;
 import java.util.Properties;
 
 public class ConfigManager {
-    private static ConfigManager instance;
+    private static final ConfigManager INSTANCE = new ConfigManager();
     private final File configFile;
     private final Properties config;
+    private static final String CONFIG_FILE_NAME = "config.properties";
 
     private ConfigManager() {
-        this.configFile = new File(Constants.CONFIG_FILE);
+    	String path = getBaseDir() + CONFIG_FILE_NAME;
+        this.configFile = new File(path);
         this.config = new Properties();
-
-        if (!configFile.exists()) {
-            try {
-                createFiles();
-            } catch (IOException e) {
-                Constants.LOGGER.error("Error creating configuration files: ", e);
-            }
-        }
-
         loadConfig();
     }
 
-    public static synchronized ConfigManager getInstance() {
-        if (instance == null) {
-            instance = new ConfigManager();
-        }
-        return instance;
-    }
-
-    private void createFiles() throws IOException {
-        File baseDir = new File(Constants.BASE_DIR);
-        if (!baseDir.exists()) baseDir.mkdirs();
-
-        try (InputStream defaultConfigStream = getClass().getClassLoader().getResourceAsStream("default.properties");
-             FileOutputStream fos = new FileOutputStream(configFile)) {
-
-            if (defaultConfigStream != null) {
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = defaultConfigStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
-                }
-            } else {
-                Constants.LOGGER.error("File not found: default.properties");
-            }
-        }
+    public static ConfigManager getInstance() {
+        return INSTANCE;
     }
 
     private void loadConfig() {
@@ -56,17 +27,71 @@ public class ConfigManager {
             Constants.LOGGER.error("Error loading configuration file: ", e);
         }
     }
+    
+    public File getConfigFile() {
+		return configFile;
+	}
 
+    public String getJdbcUrl() {
+        return String.format("%s://%s:%s/%s",
+                config.getProperty("db.protocol"),
+                config.getProperty("db.host"),
+                config.getProperty("db.port"),
+                config.getProperty("db.name"));
+    }
+    
+    public String getHost() {
+        return this.getStringProperty("inet.host");
+    }
+
+    public int getDataApiPort() {
+        return this.getIntProperty("data-api.port");
+    }
+
+    public int getLogicApiPort() {
+        return this.getIntProperty("logic-api.port");
+    }
+
+    public int getWebserverPort() {
+        return this.getIntProperty("webserver.port");
+    }
+    
+    public String getHomeDir() {
+    	return getOS() == OSType.WINDOWS ? 
+                "C:/Users/" + System.getProperty("user.name") + "/" :
+                System.getProperty("user.home").contains("root") ? "/root/" : 
+                "/home/" + System.getProperty("user.name") + "/";
+    }
+    
+    public String getBaseDir() {
+		return getHomeDir() + 
+				(getOS() == OSType.WINDOWS ? ".contaminus/" :
+					getOS() == OSType.LINUX ? ".config/contaminus/" :
+				".contaminus/");
+	}
+
+    public static OSType getOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            return OSType.WINDOWS;
+        } else if (os.contains("nix") || os.contains("nux")) {
+            return OSType.LINUX;
+        } else {
+            return OSType.INVALID_OS;
+        }
+    }
+    
     public String getStringProperty(String key) {
         return config.getProperty(key);
     }
     
     public int getIntProperty(String key) {
-		return Integer.parseInt(config.getProperty(key));
-	}
+        String value = config.getProperty(key);
+        return value != null ? Integer.parseInt(value) : 10;
+    }
     
     public boolean getBooleanProperty(String key) {
-		return Boolean.parseBoolean(config.getProperty(key));
+        return Boolean.parseBoolean(config.getProperty(key));
     }
 
     public void setProperty(String key, String value) {

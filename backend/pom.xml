@@ -55,6 +55,13 @@
   	 <version>2.12.1</version>
   	</dependency>
   	
+  	<!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-agroal -->	
+	<dependency>
+	    <groupId>org.jboss.logmanager</groupId>
+	    <artifactId>jboss-logmanager</artifactId>
+	    <version>3.1.1.Final</version> <!-- O la versión más reciente -->
+	</dependency>
+	
   </dependencies>
   
   <build>
