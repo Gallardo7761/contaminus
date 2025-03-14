@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
@@ -14,19 +11,29 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.jdbcclient.JDBCPool;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
 
 @SuppressWarnings("unused")
 public class DataLayerAPIVerticle extends AbstractVerticle {
-    private DatabaseManager dbManager = DatabaseManager.getInstance(vertx);
-    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-    private ConfigManager configManager = ConfigManager.getInstance();
+    private JDBCPool pool;
+	private DatabaseManager dbManager;
+    private ConfigManager configManager;
+    
+    
+    public DataLayerAPIVerticle(JDBCPool pool) {
+		this.pool = pool;
+	}
     
 	@Override
     public void start(Promise<Void> startPromise) {
+		dbManager = DatabaseManager.getInstance(pool);
+		configManager = ConfigManager.getInstance();
+		
 		Constants.LOGGER.info("📡 Iniciando DataLayerAPIVerticle...");
+		
 				
 		Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(
@@ -64,7 +71,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.PUT, Constants.PUT_ACTUATOR_BY_ID).handler(this::updateActuator);
     	       
         dbManager.testConnection()
-        	.onSuccess(rows -> {
+        	.onSuccess(_rows -> {
 				Constants.LOGGER.info("✅ Database connection ok");
 				vertx.createHttpServer()
 					.requestHandler(router)

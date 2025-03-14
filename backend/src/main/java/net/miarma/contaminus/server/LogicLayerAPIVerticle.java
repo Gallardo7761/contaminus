@@ -1,12 +1,8 @@
 package net.miarma.contaminus.server;
 
 import java.util.Arrays;
-
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -17,16 +13,14 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
-import net.miarma.contaminus.database.DatabaseManager;
 
-@SuppressWarnings("unused")
 public class LogicLayerAPIVerticle extends AbstractVerticle {
-	private DatabaseManager dbManager = DatabaseManager.getInstance(vertx);
-    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-    private ConfigManager configManager = ConfigManager.getInstance();
+    private ConfigManager configManager;
 	
     @Override
     public void start(Promise<Void> startPromise) {
+    	configManager = ConfigManager.getInstance();
+    	
         Constants.LOGGER.info("📡 Iniciando LogicApiVerticle...");
 		
         Router router = Router.router(vertx);

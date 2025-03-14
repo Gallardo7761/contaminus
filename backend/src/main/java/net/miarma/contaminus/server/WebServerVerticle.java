@@ -8,10 +8,12 @@ import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 
 public class WebServerVerticle extends AbstractVerticle {   
-	private final ConfigManager configManager = ConfigManager.getInstance();
+	private ConfigManager configManager;
 		
     @Override
     public void start(Promise<Void> startPromise) {
+    	configManager = ConfigManager.getInstance();
+    	
     	Constants.LOGGER.info("📡 Iniciando WebServerVerticle...");
 
         Router router = Router.router(vertx);

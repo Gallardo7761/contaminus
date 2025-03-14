@@ -1,40 +1,28 @@
 package net.miarma.contaminus.database;
 
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
-import io.vertx.jdbcclient.JDBCPool;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import net.miarma.contaminus.common.ConfigManager;
-import net.miarma.contaminus.common.Constants;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.jdbcclient.JDBCPool;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
+import net.miarma.contaminus.common.Constants;
+
 public class DatabaseManager {
     private static DatabaseManager instance;
     private final JDBCPool pool;
+    
+    private DatabaseManager(JDBCPool pool) {
+		this.pool = pool;
+	}
 
-    @SuppressWarnings("deprecation")
-	private DatabaseManager(Vertx vertx) {
-        ConfigManager config = ConfigManager.getInstance();
-
-        JsonObject dbConfig = new JsonObject()
-                .put("jdbcUrl", config.getJdbcUrl())
-                .put("username", config.getStringProperty("db.user"))
-                .put("password", config.getStringProperty("db.pwd"))
-                .put("max_pool_size", config.getIntProperty("db.poolSize"));
-
-        pool = JDBCPool.pool(vertx, dbConfig);
-    }
-
-    public static synchronized DatabaseManager getInstance(Vertx vertx) {
+    public static synchronized DatabaseManager getInstance(JDBCPool pool) {
         if (instance == null) {
-            instance = new DatabaseManager(vertx);
+            instance = new DatabaseManager(pool);
         }
         return instance;
     }

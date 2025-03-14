@@ -10,13 +10,25 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.ThreadingModel;
+import io.vertx.core.json.JsonObject;
+import io.vertx.jdbcclient.JDBCPool;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 
 public class MainVerticle extends AbstractVerticle {
-    static ConfigManager configManager = ConfigManager.getInstance();
+    static ConfigManager configManager;
+    private JDBCPool pool;
 	
-    private void init() {		
+    @SuppressWarnings("deprecation")
+	private void init() {		
+    	configManager = ConfigManager.getInstance();
+    	JsonObject dbConfig = new JsonObject()
+                .put("jdbcUrl", configManager.getJdbcUrl())
+                .put("username", configManager.getStringProperty("db.user"))
+                .put("password", configManager.getStringProperty("db.pwd"))
+                .put("max_pool_size", configManager.getIntProperty("db.poolSize"));
+
+        pool = JDBCPool.pool(vertx, dbConfig);
 	    initializeDirectories();
 	    copyDefaultConfig();
     }
@@ -50,8 +62,8 @@ public class MainVerticle extends AbstractVerticle {
     	
         final DeploymentOptions options = new DeploymentOptions();
         options.setThreadingModel(ThreadingModel.WORKER);
-
-        vertx.deployVerticle(new DataLayerAPIVerticle(), options, result -> {
+       
+        vertx.deployVerticle(new DataLayerAPIVerticle(pool), options, result -> {
         	if(result.succeeded()) {
         		Constants.LOGGER.info(String.format(
                     "🟢 DataLayerAPIVerticle desplegado. (http://%s:%d)", 

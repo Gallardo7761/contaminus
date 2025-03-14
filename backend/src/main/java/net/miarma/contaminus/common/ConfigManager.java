@@ -65,9 +65,9 @@ public class ConfigManager {
     
     public String getBaseDir() {
 		return getHomeDir() + 
-				(getOS() == OSType.WINDOWS ? ".contaminus" :
-					getOS() == OSType.LINUX ? ".config/contaminus" :
-				".contaminus");
+				(getOS() == OSType.WINDOWS ? ".contaminus/" :
+					getOS() == OSType.LINUX ? ".config/contaminus/" :
+				".contaminus/");
 	}
 
     public static OSType getOS() {
