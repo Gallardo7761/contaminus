@@ -8,9 +8,9 @@ import java.nio.file.StandardCopyOption;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Launcher;
 import io.vertx.core.Promise;
 import io.vertx.core.ThreadingModel;
-import io.vertx.core.Vertx;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 
@@ -20,16 +20,7 @@ public class MainVerticle extends AbstractVerticle {
     public static void main(String[] args) {
     	System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
     	init();
-    	
-        Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new MainVerticle(), res -> {
-            if (res.succeeded()) {
-                System.out.println("MainVerticle desplegado con éxito");
-            } else {
-                System.err.println("Fallo al desplegar MainVerticle: " + res.cause());
-                res.cause().printStackTrace();
-            }
-        });
+    	Launcher.executeCommand("run", MainVerticle.class.getName());
     }
 	
 	private static void init() {		
