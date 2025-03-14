@@ -1,18 +1,14 @@
 package net.miarma.contaminus.common;
 
 import io.vertx.core.impl.logging.Logger;
-import net.miarma.contaminus.database.DatabaseManager;
+import io.vertx.core.impl.logging.LoggerFactory;
 
 public class Constants {
 	public static final String APP_NAME = "ContaminUS";
 	public static final int API_VERSION = 1;
 	public static final String API_PREFIX = "/api/v" + Constants.API_VERSION;
-    public static String HOME_DIR;
-    public static String BASE_DIR;
-    public static String CONFIG_FILE;
-    public static ConfigManager CONFIG;
-    public static DatabaseManager DB;
-    public static Logger LOGGER;
+    public static Logger LOGGER = LoggerFactory.getLogger(Constants.APP_NAME);
+
 	
 	/* API Endpoints */
 	public static final String GET_GROUPS = API_PREFIX + "/groups";

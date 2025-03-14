@@ -17,22 +17,17 @@ import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
-import net.miarma.contaminus.util.SystemUtil;
 
 @SuppressWarnings("unused")
 public class DataLayerAPIVerticle extends AbstractVerticle {
-    private DatabaseManager dbManager;
-    private Gson gson;
-    private ConfigManager configManager;
+    private DatabaseManager dbManager = DatabaseManager.getInstance(vertx);
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+    private ConfigManager configManager = ConfigManager.getInstance();
     
 	@Override
     public void start(Promise<Void> startPromise) {
 		Constants.LOGGER.info("📡 Iniciando DataLayerAPIVerticle...");
-		
-		configManager = ConfigManager.getInstance();		
-		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		dbManager = new DatabaseManager(vertx);
-		
+				
 		Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(
 	    		Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.OPTIONS)); // Por ejemplo
@@ -71,30 +66,18 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         dbManager.testConnection()
         	.onSuccess(rows -> {
 				Constants.LOGGER.info("✅ Database connection ok");
-				Constants.LOGGER.info("🟢 DataAccessVerticle desplegado");
+				vertx.createHttpServer()
+					.requestHandler(router)
+					.listen(configManager.getDataApiPort(), configManager.getHost());
 				startPromise.complete();
 			})
 			.onFailure(onFailure -> {
 				Constants.LOGGER.error("❌ Database connection failed");
-				Constants.LOGGER.error("🔴 Error al desplegar DataAccessVerticle", onFailure);
+				Throwable t = onFailure.getCause();
+				t.printStackTrace();
 				startPromise.fail(onFailure);
 			});
-        
-        vertx.createHttpServer()
-			.requestHandler(router)
-			.listen(SystemUtil.getDataApiPort(), result -> {
-				if (result.succeeded()) {
-                    Constants.LOGGER.info(String.format(
-                        "🟢 DataLayerAPIVerticle desplegado. (http://%s:%d)", 
-                        SystemUtil.getHost(), SystemUtil.getDataApiPort()
-                    ));
-                    startPromise.complete();
-                } else {
-                    Constants.LOGGER.error("🔴 Error al desplegar DataLayerAPIVerticle", result.cause());
-                    startPromise.fail(result.cause());
-                }
-			});
-        
+
     }
 
 	private void getAllGroups(RoutingContext context) {

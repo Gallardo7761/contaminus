@@ -18,21 +18,16 @@ import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
-import net.miarma.contaminus.util.SystemUtil;
 
 @SuppressWarnings("unused")
 public class LogicLayerAPIVerticle extends AbstractVerticle {
-	private DatabaseManager dbManager;
-    private Gson gson;
-    private ConfigManager configManager;
+	private DatabaseManager dbManager = DatabaseManager.getInstance(vertx);
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+    private ConfigManager configManager = ConfigManager.getInstance();
 	
     @Override
     public void start(Promise<Void> startPromise) {
         Constants.LOGGER.info("📡 Iniciando LogicApiVerticle...");
-
-    	configManager = ConfigManager.getInstance();
-		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		dbManager = new DatabaseManager(vertx);
 		
         Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(
@@ -60,20 +55,9 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 
         vertx.createHttpServer()
 	        .requestHandler(router)
-	        .listen(
-                SystemUtil.getLogicApiPort(),
-                SystemUtil.getHost(),
-                result -> {
-	                if (result.succeeded()) {
-	                    Constants.LOGGER.info(String.format(
-	                        "🟢 ApiVerticle desplegado. (http://%s:%d)", SystemUtil.getHost(), SystemUtil.getLogicApiPort()
-	                    ));
-	                    startPromise.complete();
-	                } else {
-	                    Constants.LOGGER.error("🔴 Error al desplegar LogicApiVerticle", result.cause());
-	                    startPromise.fail(result.cause());
-	                }
-            });
+	        .listen(configManager.getLogicApiPort(), configManager.getHost());
+        
+        startPromise.complete();
     }
        
     
