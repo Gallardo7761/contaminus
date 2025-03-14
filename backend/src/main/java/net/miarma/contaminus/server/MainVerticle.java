@@ -10,25 +10,30 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.ThreadingModel;
-import io.vertx.core.json.JsonObject;
-import io.vertx.jdbcclient.JDBCPool;
+import io.vertx.core.Vertx;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 
 public class MainVerticle extends AbstractVerticle {
     static ConfigManager configManager;
-    private JDBCPool pool;
+    
+    public static void main(String[] args) {
+    	System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+    	init();
+    	
+        Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle(new MainVerticle(), res -> {
+            if (res.succeeded()) {
+                System.out.println("MainVerticle desplegado con éxito");
+            } else {
+                System.err.println("Fallo al desplegar MainVerticle: " + res.cause());
+                res.cause().printStackTrace();
+            }
+        });
+    }
 	
-    @SuppressWarnings("deprecation")
-	private void init() {		
+	private static void init() {		
     	configManager = ConfigManager.getInstance();
-    	JsonObject dbConfig = new JsonObject()
-                .put("jdbcUrl", configManager.getJdbcUrl())
-                .put("username", configManager.getStringProperty("db.user"))
-                .put("password", configManager.getStringProperty("db.pwd"))
-                .put("max_pool_size", configManager.getIntProperty("db.poolSize"));
-
-        pool = JDBCPool.pool(vertx, dbConfig);
 	    initializeDirectories();
 	    copyDefaultConfig();
     }
@@ -56,14 +61,11 @@ public class MainVerticle extends AbstractVerticle {
     }
     
     @Override
-    public void start(Promise<Void> startPromise) {    
-    	System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
-    	init();
-    	
+    public void start(Promise<Void> startPromise) {       	
         final DeploymentOptions options = new DeploymentOptions();
         options.setThreadingModel(ThreadingModel.WORKER);
        
-        vertx.deployVerticle(new DataLayerAPIVerticle(pool), options, result -> {
+        vertx.deployVerticle(new DataLayerAPIVerticle(), options, result -> {
         	if(result.succeeded()) {
         		Constants.LOGGER.info(String.format(
                     "🟢 DataLayerAPIVerticle desplegado. (http://%s:%d)", 

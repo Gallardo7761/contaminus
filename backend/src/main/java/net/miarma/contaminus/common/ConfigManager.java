@@ -53,7 +53,7 @@ public class ConfigManager {
     }
 
     public int getWebserverPort() {
-        return this.getIntProperty("web.port");
+        return this.getIntProperty("webserver.port");
     }
     
     public String getHomeDir() {
@@ -86,7 +86,8 @@ public class ConfigManager {
     }
     
     public int getIntProperty(String key) {
-        return Integer.parseInt(config.getProperty(key));
+        String value = config.getProperty(key);
+        return value != null ? Integer.parseInt(value) : 10;
     }
     
     public boolean getBooleanProperty(String key) {

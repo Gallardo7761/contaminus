@@ -6,12 +6,16 @@ import java.util.Set;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.jdbcclient.JDBCConnectOptions;
 import io.vertx.jdbcclient.JDBCPool;
+import io.vertx.sqlclient.PoolOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
@@ -23,9 +27,20 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
     
     
-    public DataLayerAPIVerticle(JDBCPool pool) {
-		this.pool = pool;
-	}
+    public DataLayerAPIVerticle() {
+    	JDBCConnectOptions connectOptions = new JDBCConnectOptions()
+    			.setJdbcUrl(
+					"jdbc:mariadb://" + configManager.getStringProperty("db.host") + 
+					":" + configManager.getStringProperty("db.port") + "/"
+				)
+				.setDatabase(configManager.getStringProperty("db.name"))
+				.setUser(configManager.getStringProperty("db.user"))
+				.setPassword(configManager.getStringProperty("db.pwd"));
+
+    	PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
+    	
+		pool = JDBCPool.pool(vertx, connectOptions, poolOptions);
+    }
     
 	@Override
     public void start(Promise<Void> startPromise) {
