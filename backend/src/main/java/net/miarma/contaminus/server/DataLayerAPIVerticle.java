@@ -22,34 +22,20 @@ import net.miarma.contaminus.database.DatabaseManager;
 
 @SuppressWarnings("unused")
 public class DataLayerAPIVerticle extends AbstractVerticle {
-    private JDBCPool pool;
-	private DatabaseManager dbManager;
+	private JDBCPool pool;
+    private DatabaseManager dbManager;
     private ConfigManager configManager;
     
-    
-    public DataLayerAPIVerticle() {
-    	JDBCConnectOptions connectOptions = new JDBCConnectOptions()
-    			.setJdbcUrl(
-					"jdbc:mariadb://" + configManager.getStringProperty("db.host") + 
-					":" + configManager.getStringProperty("db.port") + "/"
-				)
-				.setDatabase(configManager.getStringProperty("db.name"))
-				.setUser(configManager.getStringProperty("db.user"))
-				.setPassword(configManager.getStringProperty("db.pwd"));
-
-    	PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
-    	
-		pool = JDBCPool.pool(vertx, connectOptions, poolOptions);
+    public DataLayerAPIVerticle(JDBCPool pool) {
+        this.pool = pool;
+        this.configManager = ConfigManager.getInstance();
     }
     
 	@Override
     public void start(Promise<Void> startPromise) {
-		dbManager = DatabaseManager.getInstance(pool);
-		configManager = ConfigManager.getInstance();
-		
 		Constants.LOGGER.info("📡 Iniciando DataLayerAPIVerticle...");
+		dbManager = DatabaseManager.getInstance(pool);
 		
-				
 		Router router = Router.router(vertx);
 	    Set<HttpMethod> allowedMethods = new HashSet<>(
 	    		Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.OPTIONS)); // Por ejemplo
@@ -85,21 +71,6 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.POST, Constants.POST_ACTUATORS).handler(this::addActuator);
         router.route(HttpMethod.PUT, Constants.PUT_ACTUATOR_BY_ID).handler(this::updateActuator);
     	       
-        dbManager.testConnection()
-        	.onSuccess(_rows -> {
-				Constants.LOGGER.info("✅ Database connection ok");
-				vertx.createHttpServer()
-					.requestHandler(router)
-					.listen(configManager.getDataApiPort(), configManager.getHost());
-				startPromise.complete();
-			})
-			.onFailure(onFailure -> {
-				Constants.LOGGER.error("❌ Database connection failed");
-				Throwable t = onFailure.getCause();
-				t.printStackTrace();
-				startPromise.fail(onFailure);
-			});
-
     }
 
 	private void getAllGroups(RoutingContext context) {

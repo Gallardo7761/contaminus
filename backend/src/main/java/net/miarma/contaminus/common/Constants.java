@@ -5,8 +5,7 @@ import io.vertx.core.impl.logging.LoggerFactory;
 
 public class Constants {
 	public static final String APP_NAME = "ContaminUS";
-	public static final int API_VERSION = 1;
-	public static final String API_PREFIX = "/api/v" + Constants.API_VERSION;
+	public static final String API_PREFIX = "/api/v1";
     public static Logger LOGGER = LoggerFactory.getLogger(Constants.APP_NAME);
 
 	

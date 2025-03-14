@@ -17,10 +17,12 @@ import net.miarma.contaminus.common.Constants;
 public class LogicLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
 	
+    public LogicLayerAPIVerticle() {
+    	this.configManager = ConfigManager.getInstance();
+    }   
+    
     @Override
-    public void start(Promise<Void> startPromise) {
-    	configManager = ConfigManager.getInstance();
-    	
+    public void start(Promise<Void> startPromise) {    	
         Constants.LOGGER.info("📡 Iniciando LogicApiVerticle...");
 		
         Router router = Router.router(vertx);
