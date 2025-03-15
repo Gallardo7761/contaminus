@@ -19,6 +19,7 @@ import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
 import net.miarma.contaminus.database.QueryBuilder;
 import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
 import net.miarma.contaminus.database.entities.Sensor;
 
 @SuppressWarnings("unused")
@@ -73,6 +74,9 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.POST, Constants.POST_ACTUATORS).handler(this::addActuator);
         router.route(HttpMethod.PUT, Constants.PUT_ACTUATOR_BY_ID).handler(this::updateActuator);
     	       
+        // Views Routes
+        router.route(HttpMethod.GET, Constants.GET_LATEST_VALUES_VIEW).handler(this::getLatestValuesView);
+        
         vertx.createHttpServer()
 	        .requestHandler(router)
 	        .listen(configManager.getDataApiPort(), configManager.getHost());
@@ -142,6 +146,28 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	
 	private void updateActuator(RoutingContext context) {
 		context.response().end("TODO");
+	}
+	
+	/*
+	 * A PARTIR DE AQUI LO HACEMOS ÁLVARO Y YO
+	 * NO RAYARSE
+	 * 
+	 */
+	
+	private void getLatestValuesView(RoutingContext context) {
+		String query = QueryBuilder
+			.select(DeviceLatestValuesView.class)
+			.build();
+		
+		dbManager.execute(query, DeviceLatestValuesView.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
     
 }

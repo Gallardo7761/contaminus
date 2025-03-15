@@ -92,7 +92,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
             }
         });
         
-        this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+        this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
                 Constants.GET_GROUP_DEVICES, Device[].class, resultList);
     }
     
@@ -146,14 +146,14 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     					.toList();
     			
                 context.response()
-                .putHeader("content-type", "application/json; charset=utf-8")
-                .end(gson.toJson(aux));
+	                .putHeader("content-type", "application/json; charset=utf-8")
+	                .end(gson.toJson(aux));
     		} else {
     			context.fail(500, complete.cause());
     		}
     	});
     	
-    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
     			Constants.GET_DEVICE_LATEST_VALUES, DeviceLatestValuesView[].class, resultList);
     }
     
@@ -176,7 +176,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     		}
     	});
     	
-    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
     			Constants.GET_DEVICE_POLLUTION_MAP, DevicePollutionMap[].class, resultList);
 	}
     
@@ -199,7 +199,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     		}
     	});
     	
-    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
     			Constants.GET_DEVICE_HISTORY, DeviceSensorHistory[].class, resultList);
     }
     
@@ -222,7 +222,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     		}
     	});
     	
-    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
     			Constants.GET_SENSOR_VALUES, DeviceSensorValue[].class, resultList);
 	}
 }
