@@ -2,23 +2,39 @@ package net.miarma.contaminus.server;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.gson.Gson;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.database.entities.Actuator;
+import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.database.entities.Sensor;
+import net.miarma.contaminus.util.RestClientUtil;
 
 public class LogicLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
-	
+    private RestClientUtil restClient;
+    private final Gson gson = new Gson();
+    
     public LogicLayerAPIVerticle() {
     	this.configManager = ConfigManager.getInstance();
+    	WebClientOptions options = new WebClientOptions()
+				.setUserAgent("ContaminUS")
+				.setKeepAlive(false);
+    	this.restClient = new RestClientUtil(WebClient.create(Vertx.vertx(), options));
     }   
     
     @Override
@@ -58,15 +74,60 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
        
     
     private void getGroupDevices(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer groupId = Integer.parseInt(context.request().getParam("groupId"));
+    	Promise<Device[]> resultList = Promise.promise();
+    	resultList.future().onComplete(result -> {
+    	    if (result.succeeded()) {
+    	    	Device[] devices = result.result();
+    	        List<Device> aux = Arrays.stream(devices)
+    	            .filter(d -> d.getGroupId() == groupId)
+    	            .toList();
+    	        context.response().putHeader("Content-Type", "application/json").end(gson.toJson(aux));
+    	    } else {
+    	        context.response().setStatusCode(500).end(result.cause().getMessage());
+    	    }
+    	});
+
+    	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
+    			Constants.GET_DEVICES, Device[].class, resultList);
 	}
     
     private void getDeviceSensors(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	Promise<Sensor[]> resultList = Promise.promise();
+    	resultList.future().onComplete(result -> {
+    	    if (result.succeeded()) {
+    	    	Sensor[] sensors = result.result();
+    	        List<Sensor> aux = Arrays.stream(sensors)
+    	            .filter(s -> s.getDeviceId() == deviceId)
+    	            .toList();
+    	        context.response().putHeader("Content-Type", "application/json").end(gson.toJson(aux));
+    	    } else {
+    	        context.response().setStatusCode(500).end(result.cause().getMessage());
+    	    }
+    	});
+
+    	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
+    			Constants.GET_SENSORS, Sensor[].class, resultList);
     }
     
     private void getDeviceActuators(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	Promise<Actuator[]> resultList = Promise.promise();
+    	resultList.future().onComplete(result -> {
+    	    if (result.succeeded()) {
+    	    	Actuator[] devices = result.result();
+    	        List<Actuator> aux = Arrays.stream(devices)
+    	            .filter(a -> a.getDeviceId() == deviceId)
+    	            .toList();
+    	        context.response().putHeader("Content-Type", "application/json").end(gson.toJson(aux));
+    	    } else {
+    	        context.response().setStatusCode(500).end(result.cause().getMessage());
+    	    }
+    	});
+
+    	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
+    			Constants.GET_DEVICES, Actuator[].class, resultList);
 	}
     
     private void getDeviceLatestValues(RoutingContext context) {

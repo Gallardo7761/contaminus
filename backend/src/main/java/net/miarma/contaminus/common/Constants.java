@@ -26,6 +26,14 @@ public class Constants {
 	public static final String POST_ACTUATORS = API_PREFIX + "/actuators";
 	public static final String PUT_ACTUATOR_BY_ID = API_PREFIX + "/actuators/:actuatorId";
 	
+	public static final String GET_CO_BY_DEVICE_VIEW = API_PREFIX + "/v_co_by_device";
+	public static final String GET_GPS_BY_DEVICE_VIEW = API_PREFIX + "/v_gps_by_device";
+	public static final String GET_LATEST_VALUES_VIEW = API_PREFIX + "/v_latest_values";
+	public static final String GET_POLLUTION_MAP_VIEW = API_PREFIX + "/v_pollution_map";
+	public static final String GET_SENSOR_HISTORY_BY_DEVICE_VIEW = API_PREFIX + "/v_sensor_history_by_device";
+	public static final String GET_SENSOR_VALUES_VIEW = API_PREFIX + "/v_sensor_values";
+	public static final String GET_WEATHER_BY_DEVICE_VIEW = API_PREFIX + "/v_weather_by_device";
+	
 	/* Bussiness Logic API */
 	public static final String GET_GROUP_BY_ID = API_PREFIX + "/groups/:groupId";
 	public static final String GET_GROUP_DEVICES = API_PREFIX + "/groups/:groupId/devices";
