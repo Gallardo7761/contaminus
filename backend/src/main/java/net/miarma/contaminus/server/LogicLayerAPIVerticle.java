@@ -2,23 +2,35 @@ package net.miarma.contaminus.server;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.gson.Gson;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.util.RestClientUtil;
 
 public class LogicLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
-	
+    private final Gson gson = new Gson();
+    private RestClientUtil restClient;
+
     public LogicLayerAPIVerticle() {
     	this.configManager = ConfigManager.getInstance();
+    	WebClientOptions options = new WebClientOptions()
+    			.setUserAgent("ContaminUS");
+    	this.restClient = new RestClientUtil(WebClient.create(vertx, options));
     }   
     
     @Override
@@ -58,8 +70,25 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
        
     
     private void getGroupDevices(RoutingContext context) {
-    	context.response().end("TODO");
-	}
+        Integer groupId = Integer.parseInt(context.request().getParam("groupId"));
+        
+        Promise<Device[]> resultList = Promise.promise();
+        resultList.future().onComplete(complete -> {
+            if(complete.succeeded()) {
+                List<Device> aux = Arrays.asList(complete.result()).stream()
+                        .filter(d -> d.getGroupId() == groupId)
+                        .toList();
+                context.response()
+                    .putHeader("content-type", "application/json; charset=utf-8")
+                    .end(gson.toJson(aux));
+            } else {
+                context.fail(500, complete.cause());
+            }
+        });
+        
+        this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+                Constants.GET_GROUP_DEVICES, Device[].class, resultList);
+    }
     
     private void getDeviceSensors(RoutingContext context) {
     	context.response().end("TODO");
