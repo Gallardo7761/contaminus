@@ -25,7 +25,6 @@ import net.miarma.contaminus.database.entities.DevicePollutionMap;
 import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
 import net.miarma.contaminus.database.entities.Actuator;
-import net.miarma.contaminus.database.entities.Device;
 import net.miarma.contaminus.database.entities.Sensor;
 import net.miarma.contaminus.util.RestClientUtil;
 
@@ -38,7 +37,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	this.configManager = ConfigManager.getInstance();
     	WebClientOptions options = new WebClientOptions()
     			.setUserAgent("ContaminUS");
-    	this.restClient = new RestClientUtil(WebClient.create(vertx, options));
+    	this.restClient = new RestClientUtil(WebClient.create(Vertx.vertx(), options));
     }   
     
     @Override

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_sensor_values")
 public class DeviceSensorValue {
@@ -32,7 +33,7 @@ public class DeviceSensorValue {
 		this.carbonMonoxide = row.getFloat("carbonMonoxide");
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
-		this.timestamp = row.getLong("timestamp");
+		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
 	public DeviceSensorValue(int sensorId, int deviceId, String sensorType, String unit, int sensorStatus,

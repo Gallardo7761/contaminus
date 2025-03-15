@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("co_values")
 public class COValue {
@@ -19,7 +20,7 @@ public class COValue {
         this.valueId = row.getInteger("valueId");
         this.sensorId = row.getInteger("sensorId");
         this.value = row.getFloat("value");
-        this.timestamp = row.getLong("timestamp");
+        this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
 	public COValue(int valueId, int sensorId, float value, long timestamp) {

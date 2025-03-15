@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_gps_by_device")
 public class DeviceGPS {
@@ -18,7 +19,7 @@ public class DeviceGPS {
 		this.deviceId = row.getInteger("deviceId");
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
-		this.timestamp = row.getLong("timestamp");
+		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
 	public DeviceGPS(int deviceId, long lat, long lon) {

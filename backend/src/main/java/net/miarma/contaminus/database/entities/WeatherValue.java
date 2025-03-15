@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("weather_values")
 public class WeatherValue {
@@ -21,7 +22,7 @@ public class WeatherValue {
         this.sensorId = row.getInteger("sensorId");
         this.temperature = row.getFloat("temperature");
         this.humidity = row.getFloat("humidity");
-        this.timestamp = row.getLong("timestamp");
+        this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
 	public WeatherValue(int valueId, int sensorId, float temperature, float humidity, long timestamp) {

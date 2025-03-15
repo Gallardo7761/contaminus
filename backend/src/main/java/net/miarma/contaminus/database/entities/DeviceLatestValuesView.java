@@ -3,6 +3,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_latest_values")
 public class DeviceLatestValuesView {
@@ -27,13 +28,13 @@ public class DeviceLatestValuesView {
     	this.sensorType = row.getString("sensorType");
     	this.unit = row.getString("unit");
     	this.sensorStatus = row.getInteger("sensorStatus");
-    	this.sensorTimestamp = row.getLong("sensorTimestamp");
+    	this.sensorTimestamp = DateParser.parseDate(row.getLocalDateTime("sensorTimestamp"));
     	this.temperature = row.getFloat("temperature");
     	this.humidity = row.getFloat("humidity");
     	this.carbonMonoxide = row.getFloat("carbonMonoxide");
     	this.lat = row.getFloat("lat");
     	this.lon = row.getFloat("lon");
-    	this.airValuesTimestamp = row.getLong("airValuesTimestamp");
+    	this.airValuesTimestamp = DateParser.parseDate(row.getLocalDateTime("airValuesTimestamp"));
     }
 	
 	public DeviceLatestValuesView(int deviceId, int sensorId, String sensorType, String unit, int sensorStatus,

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_co_by_device")
 public class DeviceCO {
@@ -16,7 +17,7 @@ public class DeviceCO {
 	public DeviceCO(Row row) {
 		this.deviceId = row.getInteger("deviceId");
 		this.carbonMonoxide = row.getFloat("carbonMonoxide");
-		this.timestamp = row.getLong("timestamp");
+		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 	
 	public DeviceCO(int deviceId, float carbonMonoxide, long timestamp) {

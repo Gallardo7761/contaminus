@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_pollution_map")
 public class DevicePollutionMap {
@@ -22,7 +23,7 @@ public class DevicePollutionMap {
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
 		this.carbonMonoxide = row.getFloat("carbonMonoxide");
-		this.timestamp = row.getLong("timestamp");
+		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
 	public DevicePollutionMap(int deviceId, String deviceName, float lat, float lon, float carbonMonoxide,

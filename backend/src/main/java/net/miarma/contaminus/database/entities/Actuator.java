@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("actuators")
 public class Actuator {
@@ -19,7 +20,7 @@ public class Actuator {
         this.actuatorId = row.getInteger("actuatorId");
         this.deviceId = row.getInteger("deviceId");
         this.status = row.getInteger("status");
-        this.timestamp = row.getLong("timestamp");
+        this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
 	public Actuator(int actuatorId, int deviceId, int status, long timestamp) {

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.vertx.sqlclient.Row;
 import net.miarma.contaminus.common.Table;
+import net.miarma.contaminus.util.DateParser;
 
 @Table("v_sensor_history_by_device")
 public class DeviceSensorHistory {
@@ -20,7 +21,7 @@ public class DeviceSensorHistory {
 		this.deviceName = row.getString("deviceName");
 		this.value = row.getFloat("value");
 		this.valueType = row.getString("valueType");
-		this.timestamp = row.getLong("timestamp");
+		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
 	public DeviceSensorHistory(int deviceId, String deviceName, float value, String valueType, long timestamp) {

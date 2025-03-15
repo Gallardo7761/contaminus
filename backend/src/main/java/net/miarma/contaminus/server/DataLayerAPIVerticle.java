@@ -4,27 +4,29 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.gson.Gson;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.jdbcclient.JDBCConnectOptions;
 import io.vertx.jdbcclient.JDBCPool;
-import io.vertx.sqlclient.PoolOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.DatabaseManager;
+import net.miarma.contaminus.database.QueryBuilder;
+import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.database.entities.Sensor;
 
 @SuppressWarnings("unused")
 public class DataLayerAPIVerticle extends AbstractVerticle {
 	private JDBCPool pool;
     private DatabaseManager dbManager;
     private ConfigManager configManager;
+    private Gson gson = new Gson();
     
     public DataLayerAPIVerticle(JDBCPool pool) {
         this.pool = pool;
