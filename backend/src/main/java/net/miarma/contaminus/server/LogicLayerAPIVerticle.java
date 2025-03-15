@@ -19,6 +19,10 @@ import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
+import net.miarma.contaminus.database.entities.DevicePollutionMap;
+import net.miarma.contaminus.database.entities.DeviceSensorHistory;
+import net.miarma.contaminus.database.entities.DeviceSensorValue;
 import net.miarma.contaminus.util.RestClientUtil;
 
 public class LogicLayerAPIVerticle extends AbstractVerticle {
@@ -99,19 +103,94 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 	}
     
     private void getDeviceLatestValues(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+   
+    	Promise<DeviceLatestValuesView[]> resultList = Promise.promise();
+    	
+    	resultList.future().onComplete(complete -> {
+    		if (complete.succeeded()) {
+    			List<DeviceLatestValuesView> aux = Arrays.asList(complete.result()).stream()
+    					.filter(d -> d.getDeviceId() == deviceId)
+    					.toList();
+    			
+                context.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(gson.toJson(aux));
+    		} else {
+    			context.fail(500, complete.cause());
+    		}
+    	});
+    	
+    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    			Constants.GET_DEVICE_LATEST_VALUES, DeviceLatestValuesView[].class, resultList);
     }
     
     private void getDevicePollutionMap(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	
+    	Promise<DevicePollutionMap[]> resultList = Promise.promise();
+    	
+    	resultList.future().onComplete(complete -> {
+    		if (complete.succeeded()) {
+    			List<DevicePollutionMap> aux = Arrays.asList(complete.result()).stream()
+    					.filter(d -> d.getDeviceId() == deviceId)
+    					.toList();
+    			
+                context.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(gson.toJson(aux));
+    		} else {
+    			context.fail(500, complete.cause());
+    		}
+    	});
+    	
+    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    			Constants.GET_DEVICE_POLLUTION_MAP, DevicePollutionMap[].class, resultList);
 	}
     
     private void getDeviceHistory(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	
+    	Promise<DeviceSensorHistory[]> resultList = Promise.promise();
+    	
+    	resultList.future().onComplete(complete -> {
+    		if (complete.succeeded()) {
+    			List<DeviceSensorHistory> aux = Arrays.asList(complete.result()).stream()
+    					.filter(d -> d.getDeviceId() == deviceId)
+    					.toList();
+    			
+                context.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(gson.toJson(aux));
+    		} else {
+    			context.fail(500, complete.cause());
+    		}
+    	});
+    	
+    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    			Constants.GET_DEVICE_HISTORY, DeviceSensorHistory[].class, resultList);
     }
     
     private void getSensorValues(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	
+    	Promise<DeviceSensorValue[]> resultList = Promise.promise();
+    	
+    	resultList.future().onComplete(complete -> {
+    		if (complete.succeeded()) {
+    			List<DeviceSensorValue> aux = Arrays.asList(complete.result()).stream()
+    					.filter(d -> d.getDeviceId() == deviceId)
+    					.toList();
+    			
+                context.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(gson.toJson(aux));
+    		} else {
+    			context.fail(500, complete.cause());
+    		}
+    	});
+    	
+    	this.restClient.getRequest(configManager.getDataApiPort(), configManager.getHost(),
+    			Constants.GET_SENSOR_VALUES, DeviceSensorValue[].class, resultList);
 	}
-      
 }
