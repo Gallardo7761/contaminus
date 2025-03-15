@@ -31,7 +31,7 @@ public class RestClientUtil {
 	 * @param promise   Promise to be executed on call finish
 	 */
 	public <T> void getRequest(Integer port, String host, String resource, Class<T> classType, Promise<T> promise) {
-		client.getAbs(host + ":" + port + "/" + resource).send(elem -> {
+		client.getAbs(host + ":" + port + resource).send(elem -> {
 			if (elem.succeeded()) {
 				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
 			} else {

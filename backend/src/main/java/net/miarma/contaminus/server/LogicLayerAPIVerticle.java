@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -23,6 +24,9 @@ import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
 import net.miarma.contaminus.database.entities.DevicePollutionMap;
 import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
+import net.miarma.contaminus.database.entities.Actuator;
+import net.miarma.contaminus.database.entities.Device;
+import net.miarma.contaminus.database.entities.Sensor;
 import net.miarma.contaminus.util.RestClientUtil;
 
 public class LogicLayerAPIVerticle extends AbstractVerticle {
@@ -72,7 +76,6 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         startPromise.complete();
     }
        
-    
     private void getGroupDevices(RoutingContext context) {
         Integer groupId = Integer.parseInt(context.request().getParam("groupId"));
         
@@ -95,11 +98,41 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     }
     
     private void getDeviceSensors(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	Promise<Sensor[]> resultList = Promise.promise();
+    	resultList.future().onComplete(result -> {
+    	    if (result.succeeded()) {
+    	    	Sensor[] sensors = result.result();
+    	        List<Sensor> aux = Arrays.stream(sensors)
+    	            .filter(s -> s.getDeviceId() == deviceId)
+    	            .toList();
+    	        context.response().putHeader("Content-Type", "application/json").end(gson.toJson(aux));
+    	    } else {
+    	        context.response().setStatusCode(500).end(result.cause().getMessage());
+    	    }
+    	});
+
+    	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
+    			Constants.GET_SENSORS, Sensor[].class, resultList);
     }
     
     private void getDeviceActuators(RoutingContext context) {
-    	context.response().end("TODO");
+    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	Promise<Actuator[]> resultList = Promise.promise();
+    	resultList.future().onComplete(result -> {
+    	    if (result.succeeded()) {
+    	    	Actuator[] devices = result.result();
+    	        List<Actuator> aux = Arrays.stream(devices)
+    	            .filter(a -> a.getDeviceId() == deviceId)
+    	            .toList();
+    	        context.response().putHeader("Content-Type", "application/json").end(gson.toJson(aux));
+    	    } else {
+    	        context.response().setStatusCode(500).end(result.cause().getMessage());
+    	    }
+    	});
+
+    	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
+    			Constants.GET_DEVICES, Actuator[].class, resultList);
 	}
     
     private void getDeviceLatestValues(RoutingContext context) {
