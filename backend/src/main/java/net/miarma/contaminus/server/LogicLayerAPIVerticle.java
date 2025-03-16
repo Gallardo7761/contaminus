@@ -55,19 +55,15 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
                 .allowCredentials(true)
                 .allowedHeaders(allowedHeaders)
                 .allowedMethods(allowedMethods));
+        
         router.route().handler(BodyHandler.create());
         
-        // Group Routes
         router.route(HttpMethod.GET, Constants.GET_GROUP_DEVICES).handler(this::getGroupDevices);
-
-        // Device Routes
         router.route(HttpMethod.GET, Constants.GET_DEVICE_SENSORS).handler(this::getDeviceSensors);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_ACTUATORS).handler(this::getDeviceActuators);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_LATEST_VALUES).handler(this::getDeviceLatestValues);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_POLLUTION_MAP).handler(this::getDevicePollutionMap);
         router.route(HttpMethod.GET, Constants.GET_DEVICE_HISTORY).handler(this::getDeviceHistory);
-
-        // Sensor Routes
         router.route(HttpMethod.GET, Constants.GET_SENSOR_VALUES).handler(this::getSensorValues);
 
         vertx.createHttpServer()

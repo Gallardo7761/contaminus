@@ -28,6 +28,10 @@ import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
 import net.miarma.contaminus.database.entities.Sensor;
 
+/*
+ * This class is a Verticle that will handle the Data Layer API. 
+ */
+
 @SuppressWarnings("unused")
 public class DataLayerAPIVerticle extends AbstractVerticle {
 	private JDBCPool pool;
@@ -49,7 +53,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
                 .put("password", dbPwd)
                 .put("max_pool_size", poolSize != null ? poolSize : 10);
 		        
-        this.pool = JDBCPool.pool(Vertx.vertx(), dbConfig);;
+        this.pool = JDBCPool.pool(Vertx.vertx(), dbConfig);
     }
     
 	@Override
@@ -177,13 +181,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	private void updateActuator(RoutingContext context) {
 		context.response().end("TODO");
 	}
-	
-	/*
-	 * A PARTIR DE AQUI LO HACEMOS ÁLVARO Y YO
-	 * NO RAYARSE
-	 * 
-	 */
-	
+		
 	private void getLatestValuesView(RoutingContext context) {
 		String query = QueryBuilder
 			.select(DeviceLatestValuesView.class)
