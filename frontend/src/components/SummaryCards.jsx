@@ -40,7 +40,7 @@ const SummaryCards = ({ deviceId }) => {
     if (configError) return <p>Error al cargar configuración: {configError}</p>;
     if (!config) return <p>Configuración no disponible.</p>;
 
-    const BASE = config.appConfig.endpoints.BASE_URL;
+    const BASE = config.appConfig.endpoints.LOGIC_URL;
     const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_LATEST_VALUES;
     const endp = ENDPOINT.replace('{0}', deviceId);
 

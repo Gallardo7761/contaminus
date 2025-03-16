@@ -65,7 +65,7 @@ const PollutionMap = ({ deviceId }) => {
   if (configError) return <p>Error al cargar configuración: {configError}</p>;
   if (!config) return <p>Configuración no disponible.</p>;
 
-  const BASE = config.appConfig.endpoints.BASE_URL;
+  const BASE = config.appConfig.endpoints.LOGIC_URL;
   const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
   let endp = ENDPOINT.replace('{0}', deviceId);
 

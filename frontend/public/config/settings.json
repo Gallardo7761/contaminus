@@ -7,7 +7,8 @@
     },
     "appConfig": {
         "endpoints": {
-            "BASE_URL": "http://localhost:8081/api/v1",
+            "DATA_URL": "http://localhost:8081/api/v1",
+            "LOGIC_URL": "http://localhost:8082/api/v1",
             "GET_GROUPS": "/groups",
             "GET_GROUP_BY_ID": "/groups/{0}",
             "GET_GROUP_DEVICES": "/groups/{0}/devices",

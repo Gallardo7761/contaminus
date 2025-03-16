@@ -44,7 +44,7 @@ const HistoryCharts = () => {
   if (configError) return <p>Error al cargar configuración: {configError}</p>;
   if (!config) return <p>Configuración no disponible.</p>;
 
-  const BASE = config.appConfig.endpoints.BASE_URL;
+  const BASE = config.appConfig.endpoints.LOGIC_URL;
   const ENDPOINT = config.appConfig.endpoints.sensors;
 
   const reqConfig = {
