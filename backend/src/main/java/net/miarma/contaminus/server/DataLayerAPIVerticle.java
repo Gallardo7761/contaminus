@@ -19,6 +19,7 @@ import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.jdbcclient.JDBCPool;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.common.SingleJsonResponse;
 import net.miarma.contaminus.database.DatabaseManager;
 import net.miarma.contaminus.database.QueryBuilder;
 import net.miarma.contaminus.database.entities.Actuator;
@@ -27,6 +28,7 @@ import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
 import net.miarma.contaminus.database.entities.DevicePollutionMap;
 import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
+import net.miarma.contaminus.database.entities.Group;
 import net.miarma.contaminus.database.entities.Sensor;
 
 /*
@@ -152,77 +154,149 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	}
 	
 	private void getAllSensors(RoutingContext context) {
-		String query = QueryBuilder.select(Sensor.class).build();
-	    dbManager.execute(query, Sensor.class, onSuccess -> {
-	        context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-	    }, onFailure -> context.fail(500, onFailure));
+		String query = QueryBuilder
+			.select(Sensor.class)
+			.build();
+		
+		dbManager.execute(query, Sensor.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getSensorById(RoutingContext context) {
-		int sensorId = Integer.parseInt(context.pathParam("id"));
-        String query = QueryBuilder.where(QueryBuilder.select(Sensor.class), sensorId).build();
-		dbManager.execute(query, Sensor.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		Integer sensorId = Integer.parseInt(context.request().getParam("sensorId"));
+		Sensor sensor = new Sensor(sensorId, null, null, null, null, null);
+		
+		String query = QueryBuilder
+			.select(sensor)
+			.build();
+		
+		dbManager.execute(query, Sensor.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void addSensor(RoutingContext context) {
-		Sensor sensor = gson.fromJson(context.body().asString(), Sensor.class);
-        String query = QueryBuilder.insert(sensor).build();
-        dbManager.execute(query, Sensor.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		JsonObject body = context.body().asJsonObject();
+		Sensor sensor = gson.fromJson(body.toString(), Sensor.class);
+		
+		String query = QueryBuilder
+			.insert(sensor)
+			.build();
+		
+		dbManager.execute(query, Sensor.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Sensor added successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void updateSensor(RoutingContext context) {
-		Sensor sensor = gson.fromJson(context.body().asString(), Sensor.class);
-        String query = QueryBuilder.where(QueryBuilder.update(sensor), sensor).build();
-        dbManager.execute(query, Sensor.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		JsonObject body = context.body().asJsonObject();
+		Sensor sensor = gson.fromJson(body.toString(), Sensor.class);
+		
+		String query = QueryBuilder
+			.update(sensor)
+			.build();
+		
+		dbManager.execute(query, Sensor.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Sensor updated successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getAllActuators(RoutingContext context) {
-		String query = QueryBuilder.select(Actuator.class).build();
-	    dbManager.execute(query, Actuator.class, onSuccess -> {
-	        context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-	    }, onFailure -> context.fail(500, onFailure));
+		String query = QueryBuilder
+			.select(Actuator.class)
+			.build();
+		
+		dbManager.execute(query, Actuator.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getActuatorById(RoutingContext context) {
-		int actuatorId = Integer.parseInt(context.pathParam("id"));
-        String query = QueryBuilder.where(QueryBuilder.select(Actuator.class), actuatorId).build();
-        dbManager.execute(query, Actuator.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		Integer actuatorId = Integer.parseInt(context.request().getParam("actuatorId"));
+		Actuator actuator = new Actuator(actuatorId, null, null, null);
+		
+		String query = QueryBuilder
+			.select(actuator)
+			.build();
+		
+		dbManager.execute(query, Actuator.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void addActuator(RoutingContext context) {
-		Actuator actuator = gson.fromJson(context.body().asString(), Actuator.class);
-        String query = QueryBuilder.insert(actuator).build();
-        dbManager.execute(query, Actuator.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		JsonObject body = context.body().asJsonObject();
+		Actuator actuator = gson.fromJson(body.toString(), Actuator.class);
+		
+		String query = QueryBuilder
+			.insert(actuator)
+			.build();
+		
+		dbManager.execute(query, Actuator.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Actuator added successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void updateActuator(RoutingContext context) {
-		Actuator actuator = gson.fromJson(context.body().asString(), Actuator.class);
-        String query = QueryBuilder.where(QueryBuilder.update(actuator), actuator).build();
-        dbManager.execute(query, Actuator.class, onSuccess -> {
-            context.response().putHeader("content-type", "application/json").end(gson.toJson(onSuccess));
-        }, onFailure -> {
-            context.fail(500, onFailure);
-        });
+		JsonObject body = context.body().asJsonObject();
+		Actuator actuator = gson.fromJson(body.toString(), Actuator.class);
+		
+		String query = QueryBuilder
+			.update(actuator)
+			.build();
+		
+		dbManager.execute(query, Actuator.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Actuator updated successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 		
 	private void getLatestValuesView(RoutingContext context) {
