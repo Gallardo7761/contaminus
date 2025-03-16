@@ -20,11 +20,15 @@ public class QueryBuilder {
     }
     
     private static <T> String getTableName(Class<T> clazz) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        }
+        
         if (clazz.isAnnotationPresent(Table.class)) {
             Table annotation = clazz.getAnnotation(Table.class);
-            return annotation.value(); // lee el nombre de la tabla desde la annotation
+            return annotation.value();
         }
-        throw new IllegalArgumentException("Clase no tiene la anotación @TableName");
+        throw new IllegalArgumentException("Class does not have @Table annotation");
     }
 
     public String getQuery() {
@@ -32,6 +36,10 @@ public class QueryBuilder {
     }
     
     public static <T> QueryBuilder select(Class<T> clazz, String... columns) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        }
+
         QueryBuilder qb = new QueryBuilder();
         String tableName = getTableName(clazz);
 
@@ -42,7 +50,9 @@ public class QueryBuilder {
         } else {
             StringJoiner joiner = new StringJoiner(", ");
             for (String column : columns) {
-                joiner.add(column);
+                if (column != null) {
+                    joiner.add(column);
+                }
             }
             qb.query.append(joiner).append(" ");
         }
@@ -52,6 +62,10 @@ public class QueryBuilder {
     }
     
     public static <T> QueryBuilder where(QueryBuilder qb, T object) {
+        if (qb == null || object == null) {
+            throw new IllegalArgumentException("QueryBuilder and object cannot be null");
+        }
+
         List<String> conditions = new ArrayList<>();
         Class<?> clazz = object.getClass();
 
@@ -79,13 +93,19 @@ public class QueryBuilder {
     }
     
     public static <T> QueryBuilder select(T object, String... columns) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
         Class<?> clazz = object.getClass();
         QueryBuilder qb = select(clazz, columns);
         return where(qb, object);
     }
 
-  
     public static <T> QueryBuilder insert(T object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
+
 		QueryBuilder qb = new QueryBuilder();
 		String table = getTableName(object.getClass());
 		qb.query.append("INSERT INTO ").append(table).append(" ");
@@ -96,10 +116,15 @@ public class QueryBuilder {
 			field.setAccessible(true);
 			try {
 				columns.add(field.getName());
-				if(field.get(object) instanceof String) {
-					values.add("'" + field.get(object) + "'");
+				Object fieldValue = field.get(object);
+				if (fieldValue != null) {
+					if (fieldValue instanceof String) {
+						values.add("'" + fieldValue + "'");
+					} else {
+						values.add(fieldValue.toString());
+					}
 				} else {
-					values.add(field.get(object).toString());
+					values.add("NULL");
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				Constants.LOGGER.error("(REFLECTION) Error reading field: " + e.getMessage());
@@ -111,6 +136,10 @@ public class QueryBuilder {
     }
     
     public static <T> QueryBuilder update(T object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
+
 		QueryBuilder qb = new QueryBuilder();
 		String table = getTableName(object.getClass());
 		qb.query.append("UPDATE ").append(table).append(" ");
@@ -119,10 +148,15 @@ public class QueryBuilder {
 		for (Field field : object.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			try {
-				if(field.get(object) instanceof String) {
-					joiner.add(field.getName() + " = '" + field.get(object) + "'");
+				Object fieldValue = field.get(object);
+				if (fieldValue != null) {
+					if (fieldValue instanceof String) {
+						joiner.add(field.getName() + " = '" + fieldValue + "'");
+					} else {
+						joiner.add(field.getName() + " = " + fieldValue.toString());
+					}
 				} else {
-					joiner.add(field.getName() + " = " + field.get(object).toString());
+					joiner.add(field.getName() + " = NULL");
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				Constants.LOGGER.error("(REFLECTION) Error reading field: " + e.getMessage());
@@ -133,17 +167,17 @@ public class QueryBuilder {
     }
     
     public QueryBuilder orderBy(Optional<String> column, Optional<String> order) {
-        if (column.isPresent()) {
-        	sort = "ORDER BY " + column.get() + " ";
-            if (order.isPresent()) {
-            	sort += order.get().equalsIgnoreCase("asc") ? "ASC" : "DESC" + " ";
-            }
-        }
+        column.ifPresent(c -> {
+            sort = "ORDER BY " + c + " ";
+            order.ifPresent(o -> {
+                sort += o.equalsIgnoreCase("asc") ? "ASC" : "DESC" + " ";
+            });
+        });
         return this;
     }
     
     public QueryBuilder limit(Optional<Integer> limitParam) {
-    	limit = limitParam.isPresent() ? "LIMIT " + limitParam.get() + " " : "";
+    	limitParam.ifPresent(param -> limit = "LIMIT " + param + " ");
         return this;
     }
 
@@ -159,6 +193,4 @@ public class QueryBuilder {
         }
         return query.toString().trim() + ";";
     }
-    
-    
 }
