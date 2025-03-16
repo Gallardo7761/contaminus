@@ -9,12 +9,12 @@ import net.miarma.contaminus.util.DateParser;
 @Table("sensors")
 public class Sensor {
 
-    private int sensorId;
-    private int deviceId;
+    private Integer sensorId;
+    private Integer deviceId;
     private String sensorType;
     private String unit;
-    private int status;
-    private long timestamp;
+    private Integer status;
+    private Long timestamp;
 
     public Sensor() {}
     
@@ -27,7 +27,7 @@ public class Sensor {
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
     
-	public Sensor(int sensorId, int deviceId, String sensorType, String unit, int status, long timestamp) {
+	public Sensor(Integer sensorId, Integer deviceId, String sensorType, String unit, Integer status, Long timestamp) {
 		super();
 		this.sensorId = sensorId;
 		this.deviceId = deviceId;
@@ -37,19 +37,19 @@ public class Sensor {
 		this.timestamp = timestamp;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
-	public void setSensorId(int sensorId) {
+	public void setSensorId(Integer sensorId) {
 		this.sensorId = sensorId;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(int deviceId) {
+	public void setDeviceId(Integer deviceId) {
 		this.deviceId = deviceId;
 	}
 
@@ -69,19 +69,19 @@ public class Sensor {
 		this.unit = unit;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -99,8 +99,9 @@ public class Sensor {
 		if (getClass() != obj.getClass())
 			return false;
 		Sensor other = (Sensor) obj;
-		return deviceId == other.deviceId && sensorId == other.sensorId && Objects.equals(sensorType, other.sensorType)
-				&& status == other.status && timestamp == other.timestamp && Objects.equals(unit, other.unit);
+		return Objects.equals(deviceId, other.deviceId) && Objects.equals(sensorId, other.sensorId)
+				&& Objects.equals(sensorType, other.sensorType) && Objects.equals(status, other.status)
+				&& Objects.equals(timestamp, other.timestamp) && Objects.equals(unit, other.unit);
 	}
 
 	@Override
@@ -109,5 +110,5 @@ public class Sensor {
 				+ unit + ", status=" + status + ", timestamp=" + timestamp + "]";
 	}
 
-    
+	    
 }

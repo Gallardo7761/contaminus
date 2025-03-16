@@ -8,12 +8,12 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_pollution_map")
 public class DevicePollutionMap {
-	int deviceId;
-	String deviceName;
-	float lat;
-	float lon;
-	float carbonMonoxide;
-	long timestamp;
+	private Integer deviceId;
+	private String deviceName;
+	private Float lat;
+	private Float lon;
+	private Float carbonMonoxide;
+	private Long timestamp;
 	
 	public DevicePollutionMap() {}
 	
@@ -26,8 +26,8 @@ public class DevicePollutionMap {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DevicePollutionMap(int deviceId, String deviceName, float lat, float lon, float carbonMonoxide,
-			long timestamp) {
+	public DevicePollutionMap(Integer deviceId, String deviceName, Float lat, Float lon, Float carbonMonoxide,
+			Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.deviceName = deviceName;
@@ -37,7 +37,7 @@ public class DevicePollutionMap {
 		this.timestamp = timestamp;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
@@ -45,19 +45,19 @@ public class DevicePollutionMap {
 		return deviceName;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return lat;
 	}
 
-	public float getLon() {
+	public Float getLon() {
 		return lon;
 	}
 
-	public float getCarbonMonoxide() {
+	public Float getCarbonMonoxide() {
 		return carbonMonoxide;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -75,10 +75,9 @@ public class DevicePollutionMap {
 		if (getClass() != obj.getClass())
 			return false;
 		DevicePollutionMap other = (DevicePollutionMap) obj;
-		return Float.floatToIntBits(carbonMonoxide) == Float.floatToIntBits(other.carbonMonoxide)
-				&& deviceId == other.deviceId && Objects.equals(deviceName, other.deviceName)
-				&& Float.floatToIntBits(lat) == Float.floatToIntBits(other.lat)
-				&& Float.floatToIntBits(lon) == Float.floatToIntBits(other.lon) && timestamp == other.timestamp;
+		return Objects.equals(carbonMonoxide, other.carbonMonoxide) && Objects.equals(deviceId, other.deviceId)
+				&& Objects.equals(deviceName, other.deviceName) && Objects.equals(lat, other.lat)
+				&& Objects.equals(lon, other.lon) && Objects.equals(timestamp, other.timestamp);
 	}
 
 	@Override
@@ -86,4 +85,6 @@ public class DevicePollutionMap {
 		return "DevicePollutionMap [deviceId=" + deviceId + ", deviceName=" + deviceName + ", lat=" + lat + ", lon="
 				+ lon + ", carbonMonoxide=" + carbonMonoxide + ", timestamp=" + timestamp + "]";
 	}
+
+	
 }

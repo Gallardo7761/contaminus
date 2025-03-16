@@ -9,10 +9,10 @@ import net.miarma.contaminus.util.DateParser;
 @Table("co_values")
 public class COValue {
 
-    private int valueId;
-    private int sensorId;
-    private float value;
-    private long timestamp;
+    private Integer valueId;
+    private Integer sensorId;
+    private Float value;
+    private Long timestamp;
     
     public COValue() {}
     
@@ -23,7 +23,7 @@ public class COValue {
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
-	public COValue(int valueId, int sensorId, float value, long timestamp) {
+	public COValue(Integer valueId, Integer sensorId, Float value, Long timestamp) {
 		super();
 		this.valueId = valueId;
 		this.sensorId = sensorId;
@@ -31,35 +31,35 @@ public class COValue {
 		this.timestamp = timestamp;
 	}
 
-	public int getValueId() {
+	public Integer getValueId() {
 		return valueId;
 	}
 
-	public void setValueId(int valueId) {
+	public void setValueId(Integer valueId) {
 		this.valueId = valueId;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
-	public void setSensorId(int sensorId) {
+	public void setSensorId(Integer sensorId) {
 		this.sensorId = sensorId;
 	}
 
-	public float getValue() {
+	public Float getValue() {
 		return value;
 	}
 
-	public void setValue(float value) {
+	public void setValue(Float value) {
 		this.value = value;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -77,9 +77,8 @@ public class COValue {
 		if (getClass() != obj.getClass())
 			return false;
 		COValue other = (COValue) obj;
-		return sensorId == other.sensorId
-				&& Objects.equals(timestamp, other.timestamp)
-				&& Float.floatToIntBits(value) == Float.floatToIntBits(other.value) && valueId == other.valueId;
+		return Objects.equals(sensorId, other.sensorId) && Objects.equals(timestamp, other.timestamp)
+				&& Objects.equals(value, other.value) && Objects.equals(valueId, other.valueId);
 	}
 
 	@Override
@@ -87,6 +86,8 @@ public class COValue {
 		return "COValue [valueId=" + valueId + ", sensorId=" + sensorId + ", value=" + value + ", timestamp="
 				+ timestamp + "]";
 	}
+
+	
 
     
 }

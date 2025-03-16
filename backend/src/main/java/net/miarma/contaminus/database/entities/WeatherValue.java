@@ -9,11 +9,11 @@ import net.miarma.contaminus.util.DateParser;
 @Table("weather_values")
 public class WeatherValue {
 
-    private int valueId;
-    private int sensorId;
-    private float temperature;
-    private float humidity;
-    private long timestamp;
+    private Integer valueId;
+    private Integer sensorId;
+    private Float temperature;
+    private Float humidity;
+    private Long timestamp;
 
     public WeatherValue() {}
     
@@ -25,7 +25,7 @@ public class WeatherValue {
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
-	public WeatherValue(int valueId, int sensorId, float temperature, float humidity, long timestamp) {
+	public WeatherValue(Integer valueId, Integer sensorId, Float temperature, Float humidity, Long timestamp) {
 		super();
 		this.valueId = valueId;
 		this.sensorId = sensorId;
@@ -34,43 +34,43 @@ public class WeatherValue {
 		this.timestamp = timestamp;
 	}
 
-	public int getValueId() {
+	public Integer getValueId() {
 		return valueId;
 	}
 
-	public void setValueId(int valueId) {
+	public void setValueId(Integer valueId) {
 		this.valueId = valueId;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
-	public void setSensorId(int sensorId) {
+	public void setSensorId(Integer sensorId) {
 		this.sensorId = sensorId;
 	}
 
-	public float getTemperature() {
+	public Float getTemperature() {
 		return temperature;
 	}
 
-	public void setTemperature(float temperature) {
+	public void setTemperature(Float temperature) {
 		this.temperature = temperature;
 	}
 
-	public float getHumidity() {
+	public Float getHumidity() {
 		return humidity;
 	}
 
-	public void setHumidity(float humidity) {
+	public void setHumidity(Float humidity) {
 		this.humidity = humidity;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -88,9 +88,9 @@ public class WeatherValue {
 		if (getClass() != obj.getClass())
 			return false;
 		WeatherValue other = (WeatherValue) obj;
-		return Float.floatToIntBits(humidity) == Float.floatToIntBits(other.humidity) && sensorId == other.sensorId
-				&& Float.floatToIntBits(temperature) == Float.floatToIntBits(other.temperature)
-				&& timestamp == other.timestamp && valueId == other.valueId;
+		return Objects.equals(humidity, other.humidity) && Objects.equals(sensorId, other.sensorId)
+				&& Objects.equals(temperature, other.temperature) && Objects.equals(timestamp, other.timestamp)
+				&& Objects.equals(valueId, other.valueId);
 	}
 
 	@Override
@@ -99,6 +99,6 @@ public class WeatherValue {
 				+ ", humidity=" + humidity + ", timestamp=" + timestamp + "]";
 	}
 
-	
+		
     
 }

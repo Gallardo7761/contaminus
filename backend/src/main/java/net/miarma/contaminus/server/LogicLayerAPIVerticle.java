@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -19,18 +21,18 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.database.entities.Actuator;
 import net.miarma.contaminus.database.entities.Device;
 import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
 import net.miarma.contaminus.database.entities.DevicePollutionMap;
 import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
-import net.miarma.contaminus.database.entities.Actuator;
 import net.miarma.contaminus.database.entities.Sensor;
 import net.miarma.contaminus.util.RestClientUtil;
 
 public class LogicLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().serializeNulls().create();
     private RestClientUtil restClient;
 
     public LogicLayerAPIVerticle() {
@@ -81,7 +83,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         Promise<Device[]> resultList = Promise.promise();
         resultList.future().onComplete(complete -> {
             if(complete.succeeded()) {
-                List<Device> aux = Arrays.asList(complete.result()).stream()
+                List<Device> aux = Stream.of(complete.result())
                         .filter(d -> d.getGroupId() == groupId)
                         .toList();
                 context.response()
@@ -93,7 +95,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         });
         
         this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
-                Constants.GET_GROUP_DEVICES, Device[].class, resultList);
+                Constants.GET_DEVICES, Device[].class, resultList);
     }
     
     private void getDeviceSensors(RoutingContext context) {
@@ -131,17 +133,16 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	});
 
     	restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(), 
-    			Constants.GET_DEVICES, Actuator[].class, resultList);
+    			Constants.GET_ACTUATORS, Actuator[].class, resultList);
 	}
     
     private void getDeviceLatestValues(RoutingContext context) {
     	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
    
     	Promise<DeviceLatestValuesView[]> resultList = Promise.promise();
-    	
     	resultList.future().onComplete(complete -> {
     		if (complete.succeeded()) {
-    			List<DeviceLatestValuesView> aux = Arrays.asList(complete.result()).stream()
+    			List<DeviceLatestValuesView> aux = Stream.of(complete.result())
     					.filter(d -> d.getDeviceId() == deviceId)
     					.toList();
     			
@@ -154,7 +155,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	});
     	
     	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
-    			Constants.GET_DEVICE_LATEST_VALUES, DeviceLatestValuesView[].class, resultList);
+    			Constants.GET_LATEST_VALUES_VIEW, DeviceLatestValuesView[].class, resultList);
     }
     
     private void getDevicePollutionMap(RoutingContext context) {
@@ -177,7 +178,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	});
     	
     	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
-    			Constants.GET_DEVICE_POLLUTION_MAP, DevicePollutionMap[].class, resultList);
+    			Constants.GET_POLLUTION_MAP_VIEW, DevicePollutionMap[].class, resultList);
 	}
     
     private void getDeviceHistory(RoutingContext context) {
@@ -200,7 +201,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	});
     	
     	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
-    			Constants.GET_DEVICE_HISTORY, DeviceSensorHistory[].class, resultList);
+    			Constants.GET_SENSOR_HISTORY_BY_DEVICE_VIEW, DeviceSensorHistory[].class, resultList);
     }
     
     private void getSensorValues(RoutingContext context) {
@@ -223,6 +224,6 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	});
     	
     	this.restClient.getRequest(configManager.getDataApiPort(), "http://" + configManager.getHost(),
-    			Constants.GET_SENSOR_VALUES, DeviceSensorValue[].class, resultList);
+    			Constants.GET_SENSOR_VALUES_VIEW, DeviceSensorValue[].class, resultList);
 	}
 }

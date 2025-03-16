@@ -8,7 +8,7 @@ import net.miarma.contaminus.common.Table;
 @Table("groups")
 public class Group {
 
-    private int groupId;
+    private Integer groupId;
     private String groupName;
 
     public Group() {}
@@ -18,17 +18,17 @@ public class Group {
         this.groupName = row.getString("groupName");
     }
 
-	public Group(int groupId, String groupName) {
+	public Group(Integer groupId, String groupName) {
 		super();
 		this.groupId = groupId;
 		this.groupName = groupName;
 	}
 
-	public int getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 
@@ -54,8 +54,7 @@ public class Group {
 		if (getClass() != obj.getClass())
 			return false;
 		Group other = (Group) obj;
-		return groupId == other.groupId
-				&& Objects.equals(groupName, other.groupName);
+		return Objects.equals(groupId, other.groupId) && Objects.equals(groupName, other.groupName);
 	}
 
 	@Override
@@ -63,5 +62,5 @@ public class Group {
 		return "Group [groupId=" + groupId + ", groupName=" + groupName + "]";
 	}
 
-    
+	    
 }

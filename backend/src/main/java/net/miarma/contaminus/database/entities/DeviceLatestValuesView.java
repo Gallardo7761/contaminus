@@ -7,44 +7,39 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_latest_values")
 public class DeviceLatestValuesView {
-	int deviceId;
-	int sensorId;
-	String sensorType;
-	String unit;
-	int sensorStatus;
-	long sensorTimestamp;
-	float temperature;
-	float humidity;
-	float carbonMonoxide;
-	float lat;
-	float lon;
-	long airValuesTimestamp;
+	private Integer deviceId;
+	private Integer sensorId;
+	private String sensorType;
+	private String unit;
+	private Integer sensorStatus;
+	private Long sensorTimestamp;
+	private Float temperature;
+	private Float humidity;
+	private Float carbonMonoxide;
+	private Float lat;
+	private Float lon;
+	private Long airValuesTimestamp;
 	
     public DeviceLatestValuesView() {}
     
     public DeviceLatestValuesView(Row row) {
-        this.deviceId = row.getInteger("deviceId") != null ? row.getInteger("deviceId") : -1;
-        this.sensorId = row.getInteger("sensorId") != null ? row.getInteger("sensorId") : -1;
-        this.sensorType = row.getString("sensorType") != null ? row.getString("sensorType") : "unknown";
-        this.unit = row.getString("unit") != null ? row.getString("unit") : "unknown";
-        this.sensorStatus = row.getInteger("sensorStatus") != null ? row.getInteger("sensorStatus") : 0;
-        
-        this.sensorTimestamp = row.getLocalDateTime("sensorTimestamp") != null ?
-                DateParser.parseDate(row.getLocalDateTime("sensorTimestamp")) : 0;
-        
-        this.temperature = row.getFloat("temperature") != null ? row.getFloat("temperature") : 0.0f;
-        this.humidity = row.getFloat("humidity") != null ? row.getFloat("humidity") : 0.0f;
-        this.carbonMonoxide = row.getFloat("carbonMonoxide") != null ? row.getFloat("carbonMonoxide") : 0.0f;
-        this.lat = row.getFloat("lat") != null ? row.getFloat("lat") : 0.0f;
-        this.lon = row.getFloat("lon") != null ? row.getFloat("lon") : 0.0f;
-
-        this.airValuesTimestamp = row.getLocalDateTime("airValuesTimestamp") != null ?
-                DateParser.parseDate(row.getLocalDateTime("airValuesTimestamp")) : 0;
+    	this.deviceId = row.getInteger("deviceId");
+    	this.sensorId = row.getInteger("sensorId");
+    	this.sensorType = row.getString("sensorType");
+    	this.unit = row.getString("unit");
+    	this.sensorStatus = row.getInteger("sensorStatus");
+    	this.sensorTimestamp = DateParser.parseDate(row.getLocalDateTime("sensorTimestamp"));
+    	this.temperature = row.getFloat("temperature");
+    	this.humidity = row.getFloat("humidity");
+    	this.carbonMonoxide = row.getFloat("carbonMonoxide");
+    	this.lat = row.getFloat("lat");
+    	this.lon = row.getFloat("lon");
+    	this.airValuesTimestamp = DateParser.parseDate(row.getLocalDateTime("airValuesTimestamp"));
     }
 	
-	public DeviceLatestValuesView(int deviceId, int sensorId, String sensorType, String unit, int sensorStatus,
-			long sensorTimestamp, float temperature, float humidity, float carbonMonoxide, float lat, float lon,
-			long airValuesTimestamp) {
+	public DeviceLatestValuesView(Integer deviceId, Integer sensorId, String sensorType, String unit, Integer sensorStatus,
+			Long sensorTimestamp, Float temperature, Float humidity, Float carbonMonoxide, Float lat, Float lon,
+			Long airValuesTimestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.sensorId = sensorId;
@@ -60,11 +55,11 @@ public class DeviceLatestValuesView {
 		this.airValuesTimestamp = airValuesTimestamp;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
@@ -76,35 +71,35 @@ public class DeviceLatestValuesView {
 		return unit;
 	}
 
-	public int getSensorStatus() {
+	public Integer getSensorStatus() {
 		return sensorStatus;
 	}
 
-	public long getSensorTimestamp() {
+	public Long getSensorTimestamp() {
 		return sensorTimestamp;
 	}
 
-	public float getTemperature() {
+	public Float getTemperature() {
 		return temperature;
 	}
 
-	public float getHumidity() {
+	public Float getHumidity() {
 		return humidity;
 	}
 
-	public float getCarbonMonoxide() {
+	public Float getCarbonMonoxide() {
 		return carbonMonoxide;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return lat;
 	}
 
-	public float getLon() {
+	public Float getLon() {
 		return lon;
 	}
 
-	public long getAirValuesTimestamp() {
+	public Long getAirValuesTimestamp() {
 		return airValuesTimestamp;
 	}
 
@@ -123,14 +118,13 @@ public class DeviceLatestValuesView {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceLatestValuesView other = (DeviceLatestValuesView) obj;
-		return airValuesTimestamp == other.airValuesTimestamp
-				&& Float.floatToIntBits(carbonMonoxide) == Float.floatToIntBits(other.carbonMonoxide)
-				&& deviceId == other.deviceId && Float.floatToIntBits(humidity) == Float.floatToIntBits(other.humidity)
-				&& Float.floatToIntBits(lat) == Float.floatToIntBits(other.lat)
-				&& Float.floatToIntBits(lon) == Float.floatToIntBits(other.lon) && sensorId == other.sensorId
-				&& sensorStatus == other.sensorStatus && sensorTimestamp == other.sensorTimestamp
-				&& Objects.equals(sensorType, other.sensorType)
-				&& Float.floatToIntBits(temperature) == Float.floatToIntBits(other.temperature)
+		return Objects.equals(airValuesTimestamp, other.airValuesTimestamp)
+				&& Objects.equals(carbonMonoxide, other.carbonMonoxide) && Objects.equals(deviceId, other.deviceId)
+				&& Objects.equals(humidity, other.humidity) && Objects.equals(lat, other.lat)
+				&& Objects.equals(lon, other.lon) && Objects.equals(sensorId, other.sensorId)
+				&& Objects.equals(sensorStatus, other.sensorStatus)
+				&& Objects.equals(sensorTimestamp, other.sensorTimestamp)
+				&& Objects.equals(sensorType, other.sensorType) && Objects.equals(temperature, other.temperature)
 				&& Objects.equals(unit, other.unit);
 	}
 
@@ -141,6 +135,8 @@ public class DeviceLatestValuesView {
 				+ ", temperature=" + temperature + ", humidity=" + humidity + ", carbonMonoxide=" + carbonMonoxide
 				+ ", lat=" + lat + ", lon=" + lon + ", airValuesTimestamp=" + airValuesTimestamp + "]";
 	}
+
+	
 	
 	
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -27,7 +28,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	private JDBCPool pool;
     private DatabaseManager dbManager;
     private ConfigManager configManager;
-    private Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().serializeNulls().create();
     
     public DataLayerAPIVerticle(JDBCPool pool) {
         this.pool = pool;

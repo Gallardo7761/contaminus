@@ -8,10 +8,10 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_weather_by_device")
 public class DeviceWeather {
-	int deviceId;
-	float temperature;
-	float humidity;
-	long timestamp;
+	private Integer deviceId;
+	private Float temperature;
+	private Float humidity;
+	private Long timestamp;
 	
 	public DeviceWeather() {}
 	
@@ -22,7 +22,7 @@ public class DeviceWeather {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceWeather(int deviceId, float temperature, float humidity, long timestamp) {
+	public DeviceWeather(Integer deviceId, Float temperature, Float humidity, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.temperature = temperature;
@@ -30,19 +30,19 @@ public class DeviceWeather {
 		this.timestamp = timestamp;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
-	public float getTemperature() {
+	public Float getTemperature() {
 		return temperature;
 	}
 
-	public float getHumidity() {
+	public Float getHumidity() {
 		return humidity;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -60,9 +60,8 @@ public class DeviceWeather {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceWeather other = (DeviceWeather) obj;
-		return deviceId == other.deviceId && Float.floatToIntBits(humidity) == Float.floatToIntBits(other.humidity)
-				&& Float.floatToIntBits(temperature) == Float.floatToIntBits(other.temperature)
-				&& timestamp == other.timestamp;
+		return Objects.equals(deviceId, other.deviceId) && Objects.equals(humidity, other.humidity)
+				&& Objects.equals(temperature, other.temperature) && Objects.equals(timestamp, other.timestamp);
 	}
 
 	@Override
@@ -70,4 +69,6 @@ public class DeviceWeather {
 		return "DeviceWeather [deviceId=" + deviceId + ", temperature=" + temperature + ", humidity=" + humidity
 				+ ", timestamp=" + timestamp + "]";
 	}
+
+	
 }

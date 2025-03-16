@@ -9,10 +9,10 @@ import net.miarma.contaminus.util.DateParser;
 @Table("actuators")
 public class Actuator {
 
-    private int actuatorId;
-    private int deviceId;
-    private int status;
-    private long timestamp;
+    private Integer actuatorId;
+    private Integer deviceId;
+    private Integer status;
+    private Long timestamp;
 
     public Actuator() {}
     
@@ -23,7 +23,7 @@ public class Actuator {
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
-	public Actuator(int actuatorId, int deviceId, int status, long timestamp) {
+	public Actuator(Integer actuatorId, Integer deviceId, Integer status, Long timestamp) {
 		super();
 		this.actuatorId = actuatorId;
 		this.deviceId = deviceId;
@@ -31,35 +31,35 @@ public class Actuator {
 		this.timestamp = timestamp;
 	}
 
-	public int getActuatorId() {
+	public Integer getActuatorId() {
 		return actuatorId;
 	}
 
-	public void setActuatorId(int actuatorId) {
+	public void setActuatorId(Integer actuatorId) {
 		this.actuatorId = actuatorId;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(int deviceId) {
+	public void setDeviceId(Integer deviceId) {
 		this.deviceId = deviceId;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 

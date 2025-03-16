@@ -8,11 +8,11 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_sensor_history_by_device")
 public class DeviceSensorHistory {
-	int deviceId;
-	String deviceName;
-	float value;
-	String valueType;
-	long timestamp;
+	private Integer deviceId;
+	private String deviceName;
+	private Float value;
+	private String valueType;
+	private Long timestamp;
 	
 	public DeviceSensorHistory() {}
 	
@@ -24,7 +24,7 @@ public class DeviceSensorHistory {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceSensorHistory(int deviceId, String deviceName, float value, String valueType, long timestamp) {
+	public DeviceSensorHistory(Integer deviceId, String deviceName, Float value, String valueType, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.deviceName = deviceName;
@@ -33,7 +33,7 @@ public class DeviceSensorHistory {
 		this.timestamp = timestamp;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
@@ -41,7 +41,7 @@ public class DeviceSensorHistory {
 		return deviceName;
 	}
 
-	public float getValue() {
+	public Float getValue() {
 		return value;
 	}
 
@@ -49,7 +49,7 @@ public class DeviceSensorHistory {
 		return valueType;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -67,8 +67,8 @@ public class DeviceSensorHistory {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceSensorHistory other = (DeviceSensorHistory) obj;
-		return deviceId == other.deviceId && Objects.equals(deviceName, other.deviceName)
-				&& timestamp == other.timestamp && Float.floatToIntBits(value) == Float.floatToIntBits(other.value)
+		return Objects.equals(deviceId, other.deviceId) && Objects.equals(deviceName, other.deviceName)
+				&& Objects.equals(timestamp, other.timestamp) && Objects.equals(value, other.value)
 				&& Objects.equals(valueType, other.valueType);
 	}
 
@@ -77,4 +77,6 @@ public class DeviceSensorHistory {
 		return "DeviceSensorHistory [deviceId=" + deviceId + ", deviceName=" + deviceName + ", value=" + value
 				+ ", valueType=" + valueType + ", timestamp=" + timestamp + "]";
 	}
+
+	
 }

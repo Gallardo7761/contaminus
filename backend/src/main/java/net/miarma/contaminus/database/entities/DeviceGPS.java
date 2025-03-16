@@ -8,10 +8,10 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_gps_by_device")
 public class DeviceGPS {
-	int deviceId;
-	float lat;
-	float lon;
-	long timestamp;
+	private Integer deviceId;
+	private Float lat;
+	private Float lon;
+	private Long timestamp;
 	
 	public DeviceGPS() {}
 	
@@ -22,26 +22,26 @@ public class DeviceGPS {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceGPS(int deviceId, long lat, long lon) {
+	public DeviceGPS(Integer deviceId, Float lat, Float lon) {
 		super();
 		this.deviceId = deviceId;
 		this.lat = lat;
 		this.lon = lon;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return lat;
 	}
 
-	public float getLon() {
+	public Float getLon() {
 		return lon;
 	}
 	
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -59,12 +59,14 @@ public class DeviceGPS {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceGPS other = (DeviceGPS) obj;
-		return deviceId == other.deviceId && Float.floatToIntBits(lat) == Float.floatToIntBits(other.lat)
-				&& Float.floatToIntBits(lon) == Float.floatToIntBits(other.lon) && timestamp == other.timestamp;
+		return Objects.equals(deviceId, other.deviceId) && Objects.equals(lat, other.lat)
+				&& Objects.equals(lon, other.lon) && Objects.equals(timestamp, other.timestamp);
 	}
 
 	@Override
 	public String toString() {
 		return "DeviceGPS [deviceId=" + deviceId + ", lat=" + lat + ", lon=" + lon + ", timestamp=" + timestamp + "]";
 	}
+
+	
 }

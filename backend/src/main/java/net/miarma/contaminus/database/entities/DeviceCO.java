@@ -8,9 +8,9 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_co_by_device")
 public class DeviceCO {
-	int deviceId;
-	float carbonMonoxide;
-	long timestamp;
+	private Integer deviceId;
+	private Float carbonMonoxide;
+	private Long timestamp;
 	
 	public DeviceCO() {}
 	
@@ -20,22 +20,22 @@ public class DeviceCO {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 	
-	public DeviceCO(int deviceId, float carbonMonoxide, long timestamp) {
+	public DeviceCO(Integer deviceId, Float carbonMonoxide, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.carbonMonoxide = carbonMonoxide;
 		this.timestamp = timestamp;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 	
-	public float getCarbonMonoxide() {
+	public Float getCarbonMonoxide() {
 		return carbonMonoxide;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -53,8 +53,8 @@ public class DeviceCO {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceCO other = (DeviceCO) obj;
-		return Float.floatToIntBits(carbonMonoxide) == Float.floatToIntBits(other.carbonMonoxide)
-				&& deviceId == other.deviceId && timestamp == other.timestamp;
+		return Objects.equals(carbonMonoxide, other.carbonMonoxide) && Objects.equals(deviceId, other.deviceId)
+				&& Objects.equals(timestamp, other.timestamp);
 	}
 
 	@Override
@@ -62,4 +62,6 @@ public class DeviceCO {
 		return "DeviceCO [deviceId=" + deviceId + ", carbonMonoxide=" + carbonMonoxide + ", timestamp=" + timestamp
 				+ "]";
 	}
+
+	
 }

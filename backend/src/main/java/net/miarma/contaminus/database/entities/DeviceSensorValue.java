@@ -8,17 +8,17 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_sensor_values")
 public class DeviceSensorValue {
-	int sensorId;
-	int deviceId;
-	String sensorType;
-	String unit;
-	int sensorStatus;
-	float temperature;
-	float humidity;
-	float carbonMonoxide;
-	float lat;
-	float lon;
-	long timestamp;
+	private Integer sensorId;
+	private Integer deviceId;
+	private String sensorType;
+	private String unit;
+	private Integer sensorStatus;
+	private Float temperature;
+	private Float humidity;
+	private Float carbonMonoxide;
+	private Float lat;
+	private Float lon;
+	private Long timestamp;
 	
 	public DeviceSensorValue() {}
 
@@ -36,8 +36,8 @@ public class DeviceSensorValue {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceSensorValue(int sensorId, int deviceId, String sensorType, String unit, int sensorStatus,
-			float temperature, float humidity, float carbonMonoxide, float lat, float lon, long timestamp) {
+	public DeviceSensorValue(Integer sensorId, Integer deviceId, String sensorType, String unit, Integer sensorStatus,
+			Float temperature, Float humidity, Float carbonMonoxide, Float lat, Float lon, Long timestamp) {
 		super();
 		this.sensorId = sensorId;
 		this.deviceId = deviceId;
@@ -52,11 +52,11 @@ public class DeviceSensorValue {
 		this.timestamp = timestamp;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
@@ -68,31 +68,31 @@ public class DeviceSensorValue {
 		return unit;
 	}
 
-	public int getSensorStatus() {
+	public Integer getSensorStatus() {
 		return sensorStatus;
 	}
 
-	public float getTemperature() {
+	public Float getTemperature() {
 		return temperature;
 	}
 
-	public float getHumidity() {
+	public Float getHumidity() {
 		return humidity;
 	}
 
-	public float getCarbonMonoxide() {
+	public Float getCarbonMonoxide() {
 		return carbonMonoxide;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return lat;
 	}
 
-	public float getLon() {
+	public Float getLon() {
 		return lon;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
@@ -111,13 +111,12 @@ public class DeviceSensorValue {
 		if (getClass() != obj.getClass())
 			return false;
 		DeviceSensorValue other = (DeviceSensorValue) obj;
-		return Float.floatToIntBits(carbonMonoxide) == Float.floatToIntBits(other.carbonMonoxide)
-				&& deviceId == other.deviceId && Float.floatToIntBits(humidity) == Float.floatToIntBits(other.humidity)
-				&& Float.floatToIntBits(lat) == Float.floatToIntBits(other.lat)
-				&& Float.floatToIntBits(lon) == Float.floatToIntBits(other.lon) && sensorId == other.sensorId
-				&& sensorStatus == other.sensorStatus && Objects.equals(sensorType, other.sensorType)
-				&& Float.floatToIntBits(temperature) == Float.floatToIntBits(other.temperature)
-				&& timestamp == other.timestamp && Objects.equals(unit, other.unit);
+		return Objects.equals(carbonMonoxide, other.carbonMonoxide) && Objects.equals(deviceId, other.deviceId)
+				&& Objects.equals(humidity, other.humidity) && Objects.equals(lat, other.lat)
+				&& Objects.equals(lon, other.lon) && Objects.equals(sensorId, other.sensorId)
+				&& Objects.equals(sensorStatus, other.sensorStatus) && Objects.equals(sensorType, other.sensorType)
+				&& Objects.equals(temperature, other.temperature) && Objects.equals(timestamp, other.timestamp)
+				&& Objects.equals(unit, other.unit);
 	}
 
 	@Override
@@ -127,4 +126,6 @@ public class DeviceSensorValue {
 				+ humidity + ", carbonMonoxide=" + carbonMonoxide + ", lat=" + lat + ", lon=" + lon + ", timestamp="
 				+ timestamp + "]";
 	}
+
+	
 }

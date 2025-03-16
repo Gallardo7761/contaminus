@@ -9,11 +9,11 @@ import net.miarma.contaminus.util.DateParser;
 @Table("gps_values")
 public class GpsValue {
 
-    private int valueId;
-    private int sensorId;
-    private float lat;
-    private float lon;
-    private long timestamp;
+    private Integer valueId;
+    private Integer sensorId;
+    private Float lat;
+    private Float lon;
+    private Long timestamp;
 
     public GpsValue() {}
     
@@ -25,7 +25,7 @@ public class GpsValue {
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
-	public GpsValue(int valueId, int sensorId, float lat, float lon, long timestamp) {
+	public GpsValue(Integer valueId, Integer sensorId, Float lat, Float lon, Long timestamp) {
 		super();
 		this.valueId = valueId;
 		this.sensorId = sensorId;
@@ -34,43 +34,43 @@ public class GpsValue {
 		this.timestamp = timestamp;
 	}
 
-	public int getValueId() {
+	public Integer getValueId() {
 		return valueId;
 	}
 
-	public void setValueId(int valueId) {
+	public void setValueId(Integer valueId) {
 		this.valueId = valueId;
 	}
 
-	public int getSensorId() {
+	public Integer getSensorId() {
 		return sensorId;
 	}
 
-	public void setSensorId(int sensorId) {
+	public void setSensorId(Integer sensorId) {
 		this.sensorId = sensorId;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return lat;
 	}
 
-	public void setLat(float lat) {
+	public void setLat(Float lat) {
 		this.lat = lat;
 	}
 
-	public float getLon() {
+	public Float getLon() {
 		return lon;
 	}
 
-	public void setLon(float lon) {
+	public void setLon(Float lon) {
 		this.lon = lon;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -88,9 +88,9 @@ public class GpsValue {
 		if (getClass() != obj.getClass())
 			return false;
 		GpsValue other = (GpsValue) obj;
-		return Float.floatToIntBits(lat) == Float.floatToIntBits(other.lat)
-				&& Float.floatToIntBits(lon) == Float.floatToIntBits(other.lon)
-				&& sensorId == other.sensorId && timestamp == other.timestamp && valueId == other.valueId;
+		return Objects.equals(lat, other.lat) && Objects.equals(lon, other.lon)
+				&& Objects.equals(sensorId, other.sensorId) && Objects.equals(timestamp, other.timestamp)
+				&& Objects.equals(valueId, other.valueId);
 	}
 
 	@Override
