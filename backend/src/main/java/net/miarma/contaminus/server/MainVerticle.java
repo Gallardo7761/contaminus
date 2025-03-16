@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import io.vertx.core.json.JsonObject;
-import io.vertx.jdbcclient.JDBCPool;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Launcher;
@@ -18,29 +16,13 @@ import net.miarma.contaminus.common.Constants;
 
 public class MainVerticle extends AbstractVerticle {
     private ConfigManager configManager;
-    private JDBCPool pool;
 
     public static void main(String[] args) {    	
     	Launcher.executeCommand("run", MainVerticle.class.getName());
     }
 	
-	@SuppressWarnings("deprecation")
 	private void init() {	
-		configManager = ConfigManager.getInstance();
-		
-		String jdbcUrl = configManager.getJdbcUrl();
-        String dbUser = configManager.getStringProperty("db.user");
-        String dbPwd = configManager.getStringProperty("db.pwd");
-        Integer poolSize = configManager.getIntProperty("db.poolSize");
-
-        JsonObject dbConfig = new JsonObject()
-                .put("url", jdbcUrl)
-                .put("user", dbUser)
-                .put("password", dbPwd)
-                .put("max_pool_size", poolSize != null ? poolSize : 10);
-		
-        pool = JDBCPool.pool(vertx, dbConfig);
-        
+		this.configManager = ConfigManager.getInstance();
 	    initializeDirectories();
 	    copyDefaultConfig();
     }
@@ -72,17 +54,9 @@ public class MainVerticle extends AbstractVerticle {
     	try {
     		System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
         	init();
-        	pool.query("SELECT 1").execute(ar -> {
-                if (ar.succeeded()) {
-                    Constants.LOGGER.info("🟢 Connected to DB");
-                    deployVerticles(startPromise);
-                } else {
-                	Constants.LOGGER.error("🔴 Failed to connect to DB: " + ar.cause());
-                    startPromise.fail(ar.cause());
-                }
-            });
+        	deployVerticles(startPromise);
     	} catch (Exception e) {
-			System.err.println("🔴 Error starting the application: " + e);
+			Constants.LOGGER.error("🔴 Error starting the application: " + e);
 			startPromise.fail(e);
 		}
     }
@@ -91,7 +65,7 @@ public class MainVerticle extends AbstractVerticle {
         final DeploymentOptions options = new DeploymentOptions();
         options.setThreadingModel(ThreadingModel.WORKER);
 
-        vertx.deployVerticle(new DataLayerAPIVerticle(pool), options, result -> {
+        vertx.deployVerticle(new DataLayerAPIVerticle(), options, result -> {
             if (result.succeeded()) {
             	Constants.LOGGER.info("🟢 DatabaseVerticle desplegado");
             	Constants.LOGGER.info("\t🔗 API URL: " + configManager.getHost() 

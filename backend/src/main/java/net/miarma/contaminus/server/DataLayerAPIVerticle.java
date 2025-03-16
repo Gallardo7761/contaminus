@@ -9,7 +9,9 @@ import com.google.gson.GsonBuilder;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -33,14 +35,27 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
     private final Gson gson = new GsonBuilder().serializeNulls().create();
     
-    public DataLayerAPIVerticle(JDBCPool pool) {
-        this.pool = pool;
-        this.configManager = ConfigManager.getInstance();
+    @SuppressWarnings("deprecation")
+	public DataLayerAPIVerticle() {
+    	this.configManager = ConfigManager.getInstance();
+    	String jdbcUrl = configManager.getJdbcUrl();
+        String dbUser = configManager.getStringProperty("db.user");
+        String dbPwd = configManager.getStringProperty("db.pwd");
+        Integer poolSize = configManager.getIntProperty("db.poolSize");
+
+        JsonObject dbConfig = new JsonObject()
+                .put("url", jdbcUrl)
+                .put("user", dbUser)
+                .put("password", dbPwd)
+                .put("max_pool_size", poolSize != null ? poolSize : 10);
+		        
+        this.pool = JDBCPool.pool(Vertx.vertx(), dbConfig);;
     }
     
 	@Override
     public void start(Promise<Void> startPromise) {
 		Constants.LOGGER.info("📡 Iniciando DataLayerAPIVerticle...");
+			
 		dbManager = DatabaseManager.getInstance(pool);
 		
 		Router router = Router.router(vertx);
@@ -88,7 +103,15 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	        .requestHandler(router)
 	        .listen(configManager.getDataApiPort(), configManager.getHost());
     
-        startPromise.complete();
+        pool.query("SELECT 1").execute(ar -> {
+            if (ar.succeeded()) {
+                Constants.LOGGER.info("🟢 Connected to DB");
+                startPromise.complete();
+            } else {
+            	Constants.LOGGER.error("🔴 Failed to connect to DB: " + ar.cause());
+                startPromise.fail(ar.cause());
+            }
+        });   
     }
 
 	private void getAllGroups(RoutingContext context) {

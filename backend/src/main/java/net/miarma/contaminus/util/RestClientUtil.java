@@ -33,8 +33,6 @@ public class RestClientUtil {
 	public <T> void getRequest(Integer port, String host, String resource, Class<T> classType, Promise<T> promise) {
 		client.getAbs(host + ":" + port + resource).send(elem -> {
 			if (elem.succeeded()) {
-				System.out.println(host + ":" + port + resource);
-				System.out.println(elem.result().bodyAsString());
 				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
 			} else {
 				promise.fail(elem.cause());
