@@ -143,7 +143,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	resultList.future().onComplete(complete -> {
     		if (complete.succeeded()) {
     			List<DeviceLatestValuesView> aux = Stream.of(complete.result())
-    					.filter(d -> d.getDeviceId() == deviceId)
+    					.filter(elem -> elem.getDeviceId() == deviceId)
     					.toList();
     			
                 context.response()
@@ -166,7 +166,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	resultList.future().onComplete(complete -> {
     		if (complete.succeeded()) {
     			List<DevicePollutionMap> aux = Arrays.asList(complete.result()).stream()
-    					.filter(d -> d.getDeviceId() == deviceId)
+    					.filter(elem -> elem.getDeviceId() == deviceId)
     					.toList();
     			
                 context.response()
@@ -189,7 +189,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	resultList.future().onComplete(complete -> {
     		if (complete.succeeded()) {
     			List<DeviceSensorHistory> aux = Arrays.asList(complete.result()).stream()
-    					.filter(d -> d.getDeviceId() == deviceId)
+    					.filter(elem -> elem.getDeviceId() == deviceId)
     					.toList();
     			
                 context.response()
@@ -205,14 +205,14 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     }
     
     private void getSensorValues(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	Integer sensorId = Integer.parseInt(context.request().getParam("sensorId"));
     	
     	Promise<DeviceSensorValue[]> resultList = Promise.promise();
     	
     	resultList.future().onComplete(complete -> {
     		if (complete.succeeded()) {
     			List<DeviceSensorValue> aux = Arrays.asList(complete.result()).stream()
-    					.filter(d -> d.getDeviceId() == deviceId)
+    					.filter(val -> val.getSensorId() == sensorId)
     					.toList();
     			
                 context.response()

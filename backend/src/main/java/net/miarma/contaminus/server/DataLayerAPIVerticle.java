@@ -21,6 +21,9 @@ import net.miarma.contaminus.database.DatabaseManager;
 import net.miarma.contaminus.database.QueryBuilder;
 import net.miarma.contaminus.database.entities.Device;
 import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
+import net.miarma.contaminus.database.entities.DevicePollutionMap;
+import net.miarma.contaminus.database.entities.DeviceSensorHistory;
+import net.miarma.contaminus.database.entities.DeviceSensorValue;
 import net.miarma.contaminus.database.entities.Sensor;
 
 @SuppressWarnings("unused")
@@ -77,6 +80,9 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
     	       
         // Views Routes
         router.route(HttpMethod.GET, Constants.GET_LATEST_VALUES_VIEW).handler(this::getLatestValuesView);
+        router.route(HttpMethod.GET, Constants.GET_POLLUTION_MAP_VIEW).handler(this::getDevicePollutionMapView);
+        router.route(HttpMethod.GET, Constants.GET_SENSOR_VALUES_VIEW).handler(this::getSensorValuesView);
+        router.route(HttpMethod.GET, Constants.GET_SENSOR_HISTORY_BY_DEVICE_VIEW).handler(this::getSensorHistoryByDeviceView);
         
         vertx.createHttpServer()
 	        .requestHandler(router)
@@ -161,6 +167,54 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.build();
 		
 		dbManager.execute(query, DeviceLatestValuesView.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
+	}
+	
+	private void getDevicePollutionMapView(RoutingContext context) {	
+		String query = QueryBuilder
+			.select(DevicePollutionMap.class)
+			.build();
+		
+		dbManager.execute(query, DevicePollutionMap.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
+	}
+	
+	private void getSensorValuesView(RoutingContext context) {		
+		String query = QueryBuilder
+			.select(DeviceSensorValue.class)
+			.build();
+		
+		dbManager.execute(query, DeviceSensorValue.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
+	}
+	
+	private void getSensorHistoryByDeviceView(RoutingContext context) {		
+		String query = QueryBuilder
+			.select(DeviceSensorHistory.class)
+			.build();
+		
+		dbManager.execute(query, DeviceSensorHistory.class,
 			onSuccess -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")

@@ -29,7 +29,7 @@ public class DeviceSensorValue {
 		this.unit = row.getString("unit");
 		this.sensorStatus = row.getInteger("sensorStatus");
 		this.temperature = row.getFloat("temperature");
-		this.humidity = row.getFloat("humidty");
+		this.humidity = row.getFloat("humidity");
 		this.carbonMonoxide = row.getFloat("carbonMonoxide");
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
