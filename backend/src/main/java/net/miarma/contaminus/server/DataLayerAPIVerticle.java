@@ -122,35 +122,149 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
     }
 
 	private void getAllGroups(RoutingContext context) {
-		context.response().end("TODO");
+		String query = QueryBuilder
+			.select(Group.class)
+			.build();
+		
+		dbManager.execute(query, Group.class,
+			onSuccess -> {
+			context.response()
+				.putHeader("content-type", "application/json; charset=utf-8")
+				.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getGroupById(RoutingContext context) {
-		context.response().end("TODO");
+		Integer groupId = Integer.parseInt(context.request().getParam("groupId"));
+		Group group = new Group(groupId, null);
+		
+		String query = QueryBuilder
+			.select(group)
+			.build();
+		
+		dbManager.execute(query, Group.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void addGroup(RoutingContext context) {
-		context.response().end("TODO");
+		JsonObject body = context.body().asJsonObject();
+		Group group = gson.fromJson(body.toString(), Group.class);
+		
+		String query = QueryBuilder
+			.insert(group)
+			.build();
+		
+		dbManager.execute(query, Group.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Group added successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void updateGroup(RoutingContext context) {
-		context.response().end("TODO");
+		JsonObject body = context.body().asJsonObject();
+		Group group = gson.fromJson(body.toString(), Group.class);
+		
+		String query = QueryBuilder
+			.update(group)
+			.build();
+		
+		dbManager.execute(query, Group.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Group updated successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getAllDevices(RoutingContext context) {
-		context.response().end("TODO");
+		String query = QueryBuilder
+			.select(Device.class)
+			.build();
+		
+		dbManager.execute(query, Device.class,
+			onSuccess -> {
+			context.response()
+				.putHeader("content-type", "application/json; charset=utf-8")
+				.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getDeviceById(RoutingContext context) {
-		context.response().end("TODO");
+		Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+		Device device = new Device(deviceId, null, null);
+		
+		String query = QueryBuilder
+			.select(device)
+			.build();
+		
+		dbManager.execute(query, Device.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(onSuccess));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void addDevice(RoutingContext context) {
-		context.response().end("TODO");
+		JsonObject body = context.body().asJsonObject();
+		Device device = gson.fromJson(body.toString(), Device.class);
+		
+		String query = QueryBuilder
+			.insert(device)
+			.build();
+		
+		dbManager.execute(query, Device.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Device added successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void updateDevice(RoutingContext context) {
-		context.response().end("TODO");
+		JsonObject body = context.body().asJsonObject();
+		Device device = gson.fromJson(body.toString(), Device.class);
+		
+		String query = QueryBuilder
+			.update(device)
+			.build();
+		
+		dbManager.execute(query, Device.class,
+			onSuccess -> {
+				context.response()
+					.putHeader("content-type", "application/json; charset=utf-8")
+					.end(gson.toJson(SingleJsonResponse.of("Device updated successfully")));
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
 	}
 	
 	private void getAllSensors(RoutingContext context) {
