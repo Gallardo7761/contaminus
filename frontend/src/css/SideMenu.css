@@ -55,3 +55,36 @@
 .side-menu .close-btn:hover {
     color: var(--primary-color);
 }
+
+.side-menu .home-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.side-menu .home-btn .fa-home {
+    width: 30px;
+    height: 30px;
+}
+
+.side-menu .home-btn.light {
+    color: black;
+}
+
+.side-menu .home-btn.dark {
+    color: white;
+}
+
+.side-menu .home-btn:hover {
+    color: var(--primary-color);
+}
+
+hr.separation {
+    margin: 60px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}

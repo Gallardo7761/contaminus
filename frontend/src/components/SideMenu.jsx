@@ -1,7 +1,7 @@
 import "../css/SideMenu.css";
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faHome } from '@fortawesome/free-solid-svg-icons';
 
 import { DataProvider } from '../contexts/DataContext';
 import { useData } from '../contexts/DataContext';
@@ -63,9 +63,13 @@ const SideMenuContent = ({ isOpen, onClose }) => {
 
     return (
         <div className={`side-menu ${isOpen ? 'open' : ''} ${theme}`}>
+            <button className="home-btn" onClick={() => window.location.href = '/'}>
+                <FontAwesomeIcon icon={faHome} />
+            </button>
             <button className="close-btn" onClick={onClose}>
                 <FontAwesomeIcon icon={faTimes} />
             </button>
+            <hr className="separation w-100"></hr>
             <div className="d-flex flex-column gap-3 mt-5">
                 {data.map(device => {
                     return (
