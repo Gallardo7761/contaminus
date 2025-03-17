@@ -5,6 +5,11 @@
   <version>1.0.0</version>
   <name>ContaminUS</name>
   
+  <properties>
+    <maven.compiler.source>23</maven.compiler.source>
+    <maven.compiler.target>23</maven.compiler.target>
+  </properties>
+  
   <dependencies>
   	<!-- Vert.X Core -->
   	<dependency>

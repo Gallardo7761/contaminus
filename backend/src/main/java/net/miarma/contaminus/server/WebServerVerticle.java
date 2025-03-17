@@ -1,5 +1,8 @@
 package net.miarma.contaminus.server;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
@@ -19,10 +22,17 @@ public class WebServerVerticle extends AbstractVerticle {
     	Constants.LOGGER.info("📡 Iniciando WebServerVerticle...");
 
         Router router = Router.router(vertx);
+        
+        Path webRootPath = Paths.get(configManager.getWebRoot());
+
+        if (webRootPath.isAbsolute()) {
+            Path basePath = Paths.get(System.getProperty("user.dir")); // Directorio actual
+            webRootPath = basePath.relativize(webRootPath);
+        }
                 
         router.route("/*")
         	.handler(
-    			StaticHandler.create(configManager.getWebRoot())
+    			StaticHandler.create(webRootPath.toString())
     			.setCachingEnabled(false)
     			.setDefaultContentEncoding("UTF-8")
 			);
