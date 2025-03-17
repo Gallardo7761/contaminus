@@ -69,6 +69,12 @@ public class ConfigManager {
 					getOS() == OSType.LINUX ? ".config/contaminus/" :
 				".contaminus/");
 	}
+    
+    public String getWebRoot() {
+		return config.getProperty("web.root") != null ? 
+				config.getProperty("web.root") : 
+				getBaseDir() + "webroot/";
+	}
 
     public static OSType getOS() {
         String os = System.getProperty("os.name").toLowerCase();

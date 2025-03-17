@@ -22,7 +22,8 @@ public class WebServerVerticle extends AbstractVerticle {
                 
         router.route("/*")
         	.handler(
-    			StaticHandler.create("webroot")
+    			StaticHandler.create(configManager.getWebRoot())
+    			.setCachingEnabled(false)
     			.setDefaultContentEncoding("UTF-8")
 			);
         
