@@ -20,6 +20,7 @@
             "GET_DEVICE_LATEST_VALUES": "/devices/{0}/latest",
             "GET_DEVICE_POLLUTION_MAP": "/devices/{0}/pollution-map",
             "GET_DEVICE_HISTORY": "/devices/{0}/history",
+            "GET_HISTORY_BY_DEVICE_VIEW": "/v_sensor_history_by_device",
             "POST_DEVICES": "/devices",
             "PUT_DEVICE_BY_ID": "/devices/{0}",
             "GET_SENSORS": "/sensors",

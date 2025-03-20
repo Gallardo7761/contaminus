@@ -1,4 +1,4 @@
-import PollutionMap from '../components/PollutionMap.jsx'
+import PollutionMapByDevice from '../components/PollutionMapByDevice.jsx'
 import HistoryCharts from '../components/HistoryCharts.jsx'
 import SummaryCards from '../components/SummaryCards.jsx'
 
@@ -26,7 +26,7 @@ const Dashboard = () => {
     return (
         <main className='container justify-content-center'>
             <SummaryCards deviceId={deviceId} />
-            <PollutionMap deviceId={deviceId}/>
+            <PollutionMapByDevice deviceId={deviceId}/>
             <HistoryCharts deviceId={deviceId} />
         </main>
     );
