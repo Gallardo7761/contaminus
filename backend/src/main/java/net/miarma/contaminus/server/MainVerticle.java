@@ -94,6 +94,16 @@ public class MainVerticle extends AbstractVerticle {
             	Constants.LOGGER.error("🔴 Error deploying WebServerVerticle: " + result.cause());
             }
         });
+        
+        vertx.deployVerticle(new MqttVerticle(), result -> {
+        	if(result.succeeded()) {
+        		Constants.LOGGER.info("🟢 MqttVerticle desplegado");
+        		Constants.LOGGER.info("\t🔗 MQTT SERVER URL: " + configManager.getHost() 
+        			+ ":" +  configManager.getIntProperty("mqtt.port"));
+        	} else {
+            	Constants.LOGGER.error("🔴 Error deploying MqttVerticle: " + result.cause());
+            }
+        });
 
         startPromise.complete();
     }

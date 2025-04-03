@@ -53,6 +53,7 @@ const mapStyles = {
   width: '100%',
   borderRadius: '20px'
 };
+
 Map.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({

@@ -12,11 +12,14 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.jdbcclient.JDBCConnectOptions;
 import io.vertx.jdbcclient.JDBCPool;
+import io.vertx.sqlclient.PoolOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.common.SingleJsonResponse;
@@ -49,15 +52,16 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         String dbUser = configManager.getStringProperty("db.user");
         String dbPwd = configManager.getStringProperty("db.pwd");
         Integer poolSize = configManager.getIntProperty("db.poolSize");
-
+        String dbName = configManager.getStringProperty("db.name");
+        
         JsonObject dbConfig = new JsonObject()
                 .put("url", jdbcUrl)
                 .put("user", dbUser)
                 .put("password", dbPwd)
                 .put("max_pool_size", poolSize != null ? poolSize : 10);
-		        
+        
         this.pool = JDBCPool.pool(Vertx.vertx(), dbConfig);
-    }
+	}
     
 	@Override
     public void start(Promise<Void> startPromise) {

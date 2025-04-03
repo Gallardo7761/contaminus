@@ -40,6 +40,13 @@ public class ConfigManager {
                 config.getProperty("db.name"));
     }
     
+    public String getJdbcUrlNoName() {
+        return String.format("%s://%s:%s",
+                config.getProperty("db.protocol"),
+                config.getProperty("db.host"),
+                config.getProperty("db.port"));
+    }
+    
     public String getHost() {
         return this.getStringProperty("inet.host");
     }
