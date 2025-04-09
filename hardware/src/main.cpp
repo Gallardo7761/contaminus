@@ -1,6 +1,8 @@
 #include "main.hpp"
 
 const uint32_t deviceId = getChipID();
+String response;
+HTTPClient httpClient;
 
 uint32_t getChipID()
 {
@@ -15,12 +17,16 @@ void setup() {
     Serial.begin(9600);
 
     // WiFi Connection
-    if(setup_wifi() != 0)
+    if(setupWifi() != 0)
     {
-        Serial.print("Error connecting to WiFI");
+        Serial.print("Error connecting to WiFi");
     }
+
+    // test get
+    getRequest(httpClient, "http://172.20.10.7:8082/api/v1/sensors/1/values", response);
+    deserializeSensorValue(httpClient, httpClient.GET());
 }
  
 void loop() {
- 
+    
 }

@@ -31,16 +31,16 @@ String serializeDevice (
 );
 
 void deserializeSensorValue (
-    HTTPClient* http,
+    HTTPClient &http,
     int httpResponseCode
 );
 
 void deserializeActuatorStatus (
-    HTTPClient* http,
+    HTTPClient &http,
     int httpResponseCode
 );
 
 void deserializeDevice (
-    HTTPClient* http,
+    HTTPClient &http,
     int httpResponseCode
 );

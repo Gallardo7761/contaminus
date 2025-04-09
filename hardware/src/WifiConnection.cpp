@@ -1,13 +1,12 @@
-#include <wifi.hpp>
+#include <WifiConnection.hpp>
  
 WiFiClient wifiClient;
 
-int setup_wifi()
+int setupWifi()
 {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(SSID);
-
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
 

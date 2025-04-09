@@ -1,6 +1,4 @@
-#include "json.hpp"
-
-String response;
+#include "JsonTools.hpp"
 
 String serializeSensorValue(int sensorId, int deviceId, String sensorType, String unit, int sensorStatus,  float temperature, float humidity, float carbonMonoxide, float lat, float lon, long timestamp)
 {
@@ -58,7 +56,7 @@ String serializeDevice(int sensorId, int deviceId, String sensorType, int status
   return output;
 }
 
-void deserializeSensorValue (HTTPClient http, int httpResponseCode)
+void deserializeSensorValue (HTTPClient &http, int httpResponseCode)
 {
 
   if (httpResponseCode > 0)
@@ -101,7 +99,7 @@ void deserializeSensorValue (HTTPClient http, int httpResponseCode)
   }
 }
 
-void deserializeActuatorStatus (HTTPClient http, int httpResponseCode)
+void deserializeActuatorStatus (HTTPClient &http, int httpResponseCode)
 {
 
   if (httpResponseCode > 0)
@@ -140,7 +138,7 @@ void deserializeActuatorStatus (HTTPClient http, int httpResponseCode)
   }
 }
 
-void deserializeDevice (HTTPClient http, int httpResponseCode)
+void deserializeDevice (HTTPClient &http, int httpResponseCode)
 {
 
   if (httpResponseCode > 0)
