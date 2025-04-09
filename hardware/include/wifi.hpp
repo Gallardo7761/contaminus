@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define SSID "iPhone de Jose"
-#define PASSWORD "bombardeenlaus"
+#define SSID "Redmi Note 14 Pro 5G"
+#define PASSWORD "aitv5949"
 
 int setup_wifi();
