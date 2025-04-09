@@ -1,7 +1,6 @@
 #include <wifi.hpp>
  
-WiFiClient espClient;
-PubSubClient client(espClient);
+WiFiClient wifiClient;
 
 int setup_wifi()
 {

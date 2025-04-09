@@ -1,7 +1,5 @@
 #include <ArduinoJson.h>
-#include "HTTPClient.h"
-
-HTTPClient http;
+#include <HTTPClient.h>
 
 String serializeSensorValue (
     int sensorId,
@@ -33,13 +31,16 @@ String serializeDevice (
 );
 
 void deserializeSensorValue (
+    HTTPClient* http,
     int httpResponseCode
 );
 
 void deserializeActuatorStatus (
+    HTTPClient* http,
     int httpResponseCode
 );
 
 void deserializeDevice (
+    HTTPClient* http,
     int httpResponseCode
 );

@@ -6,4 +6,4 @@
 #include "test.hpp"
 #include "mqtt.hpp"
 
-#define LED 2
+uint32_t getChipID();

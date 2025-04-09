@@ -2,7 +2,6 @@
 
 String response;
 
-
 String serializeSensorValue(int sensorId, int deviceId, String sensorType, String unit, int sensorStatus,  float temperature, float humidity, float carbonMonoxide, float lat, float lon, long timestamp)
 {
   DynamicJsonDocument doc(2048);
@@ -59,7 +58,8 @@ String serializeDevice(int sensorId, int deviceId, String sensorType, int status
   return output;
 }
 
-void deserializeSensorValue (int httpResponseCode){
+void deserializeSensorValue (HTTPClient http, int httpResponseCode)
+{
 
   if (httpResponseCode > 0)
   {
@@ -101,7 +101,8 @@ void deserializeSensorValue (int httpResponseCode){
   }
 }
 
-void deserializeActuatorStatus (int httpResponseCode){
+void deserializeActuatorStatus (HTTPClient http, int httpResponseCode)
+{
 
   if (httpResponseCode > 0)
   {
@@ -139,7 +140,8 @@ void deserializeActuatorStatus (int httpResponseCode){
   }
 }
 
-void deserializeDevice (int httpResponseCode){
+void deserializeDevice (HTTPClient http, int httpResponseCode)
+{
 
   if (httpResponseCode > 0)
   {
