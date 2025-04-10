@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <MQ7.hpp>
 
 #include "JsonTools.hpp"
 #include "RestClient.hpp"
