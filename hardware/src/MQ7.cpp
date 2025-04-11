@@ -1,5 +1,10 @@
 #include "MQ7.hpp"
 
+float sensor_volt;
+float RS_air; 
+float R0;  
+float sensorValue;
+
 void MQ7_init() {
     pinMode(digitalMQ7, INPUT);
     pinMode(analogMQ7, INPUT);
