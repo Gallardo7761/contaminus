@@ -1,9 +1,8 @@
 #include <Arduino.h>
 
-#include "json.hpp"
-#include "rest.hpp"
-#include "wifi.hpp"
-#include "test.hpp"
-#include "mqtt.hpp"
+#include "JsonTools.hpp"
+#include "RestClient.hpp"
+#include "WifiConnection.hpp"
+#include "MqttClient.hpp"
 
-#define LED 2
+uint32_t getChipID();
