@@ -22,11 +22,13 @@ void setup() {
         Serial.print("Error connecting to WiFi");
     }
 
+    MQ7_init();
+
     // test get
     getRequest(httpClient, "http://172.20.10.7:8082/api/v1/sensors/1/values", response);
     deserializeSensorValue(httpClient, httpClient.GET());
 }
  
 void loop() {
-    
+    MQ7_read();
 }
