@@ -1,31 +1,30 @@
-#include "MQ7.hpp"
-
-float sensor_volt;
-float RS_air; 
-float R0;  
-float sensorValue;
-
-void MQ7_init() {
+#include "MQ7.h"
+ 
+void MQ7_Init()
+{
     pinMode(digitalMQ7, INPUT);
     pinMode(analogMQ7, INPUT);
 }
-
-void MQ7_read() {
+ 
+void MQ7_Read(float &sensorVolt, float &RSAir, float &R0, float &sensorValue)
+{
     analogWrite(analogMQ7, 1023);
     delay(60000);
     analogWrite(analogMQ7, (1023/5)*1.4 );
 
-    for(int i = 0; i<100; i++){
+    for(int i = 0; i<100; i++)
+    { 
         sensorValue = sensorValue + analogRead(analogMQ7);
         delay(90000);
     }
 
     sensorValue = sensorValue/100.0;
-    sensor_volt = sensorValue/1024*5.0;
-    RS_air = (5.0-sensor_volt)/sensor_volt;
-    R0 = RS_air/(26+(1/3));
+    sensorVolt = sensorValue/1024*5.0;
+    RSAir = (5.0-sensorVolt)/sensorVolt;
+    R0 = RSAir/(26+(1/3));
 
     Serial.print("R0 = ");
     Serial.println(R0);
+
     delay(1000);
 }
