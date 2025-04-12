@@ -1,5 +1,8 @@
 #define RX 4
 #define TX 5
 
-#include <SoftwareSerial.h>
+#include "SoftwareSerial.h"
+
 void GPS_Init();
+void GPS_Read();
+String GPS_Data();

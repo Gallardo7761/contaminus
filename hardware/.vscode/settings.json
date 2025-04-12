@@ -7,7 +7,9 @@
         "functional": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "bmp280.h": "c"
+        "bmp280.h": "c",
+        "random": "cpp",
+        "sstream": "cpp"
     },
     "github.copilot.enable": {
         "*": false,

@@ -15,6 +15,11 @@ float sensorVolt, sensorValue, RSAir, R0;
 // BMP280
 float temperature, humidity, pressure, altitude;
 
+// GPS
+String check;
+float lon;
+float lat;
+
 uint32_t getChipID()
 {
     uint32_t chipId;
