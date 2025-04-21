@@ -6,6 +6,7 @@
 #include "MqttClient.hpp"
 #include "MQ7.hpp"
 #include "BMP280.hpp"
+#include "GPS.hpp"
 //#include "test.hpp"
 
 

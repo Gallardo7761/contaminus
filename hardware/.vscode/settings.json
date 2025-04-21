@@ -9,7 +9,8 @@
         "utility": "cpp",
         "bmp280.h": "c",
         "random": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "cmath": "cpp"
     },
     "github.copilot.enable": {
         "*": false,

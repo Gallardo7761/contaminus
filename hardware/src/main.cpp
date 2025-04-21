@@ -41,8 +41,14 @@ void setup() {
     // test get
     getRequest(httpClient, "http://172.20.10.7:8082/api/v1/sensors/1/values", response);
     deserializeSensorValue(httpClient, httpClient.GET());
+
+    // test gps
+    GPS_Init();
+    
 }
  
 void loop() {
-    
+    GPS_Read();
+    lon = GPS_longitud();
+    lat = GPS_latitud();
 }

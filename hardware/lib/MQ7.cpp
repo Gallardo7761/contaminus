@@ -10,7 +10,7 @@ void MQ7_Read(float &sensorVolt, float &RSAir, float &R0, float &sensorValue)
 {
     analogWrite(ANALOG_MQ7, 1023);
     delay(60000);
-    analogWrite(ANALOG_MQ7, (1023/5)*1.4 );
+    analogWrite(ANALOG_MQ7, (1023/5)*1.4);
 
     for(int i = 0; i<100; i++)
     { 
