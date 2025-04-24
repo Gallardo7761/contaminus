@@ -1,8 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import cleanPlugin from 'vite-plugin-clean'
-import path from 'path'
-import os from 'os'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -19,10 +17,7 @@ export default defineConfig({
           "chartjs": ["chart.js"]
         }
       }
-    },
-    outDir: path.join(
-      os.platform() === 'win32' ? os.homedir() + '\\.contaminus\\webroot' : os.homedir() + '/.config/contaminus/webroot'
-    ),
+    }
   },
   publicDir: 'public',
 })

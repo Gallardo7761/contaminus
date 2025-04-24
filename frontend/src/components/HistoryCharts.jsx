@@ -48,7 +48,7 @@ const HistoryCharts = () => {
   const ENDPOINT = config.appConfig.endpoints.sensors;
 
   const reqConfig = {
-      baseUrl: `${BASE}/${ENDPOINT}`,
+      baseUrl: `${BASE}${ENDPOINT}`,
       params: {}
   }
 

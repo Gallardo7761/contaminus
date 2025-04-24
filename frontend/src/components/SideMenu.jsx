@@ -42,7 +42,7 @@ const SideMenu = ({ isOpen, onClose }) => {
     const ENDPOINT = config.appConfig.endpoints.GET_DEVICES;
 
     const reqConfig = {
-        baseUrl: `${BASE}/${ENDPOINT}`,
+        baseUrl: `${BASE}${ENDPOINT}`,
         params: {}
     }
 
