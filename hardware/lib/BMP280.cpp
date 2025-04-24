@@ -1,4 +1,4 @@
-#include "BMP280.h"
+#include "BMP280.hpp"
 
 
 void BMP280_Init()

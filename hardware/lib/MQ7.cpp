@@ -1,5 +1,9 @@
 #include "MQ7.hpp"
  
+unsigned long tiempoAnterior = 0;
+const long intervalo1 = 60000;
+const long intervalo2 = 3000;
+
 void MQ7_Init()
 {
     pinMode(DIGITAL_MQ7, INPUT);
@@ -8,23 +12,29 @@ void MQ7_Init()
  
 void MQ7_Read(float &sensorVolt, float &RSAir, float &R0, float &sensorValue)
 {
-    analogWrite(ANALOG_MQ7, 1023);
-    delay(60000);
-    analogWrite(ANALOG_MQ7, (1023/5)*1.4);
+    unsigned long tiempoActual = millis();
 
-    for(int i = 0; i<100; i++)
-    { 
-        sensorValue = sensorValue + analogRead(ANALOG_MQ7);
-        delay(90000);
+    if (tiempoActual - tiempoAnterior >= intervalo1){
+        tiempoAnterior = tiempoActual;
+        analogWrite(ANALOG_MQ7, 1023);
+        analogWrite(ANALOG_MQ7, (1023/5)*1.4);
     }
-
-    sensorValue = sensorValue/100.0;
-    sensorVolt = sensorValue/1024*5.0;
-    RSAir = (5.0-sensorVolt)/sensorVolt;
-    R0 = RSAir/(26+(1/3));
-
-    Serial.print("R0 = ");
-    Serial.println(R0);
-
-    delay(1000);
+    for(int i = 0; i<50; i++)
+    {  
+        if (tiempoActual - tiempoAnterior >= intervalo1){
+            tiempoAnterior = tiempoActual;
+            sensorValue = sensorValue + analogRead(ANALOG_MQ7);
+        }
+    }
+    
+    if (tiempoActual - tiempoAnterior >= intervalo1){
+        tiempoAnterior = tiempoActual;
+        sensorValue = sensorValue/100.0;
+        sensorVolt = sensorValue/1024*5.0;
+        RSAir = (5.0-sensorVolt)/sensorVolt;
+        R0 = RSAir/(26+(1/3));
+    
+        Serial.print("R0 = ");
+        Serial.println(R0);
+    }
 }
