@@ -7,10 +7,17 @@
         "functional": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "bmp280.h": "c"
+        "bmp280.h": "c",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp"
     },
     "github.copilot.enable": {
-        "*": false,
+        "*": true,
         "plaintext": false,
         "markdown": false,
         "scminput": false,

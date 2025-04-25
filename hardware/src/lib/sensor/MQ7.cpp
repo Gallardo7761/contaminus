@@ -1,5 +1,5 @@
 #include "MQ7.hpp"
- 
+
 void MQ7_Init()
 {
     pinMode(DIGITAL_MQ7, INPUT);
