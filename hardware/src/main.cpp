@@ -38,24 +38,12 @@ void setup()
     getRequest(httpClient, "http://172.20.10.7:8082/api/v1/sensors/1/values", response);
     deserializeSensorValue(httpClient, httpClient.GET()); */
 
-    BMP280_Init();
+    BME280_Init();
+
 }
 
 void loop()
 {
-    if (BMP280_Read(temperature, pressure, altitude))
-    {
-        Serial.print("Temperature: ");
-        Serial.println(temperature);
-        Serial.print("Pressure: ");
-        Serial.println(pressure);
-        Serial.print("Altitude: ");
-        Serial.println(altitude);
-    }
-    else
-    {
-        Serial.println("❌ Lectura fallida del BMP280");
-    }
-
-    delay(2000);
+    Serial.println(temperature);
+    Serial.println(pressure);
 }

@@ -9,6 +9,6 @@
 #include "RestClient.hpp"
 #include "WifiConnection.hpp"
 #include "MqttClient.hpp"
-#include "BMP280.hpp"
+#include "BME280.hpp"
 
 uint32_t getChipID();
