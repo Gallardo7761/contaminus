@@ -5,7 +5,7 @@ MD_Parola display = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVI
 void MAX7219_Init()
 {
     display.begin();
-    display.setIntensity(1); // 0-15
+    display.setIntensity(15); // 0-15
     display.displayClear();
 }
 

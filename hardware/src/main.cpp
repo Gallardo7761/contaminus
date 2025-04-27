@@ -13,19 +13,19 @@ void setup()
 {
     Serial.begin(9600);
 
-    Serial.println("Iniciando...");
+    /*Serial.println("Iniciando...");
     MQ7_Init();
     Serial.println("Sensor MQ7 inicializado");
     BME280_Init();
     Serial.println("Sensor BME280 inicializado");
     GPS_Init();
-    Serial.println("GPS inicializado");
+    Serial.println("GPS inicializado"); */
     MAX7219_Init();
     Serial.println("Display inicializado");
 
-    prettyReadBME280();
-    prettyReadMQ7();
+    //prettyReadBME280();
     testMatrix();
+    //prettyReadMQ7();
 }
 
 void loop()
@@ -65,6 +65,7 @@ void testMatrix()
 {
     Serial.println("Escribiendo en el display...");
     MAX7219_DisplayText("Prueba de texto", PA_LEFT, 100, 500);
+    
 }
 
 uint32_t getChipID()

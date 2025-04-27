@@ -4,7 +4,6 @@
 
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES 4 // 4 modulos 8x8
-
 #define DATA_PIN 19
 #define CS_PIN 18
 #define CLK_PIN 17
