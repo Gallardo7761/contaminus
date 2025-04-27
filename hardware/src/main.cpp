@@ -8,7 +8,9 @@ BMP280_DEV bme;
 
 // HTTP Request
 String response;
+String payload;
 const String url = "/api/v1/sensors/:sensorId/values";
+
 
 // MQ7
 float sensorVolt, sensorValue, RSAir, R0; 
@@ -52,6 +54,8 @@ void loop() {
     GPS_Read();
     lon = GPS_longitud();
     lat = GPS_latitud();
- //postRequest(HTTPClient &httpClient, const String url, String &payload, String &response)
-    postRequest(httpClient, url, serializeSensorValue(), )
+    //postRequest(HTTPClient &httpClient, const String url, String &payload, String &response)
+    //String serializeSensorValue(int sensorId, int deviceId, String sensorType, String unit, int sensorStatus,  float temperature, float humidity, float carbonMonoxide, float lat, float lon, long timestamp)
+
+    postRequest(httpClient, url, payload, response);
 }
