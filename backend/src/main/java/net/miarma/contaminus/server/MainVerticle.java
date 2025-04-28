@@ -85,16 +85,6 @@ public class MainVerticle extends AbstractVerticle {
             }
         });
 
-        vertx.deployVerticle(new WebServerVerticle(), result -> {
-        	if (result.succeeded()) {
-            	Constants.LOGGER.info("🟢 WebServerVerticle desplegado");
-            	Constants.LOGGER.info("\t🔗 WEB SERVER URL: " + configManager.getHost() 
-            		+ ":" +  configManager.getWebserverPort());
-            } else {
-            	Constants.LOGGER.error("🔴 Error deploying WebServerVerticle: " + result.cause());
-            }
-        });
-
         startPromise.complete();
     }
     

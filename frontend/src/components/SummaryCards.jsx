@@ -45,7 +45,7 @@ const SummaryCards = ({ deviceId }) => {
     const endp = ENDPOINT.replace('{0}', deviceId);
 
     const reqConfig = {
-        baseUrl: `${BASE}/${endp}`,
+        baseUrl: `${BASE}${endp}`,
         params: {}
     }
 
