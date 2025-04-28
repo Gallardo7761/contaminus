@@ -1,0 +1,16 @@
+#include <MD_Parola.h>
+#include <MD_MAX72XX.h>
+#include <SPI.h>
+
+#define HARDWARE_TYPE MD_MAX72XX::FC16_HW
+#define MAX_DEVICES 4 // 4 modulos 8x8
+#define DATA_PIN 19
+#define CS_PIN 18
+#define CLK_PIN 17
+
+void MAX7219_Init();
+void MAX7219_DisplayText(const char *text, textPosition_t align, int speed, int pause);
+void MAX7219_StartAnimation();
+void MAX7219_StopAnimation();
+void MAX7219_ClearDisplay();
+void MAX7219_SetBrightness(uint8_t brightness);
