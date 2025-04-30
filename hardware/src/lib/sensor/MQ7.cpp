@@ -2,25 +2,44 @@
 
 void MQ7_Init()
 {
-    pinMode(DIGITAL_MQ7, INPUT);
-    pinMode(ANALOG_MQ7, INPUT);
+  pinMode(HEATER_PIN, OUTPUT);
+  pinMode(SENSOR_PIN, INPUT);
 }
- 
-void MQ7_Read(float &sensorVolt, float &RSAir, float &R0, float &sensorValue)
+
+void MQ7_Read(float &sensorValue)
 {
-    // preheat
-    analogWrite(ANALOG_MQ7, 1023);
-    delay(60000);
-    analogWrite(ANALOG_MQ7, (1023/5)*1.4 );
+  Serial.println("\t - Calentando MQ7");
+  digitalWrite(HEATER_PIN, HIGH);
+  delay(60000);
 
-    for(int i = 0; i<100; i++)
-    { 
-        sensorValue = sensorValue + analogRead(ANALOG_MQ7);
-        delay(1200);
-    }
+  Serial.println("\t - Enfriando MQ7");
+  pwmBitBang(90000, 28, 100);
 
-    sensorValue = sensorValue/100.0;
-    sensorVolt = sensorValue/1024*5.0;
-    RSAir = (5.0-sensorVolt)/sensorVolt;
-    R0 = RSAir/(26+(1/3));
+  const int N = 1;
+  long sum = 0;
+  for (int i = 0; i < N; i++)
+  {
+    sum += analogRead(SENSOR_PIN);
+    delay(5);
+  }
+
+  sensorValue = sum / float(N);
+  //sensorVolt = sensorValue * (3.3 / 4095.0); // ADC 12 bits, 3.3V
+}
+
+// generamos PWM por software usando bit banging
+void pwmBitBang(int totalMs, int highPct, int cycleMs)
+{
+  int onTime = cycleMs * highPct / 100;
+  int offTime = cycleMs - onTime;
+  int elapsed = 0;
+  
+  while (elapsed < totalMs)
+  {
+    digitalWrite(HEATER_PIN, HIGH);
+    delay(onTime);
+    digitalWrite(HEATER_PIN, LOW);
+    delay(offTime);
+    elapsed += cycleMs;
+  }
 }

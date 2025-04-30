@@ -1,5 +1,5 @@
 #include <MD_Parola.h>
-#include <MD_MAX72XX.h>
+#include <MD_MAX72xx.h>
 #include <SPI.h>
 
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
@@ -9,8 +9,8 @@
 #define CLK_PIN 17
 
 void MAX7219_Init();
-void MAX7219_DisplayText(const char *text, textPosition_t align, int speed, int pause);
-void MAX7219_StartAnimation();
-void MAX7219_StopAnimation();
+void MAX7219_DisplayText(const char *text, textPosition_t align, uint16_t speed, uint16_t pause);
+bool MAX7219_StartAnimation();
+void MAX7219_ResetAnimation();
 void MAX7219_ClearDisplay();
 void MAX7219_SetBrightness(uint8_t brightness);

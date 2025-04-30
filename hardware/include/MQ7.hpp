@@ -1,7 +1,8 @@
 #include <Arduino.h>
  
-#define ANALOG_MQ7 33
-#define DIGITAL_MQ7 32
- 
+#define HEATER_PIN 16
+#define SENSOR_PIN 34
+
 void MQ7_Init();
-void MQ7_Read(float &sensorVolt, float &RSAir, float &R0, float &sensorValue);
+void MQ7_Read(float &sensorValue);
+void pwmBitBang(int totalMs, int highPct, int cycleMs);

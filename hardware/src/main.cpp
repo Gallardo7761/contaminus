@@ -4,44 +4,44 @@ const uint32_t deviceId = getChipID();
 
 extern HTTPClient httpClient; // HTTP client object
 String response; // HTTP Response
-float sensorVolt, sensorValue, RSAir, R0; // MQ7 vars
+float sensorVolt, sensorValue; // MQ7 vars
 float temperature, pressure, humidity; // BME280 vars
 float lon, lat; // GPS vars
 extern MD_Parola display; // Display object
 
 void setup()
 {
+    /*GPS_Init();
+    Serial.println("GPS inicializado"); */
     Serial.begin(9600);
 
-    /*Serial.println("Iniciando...");
-    MQ7_Init();
-    Serial.println("Sensor MQ7 inicializado");
+    Serial.println("Iniciando...");
     BME280_Init();
     Serial.println("Sensor BME280 inicializado");
-    GPS_Init();
-    Serial.println("GPS inicializado"); */
     MAX7219_Init();
     Serial.println("Display inicializado");
+    MQ7_Init();
+    Serial.println("Sensor MQ7 inicializado");
 
-    //prettyReadBME280();
+    prettyReadBME280();
     testMatrix();
-    //prettyReadMQ7();
+    prettyReadMQ7();
 }
 
 void loop()
 {
-    
+    if(MAX7219_StartAnimation())
+    {
+        MAX7219_ResetAnimation();
+    }
 }
 
 void prettyReadMQ7()
 {
     Serial.println("Leyendo sensor MQ7...");
-    MQ7_Read(sensorVolt, RSAir, R0, sensorValue);
-    Serial.print("\t - Voltaje: "); Serial.print(sensorVolt); Serial.print("V\r\n");
+    MQ7_Read(sensorValue);
+    //Serial.print("\t - Voltaje: "); Serial.print(sensorVolt); Serial.print("V\r\n");
     Serial.print("\t - Valor sensor: "); Serial.print(sensorValue); Serial.print("\r\n");
-    Serial.print("\t - Resistencia aire: "); Serial.print(RSAir); Serial.print("kOhm\r\n");
-    Serial.print("\t - Resistencia aire: "); Serial.print(R0); Serial.print("kOhm\r\n");
-    Serial.print("\t - Concentración CO: "); Serial.print(sensorValue); Serial.print("ppm\r\n");
 }
 
 void prettyReadBME280()
@@ -64,7 +64,7 @@ void prettyReadGPS()
 void testMatrix()
 {
     Serial.println("Escribiendo en el display...");
-    MAX7219_DisplayText("Prueba de texto", PA_LEFT, 100, 500);
+    MAX7219_DisplayText("Prueba de texto", PA_LEFT, 50, 0);
     
 }
 
