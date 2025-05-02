@@ -11,8 +11,6 @@ extern MD_Parola display; // Display object
 
 void setup()
 {
-    /*GPS_Init();
-    Serial.println("GPS inicializado"); */
     Serial.begin(9600);
 
     Serial.println("Iniciando...");
@@ -21,11 +19,20 @@ void setup()
     MAX7219_Init();
     Serial.println("Display inicializado");
     MQ7_Init();
-    Serial.println("Sensor MQ7 inicializado");
+    Serial.println("Sensor MQ7 inicializado"); 
+
+    /*
+    GPS_Init();
+    Serial.println("GPS inicializado");
+    */
 
     prettyReadBME280();
     testMatrix();
     prettyReadMQ7();
+
+    /* 
+    
+    */
 }
 
 void loop()
@@ -40,7 +47,6 @@ void prettyReadMQ7()
 {
     Serial.println("Leyendo sensor MQ7...");
     MQ7_Read(sensorValue);
-    //Serial.print("\t - Voltaje: "); Serial.print(sensorVolt); Serial.print("V\r\n");
     Serial.print("\t - Valor sensor: "); Serial.print(sensorValue); Serial.print("\r\n");
 }
 

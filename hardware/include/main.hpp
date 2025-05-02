@@ -11,7 +11,7 @@
 #include "BME280.hpp"
 #include "GPS.hpp"
 #include "MAX7219.hpp"
-#include "MQ7.hpp"
+#include "MQ7v2.hpp"
 
 uint32_t getChipID();
 void prettyReadMQ7();
