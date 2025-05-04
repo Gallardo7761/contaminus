@@ -2,13 +2,9 @@
 
 TinyGPSPlus gps;
 
-void GPS_Init()
+GPSData_t GPS_Read()
 {
-    Serial.begin(9600);
-}
-
-void GPS_Read(float &lat, float &lon)
-{
+    float lat, lon;
     if (gps.location.isValid())
     {
         lat = gps.location.lat();
@@ -19,4 +15,5 @@ void GPS_Read(float &lat, float &lon)
         lat = 0.0f;
         lon = 0.0f;
     }
+    return {lat, lon};
 }

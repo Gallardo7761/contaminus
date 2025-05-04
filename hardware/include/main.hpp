@@ -13,8 +13,23 @@
 #include "MAX7219.hpp"
 #include "MQ7v2.hpp"
 
+struct TaskTimer {
+    uint32_t lastRun = 0;
+    uint32_t interval = 1000;
+
+    TaskTimer() = default;
+
+    TaskTimer(uint32_t last, uint32_t interval)
+        : lastRun(last), interval(interval) {}
+};
+
+enum AirQualityStatus {
+    GOOD,
+    BAD
+};
+
+void readMQ7();
+void readBME280();
+void readGPS();
+void writeMatrix(const char* message);
 uint32_t getChipID();
-void prettyReadMQ7();
-void prettyReadBME280();
-void prettyReadGPS();
-void testMatrix();

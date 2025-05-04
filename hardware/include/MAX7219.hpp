@@ -10,7 +10,7 @@
 
 void MAX7219_Init();
 void MAX7219_DisplayText(const char *text, textPosition_t align, uint16_t speed, uint16_t pause);
-bool MAX7219_StartAnimation();
+bool MAX7219_Animate();
 void MAX7219_ResetAnimation();
 void MAX7219_ClearDisplay();
 void MAX7219_SetBrightness(uint8_t brightness);

@@ -6,5 +6,10 @@
 #define RL 10000.0     // 10kΩ
 #define RO 10000.0     // Resistencia del aire limpio
 
+struct MQ7Data_t
+{
+    float co;
+};
+
 void MQ7_Init();
-void MQ7_Read(float &sensorValue);
+MQ7Data_t MQ7_Read();

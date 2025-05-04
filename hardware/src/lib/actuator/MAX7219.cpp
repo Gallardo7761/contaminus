@@ -7,6 +7,7 @@ void MAX7219_Init()
     display.begin();
     display.setIntensity(1); // 0-15
     display.displayClear();
+    display.displaySuspend(false);
 }
 
 void MAX7219_DisplayText(const char *text, textPosition_t align, uint16_t speed, uint16_t pause)
@@ -14,7 +15,7 @@ void MAX7219_DisplayText(const char *text, textPosition_t align, uint16_t speed,
     display.displayText(text, align, speed, pause, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
 }
 
-bool MAX7219_StartAnimation()
+bool MAX7219_Animate()
 {
     return display.displayAnimate();
 }

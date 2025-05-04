@@ -23,12 +23,12 @@ void BME280_Init()
     while (!bme.begin());
 }
 
-bool BME280_Read(float &pressure, float &temperature, float &humidity)
+BME280Data_t BME280_Read()
 {
-    BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
-    BME280::PresUnit presUnit(BME280::PresUnit_Pa);
-    bme.read(pressure, temperature, humidity, tempUnit, presUnit);
-
-    return (temperature != 0.0f && pressure != 0.0f);
+    float p, t, h;
+    BME280::TempUnit tUnit(BME280::TempUnit_Celsius);
+    BME280::PresUnit pUnit(BME280::PresUnit_Pa);
+    bme.read(p, t, h, tUnit, pUnit);
+    return {p, t, h};
 }
 

@@ -3,6 +3,12 @@
 
 #define I2C_BME280_ADDRESS 0x76
 
+struct BME280Data_t
+{
+    float pressure;
+    float temperature;
+    float humidity;
+};
+
 void BME280_Init();
-bool BME280_DataReady();
-bool BME280_Read(float &pressure, float &temperature, float &humidity);
+BME280Data_t BME280_Read();
