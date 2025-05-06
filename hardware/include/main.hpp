@@ -28,8 +28,9 @@ enum AirQualityStatus {
     BAD
 };
 
-void readMQ7();
+void processMQ7();
 void readBME280();
 void readGPS();
 void writeMatrix(const char* message);
+void printAllData();
 uint32_t getChipID();

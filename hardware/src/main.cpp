@@ -5,11 +5,8 @@
 const uint32_t DEVICE_ID = getChipID();
 const char ALL_VEHICLES[] = "Todo tipo de vehiculos";
 const char ELECTRIC_VEHICLES[] = "Solo vehiculos electricos/hibridos";
+const char* currentMessage = nullptr;
 
-TaskTimer bmeTimer{0, 1000};
-TaskTimer mq7Timer{0, 1000};
-TaskTimer gpsTimer{0, 1000};
-TaskTimer printTimer{0, 1000};
 TaskTimer matrixTimer{0, 25};
 
 extern HTTPClient httpClient;
@@ -31,6 +28,7 @@ void setup()
     MQ7_Init();
     Serial.println("Sensor MQ7 inicializado"); 
 
+    // inicializar el estado de la matriz
     writeMatrix(ALL_VEHICLES);
 }
 
@@ -38,41 +36,29 @@ void loop()
 {
     uint32_t now = millis();
 
+    // animación matriz de leds
     if (now - matrixTimer.lastRun >= matrixTimer.interval) {
         if (MAX7219_Animate()) {
             MAX7219_ResetAnimation();
         }
         matrixTimer.lastRun = now;
     }
-    
-    if (now - bmeTimer.lastRun >= bmeTimer.interval) {
+
+    // MQ7 tarda mas y marca el ritmo
+    if (MQ7_Update()) { 
+        mq7Data.co = MQ7_Read().co;
         readBME280();
-        bmeTimer.lastRun = now;
-    }
-
-    if (now - mq7Timer.lastRun >= mq7Timer.interval) {
-        readMQ7();
-        mq7Timer.lastRun = now;
-    }
-
-    if (now - gpsTimer.lastRun >= gpsTimer.interval) {
         readGPS();
-        gpsTimer.lastRun = now;
+        processMQ7();
+        #ifdef DEBUG
+        printAllData();
+        #endif
+        // sendToServer();
     }
-
-    #ifdef DEBUG
-    if (now - printTimer.lastRun >= printTimer.interval) {
-        Serial.print("---------------------\n");
-        Serial.println("Leyendo sensores...");
-        printTimer.lastRun = now;
-    }
-    #endif
 }
 
-void readMQ7()
+void processMQ7()
 {
-    mq7Data = MQ7_Read();
-
     #ifdef DEBUG
     Serial.print("CO: "); Serial.println(mq7Data.co);
     #endif
@@ -91,32 +77,42 @@ void readMQ7()
     }
 }
 
-
 void readBME280()
 {
     bme280Data = BME280_Read();
-    #ifdef DEBUG
-    Serial.print("Presión: "); Serial.print(bme280Data.pressure / 100); Serial.println(" hPa");
-    Serial.print("Temperatura: "); Serial.print(bme280Data.temperature); Serial.println(" °C");
-    Serial.print("Humedad: "); Serial.print(bme280Data.humidity); Serial.println(" %");
-    #endif
 }
 
 void readGPS()
 {
     gpsData = GPS_Read();
-    #ifdef DEBUG
-    Serial.print("Latitud: "); Serial.println(gpsData.lat);
-    Serial.print("Longitud: "); Serial.println(gpsData.lon);
-    #endif
 }
 
 void writeMatrix(const char* message)
 {
+    if (currentMessage == message) return;
+    currentMessage = message;
+
     #ifdef DEBUG
     Serial.println("Escribiendo en el display...");
     #endif
+    
     MAX7219_DisplayText(message, PA_LEFT, 50, 0);
+}
+
+void printAllData()
+{
+    Serial.println("---------------------");
+
+    Serial.print("ID: "); Serial.println(DEVICE_ID, HEX);
+
+    Serial.print("Presión: "); Serial.print(bme280Data.pressure / 100); Serial.println(" hPa");
+    Serial.print("Temperatura: "); Serial.print(bme280Data.temperature); Serial.println(" °C");
+    Serial.print("Humedad: "); Serial.print(bme280Data.humidity); Serial.println(" %");
+
+    Serial.print("Latitud: "); Serial.println(gpsData.lat);
+    Serial.print("Longitud: "); Serial.println(gpsData.lon);
+
+    Serial.print("CO: "); Serial.println(mq7Data.co);
 }
 
 uint32_t getChipID()

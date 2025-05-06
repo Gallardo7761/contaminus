@@ -1,7 +1,7 @@
 #include "TinyGPSPlus.h"
 
-#define RX 4
-#define TX 5
+#define RX 26
+#define TX 14
 
 struct GPSData_t
 {
