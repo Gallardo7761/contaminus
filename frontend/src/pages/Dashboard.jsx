@@ -1,6 +1,6 @@
-import PollutionMap from '../components/PollutionMap.jsx'
-import HistoryCharts from '../components/HistoryCharts.jsx'
-import SummaryCards from '../components/SummaryCards.jsx'
+import PollutionMap from '@/components/PollutionMap.jsx'
+import HistoryCharts from '@/components/HistoryCharts.jsx'
+import SummaryCards from '@/components/SummaryCards.jsx'
 
 import { useParams } from 'react-router-dom';
 

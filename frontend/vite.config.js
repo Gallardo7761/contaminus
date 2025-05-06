@@ -5,7 +5,13 @@ import cleanPlugin from 'vite-plugin-clean'
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: 5173,
+    host: "localhost",
+    port: 3000,
+  },
+  resolve: {
+    alias: {
+      '@/': '/src/',
+    },
   },
   plugins: [react(), cleanPlugin()],
   build: {

@@ -1,29 +1,10 @@
 import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
 import PropTypes from 'prop-types';
 
-import { useConfig } from '../contexts/ConfigContext.jsx';
+import { useConfig } from '@/hooks/useConfig.js';
 
-import { DataProvider } from '../contexts/DataContext.jsx';
-import { useData } from '../contexts/DataContext.jsx';
-
-/**
- * PollutionMap.jsx
- * 
- * Este archivo define el componente PollutionMap, que muestra un mapa con los niveles de contaminación en diferentes ubicaciones.
- * 
- * Importaciones:
- * - MapContainer, TileLayer, Circle, Popup: Componentes de react-leaflet para renderizar el mapa y los círculos de contaminación.
- * - useConfig: Hook personalizado para acceder al contexto de configuración.
- * - DataProvider, useData: Funciones del contexto de datos para obtener y manejar datos.
- * 
- * Funcionalidad:
- * - PollutionMap: Componente que configura la solicitud de datos y utiliza el DataProvider para obtener datos de sensores.
- *   - Muestra mensajes de carga y error según el estado de la configuración.
- * - PollutionMapContent: Componente que procesa los datos obtenidos y renderiza los círculos de contaminación en el mapa.
- *   - Utiliza el hook `useData` para acceder a los datos de sensores.
- *   - Renderiza círculos de diferentes colores y tamaños según el nivel de contaminación.
- * 
- */
+import { DataProvider } from '@/context/DataContext.jsx';
+import { useDataContext } from '@/hooks/useDataContext';
 
 const PollutionCircles = ({ data }) => {
   return data.map(({ lat, lng, level }, index) => {
@@ -83,7 +64,7 @@ const PollutionMap = ({ deviceId }) => {
 
 const PollutionMapContent = () => {
   const { config, configLoading, configError } = useConfig();
-  const { data, dataLoading, dataError } = useData();
+  const { data, dataLoading, dataError } = useDataContext();
 
   if (configLoading) return <p>Cargando configuración...</p>;
   if (configError) return <p>Error al cargar configuración: {configError}</p>;

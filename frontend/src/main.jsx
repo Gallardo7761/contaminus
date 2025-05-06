@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './css/index.css'
 import App from './components/App.jsx'
 
-import { ThemeProvider } from './contexts/ThemeContext.jsx'
-import { ConfigProvider } from './contexts/ConfigContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
+import { ConfigProvider } from './context/ConfigContext.jsx'
 
 /**
  * main.jsx

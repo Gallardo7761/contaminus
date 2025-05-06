@@ -4,34 +4,11 @@ import CardContainer from './CardContainer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud, faClock, faTemperature0, faWater } from '@fortawesome/free-solid-svg-icons';
 
-import { DataProvider } from '../contexts/DataContext';
-import { useData } from '../contexts/DataContext';
+import { DataProvider } from '@/context/DataContext';
+import { useDataContext } from '@/hooks/useDataContext';
 
-import { useConfig } from '../contexts/ConfigContext';
-import { timestampToTime, formatTime } from '../util/date.js';
-
-/**
- * SummaryCards.jsx
- * 
- * Este archivo define el componente SummaryCards, que muestra tarjetas resumen con información relevante obtenida de sensores.
- * 
- * Importaciones:
- * - PropTypes: Librería para la validación de tipos de propiedades en componentes de React.
- * - CardContainer: Componente que actúa como contenedor para las tarjetas.
- * - DataProvider, useData: Funciones del contexto de datos para obtener y manejar datos.
- * - useConfig: Hook personalizado para acceder al contexto de configuración.
- * 
- * Funcionalidad:
- * - SummaryCards: Componente que configura la solicitud de datos y utiliza el DataProvider para obtener datos de sensores.
- *   - Muestra mensajes de carga y error según el estado de la configuración.
- * - SummaryCardsContent: Componente que procesa los datos obtenidos y actualiza el contenido de las tarjetas.
- *   - Utiliza el hook `useData` para acceder a los datos de sensores.
- *   - Actualiza el contenido y estado de las tarjetas según los datos obtenidos.
- * 
- * PropTypes:
- * - SummaryCards espera una propiedad `data` que es un array.
- * 
- */
+import { useConfig } from '@/hooks/useConfig.js';
+import { DateParser } from '@/util/dateParser';
 
 const SummaryCards = ({ deviceId }) => {
     const { config, configLoading, configError } = useConfig();
@@ -51,13 +28,13 @@ const SummaryCards = ({ deviceId }) => {
 
     return (
         <DataProvider config={reqConfig}>
-            <SummaryCardsContent deviceId={deviceId} />
+            <SummaryCardsContent />
         </DataProvider>
     );
 }
 
 const SummaryCardsContent = () => {
-    const { data, dataLoading, dataError } = useData();
+    const { data, dataLoading, dataError } = useDataContext();
 
     if (dataLoading) return <p>Cargando datos...</p>;
     if (dataError) return <p>Error al cargar datos: {dataError}</p>;
@@ -74,7 +51,7 @@ const SummaryCardsContent = () => {
         let coData = data[1];
         let tempData = data[2];
 
-        let lastTime = timestampToTime(coData.airValuesTimestamp);
+        let lastTime = DateParser.timestampToString(coData.airValuesTimestamp);
         let lastDate = new Date(coData.airValuesTimestamp);
 
         CardsData[0].content = tempData.temperature + "°C";
@@ -83,7 +60,7 @@ const SummaryCardsContent = () => {
         CardsData[1].status = "Humedad actual";
         CardsData[2].content = coData.carbonMonoxide + " ppm";
         CardsData[2].status = "Nivel de CO actual";
-        CardsData[3].content = formatTime(lastTime);
+        CardsData[3].content = lastTime;
         CardsData[3].status = "Día " + lastDate.toLocaleDateString();
 
     }
