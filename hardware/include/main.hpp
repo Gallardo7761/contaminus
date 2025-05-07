@@ -4,6 +4,11 @@
 #define REST_PORT 443
 #define MQTT_PORT 1883
 
+#define MQ7_ID 1
+#define BME280_ID 2
+#define GPS_ID 3
+#define MAX7219_ID 1
+
 #include "JsonTools.hpp"
 #include "RestClient.hpp"
 #include "WifiConnection.hpp"
@@ -28,7 +33,7 @@ enum AirQualityStatus {
     BAD
 };
 
-void processMQ7();
+void readMQ7();
 void readBME280();
 void readGPS();
 void writeMatrix(const char* message);

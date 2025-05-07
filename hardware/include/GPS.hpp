@@ -9,4 +9,5 @@ struct GPSData_t
     float lon;
 };
 
+void GPS_Init();
 GPSData_t GPS_Read();

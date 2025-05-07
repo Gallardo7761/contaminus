@@ -8,6 +8,7 @@ const char ELECTRIC_VEHICLES[] = "Solo vehiculos electricos/hibridos";
 const char* currentMessage = nullptr;
 
 TaskTimer matrixTimer{0, 25};
+TaskTimer globalTimer{0, 30000};
 
 extern HTTPClient httpClient;
 extern MD_Parola display;
@@ -20,15 +21,17 @@ AirQualityStatus currentAirStatus = GOOD;
 void setup()
 {
     Serial.begin(115200);
+
     Serial.println("Iniciando...");
     BME280_Init();
     Serial.println("Sensor BME280 inicializado");
-    MAX7219_Init();
-    Serial.println("Display inicializado");
+    GPS_Init();
+    Serial.println("Sensor GPS inicializado");
     MQ7_Init();
     Serial.println("Sensor MQ7 inicializado"); 
+    MAX7219_Init();
+    Serial.println("Display inicializado");
 
-    // inicializar el estado de la matriz
     writeMatrix(ALL_VEHICLES);
 }
 
@@ -36,7 +39,6 @@ void loop()
 {
     uint32_t now = millis();
 
-    // animación matriz de leds
     if (now - matrixTimer.lastRun >= matrixTimer.interval) {
         if (MAX7219_Animate()) {
             MAX7219_ResetAnimation();
@@ -44,26 +46,23 @@ void loop()
         matrixTimer.lastRun = now;
     }
 
-    // MQ7 tarda mas y marca el ritmo
-    if (MQ7_Update()) { 
-        mq7Data.co = MQ7_Read().co;
+    if (now - globalTimer.lastRun >= globalTimer.interval)
+    {
         readBME280();
         readGPS();
-        processMQ7();
+        readMQ7();
         #ifdef DEBUG
         printAllData();
         #endif
-        // sendToServer();
+        globalTimer.lastRun = now;
     }
 }
 
-void processMQ7()
+void readMQ7()
 {
-    #ifdef DEBUG
-    Serial.print("CO: "); Serial.println(mq7Data.co);
-    #endif
+    const float CO_THRESHOLD = 100.0f;
 
-    const float CO_THRESHOLD = 10.0f;
+    mq7Data = MQ7_Read();
 
     AirQualityStatus newStatus = (mq7Data.co >= CO_THRESHOLD) ? BAD : GOOD;
 
@@ -113,6 +112,7 @@ void printAllData()
     Serial.print("Longitud: "); Serial.println(gpsData.lon);
 
     Serial.print("CO: "); Serial.println(mq7Data.co);
+    Serial.print("D0: "); Serial.println(mq7Data.threshold);
 }
 
 uint32_t getChipID()
