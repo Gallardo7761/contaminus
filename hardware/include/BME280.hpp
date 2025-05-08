@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Wire.h>
 #include <BME280I2C.h>
 

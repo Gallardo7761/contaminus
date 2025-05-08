@@ -6,30 +6,30 @@ import net.miarma.contaminus.common.Table;
 @Table("devices")
 public class Device {
 
-    private Integer deviceId;
+    private String deviceId;
     private Integer groupId;
     private String deviceName;
 
     public Device() {}
     
     public Device(Row row) {
-        this.deviceId = row.getInteger("deviceId");
+        this.deviceId = row.getString("deviceId");
         this.groupId = row.getInteger("groupId");
         this.deviceName = row.getString("deviceName");
     }
 
-	public Device(Integer deviceId, Integer groupId, String deviceName) {
+	public Device(String deviceId, Integer groupId, String deviceName) {
 		super();
 		this.deviceId = deviceId;
 		this.groupId = groupId;
 		this.deviceName = deviceName;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(Integer deviceId) {
+	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
 

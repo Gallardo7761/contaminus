@@ -1,3 +1,5 @@
+#pragma once
+
 #include "TinyGPSPlus.h"
 
 struct GPSData_t

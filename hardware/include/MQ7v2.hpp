@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 
 #define MQ7_A0 34

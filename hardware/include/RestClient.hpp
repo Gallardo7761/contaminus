@@ -1,3 +1,5 @@
+#pragma once
+
 #include <HTTPClient.h>
 
 void getRequest(HTTPClient &httpClient, const String url, String &response);

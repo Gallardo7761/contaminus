@@ -10,7 +10,7 @@ import net.miarma.contaminus.util.DateParser;
 public class Actuator {
 
     private Integer actuatorId;
-    private Integer deviceId;
+    private String deviceId;
     private Integer status;
     private Long timestamp;
 
@@ -18,12 +18,12 @@ public class Actuator {
     
     public Actuator(Row row) {
         this.actuatorId = row.getInteger("actuatorId");
-        this.deviceId = row.getInteger("deviceId");
+        this.deviceId = row.getString("deviceId");
         this.status = row.getInteger("status");
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
 
-	public Actuator(Integer actuatorId, Integer deviceId, Integer status, Long timestamp) {
+	public Actuator(Integer actuatorId, String deviceId, Integer status, Long timestamp) {
 		super();
 		this.actuatorId = actuatorId;
 		this.deviceId = deviceId;
@@ -39,11 +39,11 @@ public class Actuator {
 		this.actuatorId = actuatorId;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(Integer deviceId) {
+	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
 

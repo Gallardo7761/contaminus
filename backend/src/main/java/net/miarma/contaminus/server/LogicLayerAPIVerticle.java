@@ -95,7 +95,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     }
     
     private void getDeviceSensors(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	String deviceId = context.request().getParam("deviceId");
     	Promise<Sensor[]> resultList = Promise.promise();
     	resultList.future().onComplete(result -> {
     	    if (result.succeeded()) {
@@ -114,7 +114,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     }
     
     private void getDeviceActuators(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	String deviceId = context.request().getParam("deviceId");
     	Promise<Actuator[]> resultList = Promise.promise();
     	resultList.future().onComplete(result -> {
     	    if (result.succeeded()) {
@@ -133,7 +133,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 	}
     
     private void getDeviceLatestValues(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	String deviceId = context.request().getParam("deviceId");
    
     	Promise<DeviceLatestValuesView[]> resultList = Promise.promise();
     	resultList.future().onComplete(complete -> {
@@ -155,7 +155,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     }
     
     private void getDevicePollutionMap(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	String deviceId = context.request().getParam("deviceId");
     	
     	Promise<DevicePollutionMap[]> resultList = Promise.promise();
     	
@@ -178,7 +178,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 	}
     
     private void getDeviceHistory(RoutingContext context) {
-    	Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+    	String deviceId = context.request().getParam("deviceId");
     	
     	Promise<DeviceSensorHistory[]> resultList = Promise.promise();
     	

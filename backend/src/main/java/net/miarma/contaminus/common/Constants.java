@@ -11,6 +11,8 @@ public class Constants {
 
 	
 	/* API Endpoints */
+    public static final String POST_PAYLOAD = RAW_API_PREFIX + "/device-payload";
+    
 	public static final String GET_GROUPS = RAW_API_PREFIX + "/groups";
 	public static final String POST_GROUPS = RAW_API_PREFIX + "/groups";
 	public static final String PUT_GROUP_BY_ID = RAW_API_PREFIX + "/groups/:groupId";

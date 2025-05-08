@@ -8,7 +8,7 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_sensor_history_by_device")
 public class DeviceSensorHistory {
-	private Integer deviceId;
+	private String deviceId;
 	private String deviceName;
 	private Float value;
 	private String valueType;
@@ -17,14 +17,14 @@ public class DeviceSensorHistory {
 	public DeviceSensorHistory() {}
 	
 	public DeviceSensorHistory(Row row) {
-		this.deviceId = row.getInteger("deviceId");
+		this.deviceId = row.getString("deviceId");
 		this.deviceName = row.getString("deviceName");
 		this.value = row.getFloat("value");
 		this.valueType = row.getString("valueType");
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceSensorHistory(Integer deviceId, String deviceName, Float value, String valueType, Long timestamp) {
+	public DeviceSensorHistory(String deviceId, String deviceName, Float value, String valueType, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.deviceName = deviceName;
@@ -33,7 +33,7 @@ public class DeviceSensorHistory {
 		this.timestamp = timestamp;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 

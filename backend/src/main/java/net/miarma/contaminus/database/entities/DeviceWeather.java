@@ -8,7 +8,7 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_weather_by_device")
 public class DeviceWeather {
-	private Integer deviceId;
+	private String deviceId;
 	private Float temperature;
 	private Float humidity;
 	private Long timestamp;
@@ -16,13 +16,13 @@ public class DeviceWeather {
 	public DeviceWeather() {}
 	
 	public DeviceWeather(Row row) {
-		this.deviceId = row.getInteger("deviceId");
+		this.deviceId = row.getString("deviceId");
 		this.temperature = row.getFloat("temperature");
 		this.humidity = row.getFloat("humidity");
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceWeather(Integer deviceId, Float temperature, Float humidity, Long timestamp) {
+	public DeviceWeather(String deviceId, Float temperature, Float humidity, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.temperature = temperature;
@@ -30,7 +30,7 @@ public class DeviceWeather {
 		this.timestamp = timestamp;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 

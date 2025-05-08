@@ -57,8 +57,6 @@ void loop()
         printAllData();
         #endif
 
-        
-
         globalTimer.lastRun = now;
     }
 }

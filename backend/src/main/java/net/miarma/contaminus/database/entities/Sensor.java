@@ -10,7 +10,7 @@ import net.miarma.contaminus.util.DateParser;
 public class Sensor {
 
     private Integer sensorId;
-    private Integer deviceId;
+    private String deviceId;
     private String sensorType;
     private String unit;
     private Integer status;
@@ -20,14 +20,14 @@ public class Sensor {
     
     public Sensor(Row row) {
         this.sensorId = row.getInteger("sensorId");
-        this.deviceId = row.getInteger("deviceId");
+        this.deviceId = row.getString("deviceId");
         this.sensorType = row.getString("sensorType");
         this.unit = row.getString("unit");
         this.status = row.getInteger("status");
         this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
     }
     
-	public Sensor(Integer sensorId, Integer deviceId, String sensorType, String unit, Integer status, Long timestamp) {
+	public Sensor(Integer sensorId, String deviceId, String sensorType, String unit, Integer status, Long timestamp) {
 		super();
 		this.sensorId = sensorId;
 		this.deviceId = deviceId;
@@ -45,11 +45,11 @@ public class Sensor {
 		this.sensorId = sensorId;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 
-	public void setDeviceId(Integer deviceId) {
+	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
 

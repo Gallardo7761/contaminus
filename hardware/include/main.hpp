@@ -20,7 +20,8 @@
 #include "MAX7219.hpp"
 #include "MQ7v2.hpp"
 
-struct TaskTimer {
+struct TaskTimer
+{
     uint32_t lastRun = 0;
     uint32_t interval = 1000;
 
@@ -30,7 +31,14 @@ struct TaskTimer {
         : lastRun(last), interval(interval) {}
 };
 
-enum AirQualityStatus {
+struct SensorInfo 
+{
+    int id;
+    String type;
+};
+
+enum AirQualityStatus
+{
     GOOD,
     BAD
 };

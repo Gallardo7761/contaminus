@@ -7,7 +7,7 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_latest_values")
 public class DeviceLatestValuesView {
-	private Integer deviceId;
+	private String deviceId;
 	private Integer sensorId;
 	private String sensorType;
 	private String unit;
@@ -23,7 +23,7 @@ public class DeviceLatestValuesView {
     public DeviceLatestValuesView() {}
     
     public DeviceLatestValuesView(Row row) {
-    	this.deviceId = row.getInteger("deviceId");
+    	this.deviceId = row.getString("deviceId");
     	this.sensorId = row.getInteger("sensorId");
     	this.sensorType = row.getString("sensorType");
     	this.unit = row.getString("unit");
@@ -37,7 +37,7 @@ public class DeviceLatestValuesView {
     	this.airValuesTimestamp = DateParser.parseDate(row.getLocalDateTime("airValuesTimestamp"));
     }
 	
-	public DeviceLatestValuesView(Integer deviceId, Integer sensorId, String sensorType, String unit, Integer sensorStatus,
+	public DeviceLatestValuesView(String deviceId, Integer sensorId, String sensorType, String unit, Integer sensorStatus,
 			Long sensorTimestamp, Float temperature, Float humidity, Float carbonMonoxide, Float lat, Float lon,
 			Long airValuesTimestamp) {
 		super();
@@ -55,7 +55,7 @@ public class DeviceLatestValuesView {
 		this.airValuesTimestamp = airValuesTimestamp;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 

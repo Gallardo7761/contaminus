@@ -8,7 +8,7 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_pollution_map")
 public class DevicePollutionMap {
-	private Integer deviceId;
+	private String deviceId;
 	private String deviceName;
 	private Float lat;
 	private Float lon;
@@ -18,7 +18,7 @@ public class DevicePollutionMap {
 	public DevicePollutionMap() {}
 	
 	public DevicePollutionMap(Row row) {
-		this.deviceId = row.getInteger("deviceId");
+		this.deviceId = row.getString("deviceId");
 		this.deviceName = row.getString("deviceName");
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
@@ -26,7 +26,7 @@ public class DevicePollutionMap {
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DevicePollutionMap(Integer deviceId, String deviceName, Float lat, Float lon, Float carbonMonoxide,
+	public DevicePollutionMap(String deviceId, String deviceName, Float lat, Float lon, Float carbonMonoxide,
 			Long timestamp) {
 		super();
 		this.deviceId = deviceId;
@@ -37,7 +37,7 @@ public class DevicePollutionMap {
 		this.timestamp = timestamp;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 

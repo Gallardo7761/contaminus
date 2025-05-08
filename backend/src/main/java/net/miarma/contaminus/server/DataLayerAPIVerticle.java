@@ -23,13 +23,17 @@ import net.miarma.contaminus.common.SingleJsonResponse;
 import net.miarma.contaminus.database.DatabaseManager;
 import net.miarma.contaminus.database.QueryBuilder;
 import net.miarma.contaminus.database.entities.Actuator;
+import net.miarma.contaminus.database.entities.COValue;
 import net.miarma.contaminus.database.entities.Device;
 import net.miarma.contaminus.database.entities.DeviceLatestValuesView;
+import net.miarma.contaminus.database.entities.DevicePayload;
 import net.miarma.contaminus.database.entities.DevicePollutionMap;
 import net.miarma.contaminus.database.entities.DeviceSensorHistory;
 import net.miarma.contaminus.database.entities.DeviceSensorValue;
+import net.miarma.contaminus.database.entities.GpsValue;
 import net.miarma.contaminus.database.entities.Group;
 import net.miarma.contaminus.database.entities.Sensor;
+import net.miarma.contaminus.database.entities.WeatherValue;
 
 /*
  * This class is a Verticle that will handle the Data Layer API. 
@@ -76,6 +80,9 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
                 .allowedMethods(allowedMethods));
         router.route().handler(BodyHandler.create());
         
+        // Payload
+        router.route(HttpMethod.POST, Constants.POST_PAYLOAD).handler(this::addDevicePayload);
+        
         // Group Routes
         router.route(HttpMethod.GET, Constants.GET_GROUPS).handler(this::getAllGroups);
         router.route(HttpMethod.GET, Constants.GET_GROUP_BY_ID).handler(this::getGroupById);
@@ -120,6 +127,48 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
             }
         });   
     }
+	
+	private void addDevicePayload(RoutingContext context) {
+		JsonObject body = context.body().asJsonObject();
+		DevicePayload devicePayload = gson.fromJson(body.toString(), DevicePayload.class);
+		COValue coValue = COValue.fromPayload(devicePayload);
+		GpsValue gpsValue = GpsValue.fromPayload(devicePayload);
+		WeatherValue weatherValue = WeatherValue.fromPayload(devicePayload);
+		
+		String coQuery = QueryBuilder
+			.insert(coValue)
+			.build();
+		
+		String gpsQuery = QueryBuilder
+			.insert(gpsValue)
+			.build();
+		
+		String weatherQuery = QueryBuilder
+			.insert(weatherValue)
+			.build();
+		
+		dbManager.execute(coQuery, COValue.class,
+				onSuccess -> {
+				dbManager.execute(gpsQuery, GpsValue.class,
+					onSuccess2 -> {
+						dbManager.execute(weatherQuery, WeatherValue.class,
+							onSuccess3 -> {
+								context.response()
+									.putHeader("content-type", "application/json; charset=utf-8")
+									.end(gson.toJson(SingleJsonResponse.of("Payload added successfully")));
+							},
+							onFailure3 -> {
+								context.fail(500, onFailure3);
+							});
+					},
+					onFailure2 -> {
+						context.fail(500, onFailure2);
+					});
+			},
+			onFailure -> {
+				context.fail(500, onFailure);
+			});
+	}
 
 	private void getAllGroups(RoutingContext context) {
 		String query = QueryBuilder
@@ -211,7 +260,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 	}
 	
 	private void getDeviceById(RoutingContext context) {
-		Integer deviceId = Integer.parseInt(context.request().getParam("deviceId"));
+		String deviceId = context.request().getParam("deviceId");
 		Device device = new Device(deviceId, null, null);
 		
 		String query = QueryBuilder

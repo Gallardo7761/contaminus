@@ -8,26 +8,26 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_co_by_device")
 public class DeviceCO {
-	private Integer deviceId;
+	private String deviceId;
 	private Float carbonMonoxide;
 	private Long timestamp;
 	
 	public DeviceCO() {}
 	
 	public DeviceCO(Row row) {
-		this.deviceId = row.getInteger("deviceId");
+		this.deviceId = row.getString("deviceId");
 		this.carbonMonoxide = row.getFloat("carbonMonoxide");
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 	
-	public DeviceCO(Integer deviceId, Float carbonMonoxide, Long timestamp) {
+	public DeviceCO(String deviceId, Float carbonMonoxide, Long timestamp) {
 		super();
 		this.deviceId = deviceId;
 		this.carbonMonoxide = carbonMonoxide;
 		this.timestamp = timestamp;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 	

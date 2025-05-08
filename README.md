@@ -26,8 +26,9 @@ La encontraréis en `dist/`
 ```sql
 USE dad;
 
+DROP TABLE IF EXISTS co_values;
+DROP TABLE IF EXISTS weather_values;
 DROP TABLE IF EXISTS gps_values;
-DROP TABLE IF EXISTS air_values;
 DROP TABLE IF EXISTS actuators;
 DROP TABLE IF EXISTS sensors;
 DROP TABLE IF EXISTS devices;
@@ -39,54 +40,60 @@ CREATE TABLE IF NOT EXISTS groups(
 );
 
 CREATE TABLE IF NOT EXISTS devices(
-	deviceId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	deviceId CHAR(6) PRIMARY KEY NOT NULL,
 	groupId INT NOT NULL,
 	deviceName VARCHAR(64) DEFAULT NULL,
-	FOREIGN KEY (groupId) REFERENCES groups(groupId)
+	FOREIGN KEY (groupId) REFERENCES groups(groupId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS sensors(
-	sensorId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	deviceId INT NOT NULL,
+	sensorId INT NOT NULL,
+	deviceId CHAR(6) NOT NULL,
 	sensorType VARCHAR(64) NOT NULL,
 	unit VARCHAR(8) NOT NULL,
 	status INT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-	FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+	PRIMARY KEY (deviceId, sensorId),
+	FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS actuators (
-	actuatorId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	deviceId INT NOT NULL,
+	actuatorId INT NOT NULL,
+	deviceId CHAR(6) NOT NULL,
 	status INT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-	FOREIGN KEY (deviceId) REFERENCES devices(deviceId)
+	PRIMARY KEY (deviceId, actuatorId),
+	FOREIGN KEY (deviceId) REFERENCES devices(deviceId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS gps_values(
 	valueId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	deviceId CHAR(6) NOT NULL,
 	sensorId INT NOT NULL,
 	lat FLOAT NOT NULL,
 	lon FLOAT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
+	FOREIGN KEY (deviceId, sensorId) REFERENCES sensors(deviceId, sensorId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS weather_values (
 	valueId INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
+	deviceId CHAR(6) NOT NULL,
 	sensorId INT NOT NULL,
 	temperature FLOAT NOT NULL,
 	humidity FLOAT NOT NULL,
+	pressure FLOAT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
+	FOREIGN KEY (deviceId, sensorId) REFERENCES sensors(deviceId, sensorId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS co_values (
 	valueId INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
+	deviceId CHAR(6) NOT NULL,
 	sensorId INT NOT NULL,
 	value FLOAT NOT NULL,
 	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-	FOREIGN KEY (sensorId) REFERENCES sensors(sensorId)
+	FOREIGN KEY (deviceId, sensorId) REFERENCES sensors(deviceId, sensorId) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE VIEW v_sensor_values AS
@@ -98,14 +105,15 @@ SELECT
     s.status AS sensorStatus,
     wv.temperature,
     wv.humidity,
+    wv.pressure,
     cv.value AS carbonMonoxide,
     gv.lat,
     gv.lon,
     COALESCE(gv.timestamp, wv.timestamp, cv.timestamp) AS timestamp -- el primero no nulo
 FROM sensors s
-LEFT JOIN weather_values wv ON s.sensorId = wv.sensorId
-LEFT JOIN co_values cv ON s.sensorId = cv.sensorId
-LEFT JOIN gps_values gv ON s.sensorId = gv.sensorId;
+LEFT JOIN weather_values wv ON s.deviceId = wv.deviceId AND s.sensorId = wv.sensorId
+LEFT JOIN co_values cv ON s.deviceId = cv.deviceId AND s.sensorId = cv.sensorId
+LEFT JOIN gps_values gv ON s.deviceId = gv.deviceId AND s.sensorId = gv.sensorId;
 
 
 CREATE OR REPLACE VIEW v_latest_values AS
@@ -118,14 +126,15 @@ SELECT
     s.timestamp AS sensorTimestamp,
     wv.temperature,
     wv.humidity,
+    wv.pressure,
     cv.value AS carbonMonoxide,
     gv.lat,
     gv.lon,
     COALESCE(gv.timestamp, wv.timestamp, cv.timestamp) AS airValuesTimestamp -- el primero no nulo
 FROM sensors s
-LEFT JOIN weather_values wv ON s.sensorId = wv.sensorId
-LEFT JOIN co_values cv ON s.sensorId = cv.sensorId
-LEFT JOIN gps_values gv ON s.sensorId = gv.sensorId
+LEFT JOIN weather_values wv ON s.deviceId = wv.deviceId AND s.sensorId = wv.sensorId
+LEFT JOIN co_values cv ON s.deviceId = cv.deviceId AND s.sensorId = cv.sensorId
+LEFT JOIN gps_values gv ON s.deviceId = gv.deviceId AND s.sensorId = gv.sensorId
 WHERE (wv.timestamp = (SELECT MAX(timestamp) FROM weather_values WHERE sensorId = s.sensorId)
        OR cv.timestamp = (SELECT MAX(timestamp) FROM co_values WHERE sensorId = s.sensorId)
 		OR gv.timestamp = (SELECT MAX(timestamp) FROM gps_values WHERE sensorId = s.sensorId));
@@ -138,7 +147,7 @@ SELECT
     c.value AS carbonMonoxide,
     c.timestamp
 FROM sensors s
-JOIN co_values c ON s.sensorId = c.sensorId
+JOIN co_values c ON s.deviceId = c.deviceId AND s.sensorId = c.sensorId
 WHERE s.sensorType = 'CO';
 
 CREATE OR REPLACE VIEW v_gps_by_device AS
@@ -148,7 +157,7 @@ SELECT
     g.lon,
     g.timestamp
 FROM sensors s
-JOIN gps_values g ON s.sensorId = g.sensorId
+JOIN gps_values g ON s.deviceId = g.deviceId AND s.sensorId = g.sensorId
 WHERE s.sensorType = 'GPS';
 
 CREATE OR REPLACE VIEW v_weather_by_device AS
@@ -156,9 +165,10 @@ SELECT
     s.deviceId,
     w.temperature AS temperature,
     w.humidity AS humidity,
+    w.pressure AS pressure,
     w.timestamp
 FROM sensors s
-JOIN weather_values w ON s.sensorId = w.sensorId
+JOIN weather_values w ON s.deviceId = w.deviceId AND s.sensorId = w.sensorId
 WHERE s.sensorType = 'Temperature & Humidity';
 -- VISTAS AUXILIARES
 
@@ -210,46 +220,16 @@ ORDER BY deviceId, timestamp;
 INSERT INTO groups (groupName) VALUES ('Grupo 1');
 
 -- Insertar dispositivos
-INSERT INTO devices (groupId, deviceName) VALUES
-(1, 'Dispositivo 1'),
-(1, 'Dispositivo 2'),
-(1, 'Dispositivo 3');
+INSERT INTO devices (deviceId, groupId, deviceName) VALUES
+('6A6098', 1, 'Dispositivo 1');
 
--- Sensores para el Dispositivo 1
--- Cada dispositivo tiene un único sensor de cada tipo (GPS, Temperature & Humidity, CO)
-INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(1, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 1
-(1, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 1
-(1, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 1
+-- Sensores para el Dispositivo 6A6098
+INSERT INTO sensors (sensorId, deviceId, sensorType, unit, status) VALUES
+(1, '6A6098', 'GPS', 'N/A', 1),
+(2, '6A6098', 'Temperature & Humidity', '°C/%', 1),
+(3, '6A6098', 'CO', 'ppm', 1);
 
--- Sensores para el Dispositivo 2
-INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(2, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 2
-(2, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 2
-(2, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 2
-
--- Sensores para el Dispositivo 3
-INSERT INTO sensors (deviceId, sensorType, unit, status) VALUES
-(3, 'GPS', 'N/A', 1),  -- Sensor de GPS para Dispositivo 3
-(3, 'Temperature & Humidity', '°C/%', 1),  -- Sensor de Temp/Humidity para Dispositivo 3
-(3, 'CO', 'ppm', 1);  -- Sensor de CO para Dispositivo 3
-
--- Valores de GPS para los Dispositivos
--- Cada dispositivo tiene un único sensor de GPS con latitud y longitud asociada
-INSERT INTO gps_values (sensorId, lat, lon) VALUES
-(1, 37.3861, -5.9921),  -- GPS para Dispositivo 1
-(4, 37.3850, -5.9910),  -- GPS para Dispositivo 2
-(7, 37.3860, -5.9920);  -- GPS para Dispositivo 3
-
--- Valores de Temperatura, Humedad y CO para los Dispositivos
--- Cada dispositivo tiene un único sensor de aire (temperatura, humedad, CO) con valores asociados
-INSERT INTO weather_values (sensorId, temperature, humidity) VALUES
-(2, 22.5, 45.0),  -- Temperatura, Humedad para Dispositivo 1
-(5, 24.5, 50.0),  -- Temperatura, Humedad para Dispositivo 2
-(8, 21.0, 44.0);  -- Temperatura, Humedad para Dispositivo 3
-
-INSERT INTO co_values (sensorId, value) VALUES
-(3, 0.02),  -- CO para Dispositivo 1
-(6, 0.04),  -- CO para Dispositivo 2
-(9, 0.01);  -- CO para Dispositivo 3
+-- ACtuadores para el Dispositivo 6A6098
+INSERT INTO actuators (actuatorId, deviceId, status, timestamp) VALUES
+(1, '6A6098', 1, CURRENT_TIMESTAMP());
 ```

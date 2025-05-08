@@ -8,7 +8,7 @@ import net.miarma.contaminus.util.DateParser;
 
 @Table("v_gps_by_device")
 public class DeviceGPS {
-	private Integer deviceId;
+	private String deviceId;
 	private Float lat;
 	private Float lon;
 	private Long timestamp;
@@ -16,20 +16,20 @@ public class DeviceGPS {
 	public DeviceGPS() {}
 	
 	public DeviceGPS(Row row) {
-		this.deviceId = row.getInteger("deviceId");
+		this.deviceId = row.getString("deviceId");
 		this.lat = row.getFloat("lat");
 		this.lon = row.getFloat("lon");
 		this.timestamp = DateParser.parseDate(row.getLocalDateTime("timestamp"));
 	}
 
-	public DeviceGPS(Integer deviceId, Float lat, Float lon) {
+	public DeviceGPS(String deviceId, Float lat, Float lon) {
 		super();
 		this.deviceId = deviceId;
 		this.lat = lat;
 		this.lon = lon;
 	}
 
-	public Integer getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 
