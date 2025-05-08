@@ -1,13 +1,13 @@
 :root {
-  --primary-color: #be0f2e;
-  --secondary-color: #a8223a;
-  --text-shadow: #be0f2e80;
-  --box-shadow: #be0f2e33;
+  --primary-color: #018E55;
+  --secondary-color: #007946;
+  --text-shadow: #00794680;
+  --box-shadow: #00794633;
 
   --gradient-primary: #1A1A1A;
   --gradient-secondary: #2A2A2A;
 
-  --card-background: #be0f2e1a;
+  --card-background: #0079461a;
   --card-gradient-primary: #252525;
   --card-gradient-secondary: #353535;
 }

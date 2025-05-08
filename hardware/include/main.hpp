@@ -9,6 +9,8 @@
 #define GPS_ID 3
 #define MAX7219_ID 1
 
+#define DEBUG
+
 #include "JsonTools.hpp"
 #include "RestClient.hpp"
 #include "WifiConnection.hpp"

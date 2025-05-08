@@ -1,22 +1,24 @@
 #include "GPS.hpp"
 
 TinyGPSPlus gps;
-HardwareSerial gpsSerial(1);
+HardwareSerial SerialGPS(1);
 
 void GPS_Init()
 {
-    gpsSerial.begin(9600, SERIAL_8N1, RX, TX);
+    SerialGPS.begin(9600, SERIAL_8N1, 25, 26); // RX, TX
 }
 
 GPSData_t GPS_Read()
 {
-    while (gpsSerial.available() > 0) {
-        gps.encode(gpsSerial.read());
+    while (SerialGPS.available() > 0)
+    {
+        gps.encode(SerialGPS.read());
     }
 
     float lat = 0.0f, lon = 0.0f;
 
-    if (gps.location.isValid()) {
+    if (gps.location.isUpdated())
+    {
         lat = gps.location.lat();
         lon = gps.location.lng();
     }

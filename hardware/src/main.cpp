@@ -1,14 +1,12 @@
 #include "main.hpp"
 
-#define DEBUG
-
 const uint32_t DEVICE_ID = getChipID();
 const char ALL_VEHICLES[] = "Todo tipo de vehiculos";
 const char ELECTRIC_VEHICLES[] = "Solo vehiculos electricos/hibridos";
 const char* currentMessage = nullptr;
 
 TaskTimer matrixTimer{0, 25};
-TaskTimer globalTimer{0, 30000};
+TaskTimer globalTimer{0, 60000};
 
 extern HTTPClient httpClient;
 extern MD_Parola display;
@@ -23,6 +21,9 @@ void setup()
     Serial.begin(115200);
 
     Serial.println("Iniciando...");
+
+    setupWifi();
+
     BME280_Init();
     Serial.println("Sensor BME280 inicializado");
     GPS_Init();
@@ -51,9 +52,13 @@ void loop()
         readBME280();
         readGPS();
         readMQ7();
+        
         #ifdef DEBUG
         printAllData();
         #endif
+
+        
+
         globalTimer.lastRun = now;
     }
 }
