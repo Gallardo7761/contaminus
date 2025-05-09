@@ -31,7 +31,7 @@ struct TaskTimer
         : lastRun(last), interval(interval) {}
 };
 
-struct SensorInfo 
+struct SensorInfo
 {
     int id;
     String type;
@@ -46,6 +46,6 @@ enum AirQualityStatus
 void readMQ7();
 void readBME280();
 void readGPS();
-void writeMatrix(const char* message);
+void writeMatrix(const char *message);
 void printAllData();
 uint32_t getChipID();

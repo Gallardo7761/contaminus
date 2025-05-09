@@ -51,8 +51,8 @@ const SummaryCardsContent = () => {
         let coData = data[1];
         let tempData = data[2];
 
-        let lastTime = DateParser.timestampToString(coData.airValuesTimestamp);
-        let lastDate = new Date(coData.airValuesTimestamp);
+        let lastTime = DateParser.timestampToString(coData.timestamp);
+        let lastDate = new Date(coData.timestamp);
 
         CardsData[0].content = tempData.temperature + "°C";
         CardsData[0].status = "Temperatura actual";

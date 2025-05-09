@@ -6,24 +6,28 @@
 
 WiFiClient wifiClient;
 
-void setColor(uint8_t r, uint8_t g, uint8_t b) {
+void setColor(uint8_t r, uint8_t g, uint8_t b)
+{
   ledcWrite(0, r);
   ledcWrite(1, g);
   ledcWrite(2, b);
 }
 
-void setupLED() {
-  ledcAttachPin(PIN_R, 0);
-  ledcAttachPin(PIN_G, 1);
-  ledcAttachPin(PIN_B, 2);
-
+void setupLED()
+{
   ledcSetup(0, 5000, 8);
+  ledcAttachPin(PIN_R, 0);
+
   ledcSetup(1, 5000, 8);
+  ledcAttachPin(PIN_G, 1);
+
   ledcSetup(2, 5000, 8);
+  ledcAttachPin(PIN_B, 2);
 }
 
 // hue cycle
-void hueCycle(uint8_t pos) {
+void hueCycle(uint8_t pos)
+{
   uint8_t r = (uint8_t)(sin((pos + 0) * 0.024) * 127 + 128);
   uint8_t g = (uint8_t)(sin((pos + 85) * 0.024) * 127 + 128);
   uint8_t b = (uint8_t)(sin((pos + 170) * 0.024) * 127 + 128);
@@ -37,10 +41,10 @@ int setupWifi()
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
 
-  #ifdef DEBUG
+#ifdef DEBUG
   Serial.print("Conectando a la red WiFi: ");
   Serial.print(SSID);
-  #endif
+#endif
 
   int hue = 0;
   uint32_t start = millis();
@@ -50,9 +54,9 @@ int setupWifi()
   {
     hueCycle(hue++);
 
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.print(".");
-    #endif
+#endif
 
     delay(30);
   }
@@ -61,11 +65,11 @@ int setupWifi()
   {
     setColor(0, 255, 0);
 
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.println("Conectado a la red WiFi");
     Serial.print("Dirección IP: ");
     Serial.println(WiFi.localIP());
-    #endif
+#endif
 
     return 0;
   }
@@ -73,11 +77,10 @@ int setupWifi()
   {
     setColor(255, 0, 0);
 
-    #ifdef DEBUG
+#ifdef DEBUG
     Serial.println("No se pudo conectar a la red WiFi");
-    #endif
+#endif
 
     return 1;
   }
 }
-
