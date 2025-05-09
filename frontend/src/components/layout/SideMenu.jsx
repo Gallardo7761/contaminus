@@ -9,6 +9,8 @@ import { useDataContext } from "@/hooks/useDataContext";
 import { useConfig } from '@/hooks/useConfig.js';
 import { useTheme } from "@/hooks/useTheme";
 
+import { Link } from 'react-router-dom';
+
 import Card from './Card';
 
 const SideMenu = ({ isOpen, onClose }) => {
@@ -19,7 +21,7 @@ const SideMenu = ({ isOpen, onClose }) => {
     if (!config) return <p>Configuración no disponible.</p>;
 
     const BASE = config.appConfig.endpoints.DATA_URL;
-    const ENDPOINT = config.appConfig.endpoints.GET_DEVICES;
+    const ENDPOINT = config.appConfig.endpoints.GET_GROUPS;
 
     const reqConfig = {
         baseUrl: `${BASE}${ENDPOINT}`,
@@ -51,18 +53,18 @@ const SideMenuContent = ({ isOpen, onClose }) => {
             </button>
             <hr className="separation w-100"></hr>
             <div className="d-flex flex-column gap-3 mt-5">
-                {data.map(device => {
+                {data.map(group => {
                     return (
-                        <a href={`/dashboard/${device.deviceId}`} key={device.deviceId} style={{ textDecoration: 'none' }}>
+                        <Link to={`/groups/${group.groupId}`} key={group.groupId} style={{ textDecoration: 'none' }}>
                             <Card
-                                title={device.deviceName}
-                                status={`ID: ${device.deviceId}`}
+                                title={group.groupName}
+                                status={`ID: ${group.groupId}`}
                                 styleMode={"override"}
                                 className={"col-12"}
                             >
                                 {[]}
                             </Card>
-                        </a>
+                        </Link>
                     );
                 })}
             </div>

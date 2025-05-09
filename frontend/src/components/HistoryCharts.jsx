@@ -1,6 +1,6 @@
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Filler } from "chart.js";
-import CardContainer from "./CardContainer";
+import CardContainer from "./layout/CardContainer";
 import "@/css/HistoryCharts.css";
 import PropTypes from "prop-types";
 
@@ -11,26 +11,29 @@ import { useConfig } from "@/hooks/useConfig";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Filler);
 
-const HistoryCharts = () => {
-  const { config, configLoading, configError } = useConfig();
-  
-  if (configLoading) return <p>Cargando configuración...</p>;
-  if (configError) return <p>Error al cargar configuración: {configError}</p>;
-  if (!config) return <p>Configuración no disponible.</p>;
+const HistoryCharts = ({ groupId, deviceId }) => {
+    const { config, configLoading, configError } = useConfig();
 
-  const BASE = config.appConfig.endpoints.DATA_URL;
-  const ENDPOINT = config.appConfig.endpoints.GET_SENSORS;
+    if (configLoading) return <p>Cargando configuración...</p>;
+    if (configError) return <p>Error al cargar configuración: {configError}</p>;
+    if (!config) return <p>Configuración no disponible.</p>;
 
-  const reqConfig = {
-      baseUrl: `${BASE}${ENDPOINT}`,
-      params: {}
-  }
+    const BASE = config.appConfig.endpoints.DATA_URL;
+    const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_HISTORY;
+    const endp = ENDPOINT
+        .replace(':groupId', groupId)
+        .replace(':deviceId', deviceId); // si tu endpoint lo necesita
 
-  return (
-    <DataProvider config={reqConfig}>
-      <HistoryChartsContent />
-    </DataProvider>
-  );
+    const reqConfig = {
+        baseUrl: `${BASE}${endp}`,
+        params: {}
+    };
+
+    return (
+        <DataProvider config={reqConfig}>
+            <HistoryChartsContent />
+        </DataProvider>
+    );
 };
 
 const HistoryChartsContent = () => {
@@ -90,6 +93,11 @@ const HistoryChartsContent = () => {
       className=""
     />
   );
+};
+
+HistoryCharts.propTypes = {
+  groupId: PropTypes.string.isRequired,
+  deviceId: PropTypes.string.isRequired
 };
 
 HistoryChartsContent.propTypes = {

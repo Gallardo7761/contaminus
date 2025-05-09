@@ -5,10 +5,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 import Home from '@/pages/Home.jsx'
 import Dashboard from '@/pages/Dashboard.jsx'
-import MenuButton from './MenuButton.jsx'
-import SideMenu from './SideMenu.jsx'
-import ThemeButton from '@/components/ThemeButton.jsx'
-import Header from '@/components/Header.jsx'
+import MenuButton from '@/components/layout/MenuButton.jsx'
+import SideMenu from '@/components/layout/SideMenu.jsx'
+import ThemeButton from '@/components/layout/ThemeButton.jsx'
+import Header from '@/components/layout/Header.jsx'
+import GroupView from '@/pages/GroupView.jsx'
 
 import { Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
@@ -30,10 +31,11 @@ const App = () => {
       <SideMenu isOpen={isSideMenuOpen} onClose={toggleSideMenu} />
       <ThemeButton />
       <div className={isSideMenuOpen ? 'blur m-0 p-0' : 'm-0 p-0'} onClick={closeSideMenu}>
-        <Header title='Contamin' subtitle='Midiendo la calidad del aire y las calles en Sevilla 🌿🚛' />
+        <Header subtitle='Midiendo la calidad del aire y las calles en Sevilla 🌿🚛' />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard/:deviceId" element={<Dashboard />} />
+          <Route path="/groups/:groupId" element={<GroupView />} />
+          <Route path="/groups/:groupId/devices/:deviceId" element={<Dashboard />} />
         </Routes>
       </div>
     </>

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import CardContainer from './CardContainer';
+import CardContainer from './layout/CardContainer';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloud, faClock, faTemperature0, faWater } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +10,7 @@ import { useDataContext } from '@/hooks/useDataContext';
 import { useConfig } from '@/hooks/useConfig.js';
 import { DateParser } from '@/util/dateParser';
 
-const SummaryCards = ({ deviceId }) => {
+const SummaryCards = ({ groupId, deviceId }) => {
     const { config, configLoading, configError } = useConfig();
 
     if (configLoading) return <p>Cargando configuración...</p>;
@@ -19,19 +19,21 @@ const SummaryCards = ({ deviceId }) => {
 
     const BASE = config.appConfig.endpoints.LOGIC_URL;
     const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_LATEST_VALUES;
-    const endp = ENDPOINT.replace('{0}', deviceId);
+    const endp = ENDPOINT
+        .replace(':groupId', groupId)
+        .replace(':deviceId', deviceId); // solo si lo necesitas así
 
     const reqConfig = {
         baseUrl: `${BASE}${endp}`,
         params: {}
-    }
+    };
 
     return (
         <DataProvider config={reqConfig}>
             <SummaryCardsContent />
         </DataProvider>
     );
-}
+};
 
 const SummaryCardsContent = () => {
     const { data, dataLoading, dataError } = useDataContext();
@@ -71,6 +73,7 @@ const SummaryCardsContent = () => {
 }
 
 SummaryCards.propTypes = {
+    groupId: PropTypes.string.isRequired,
     deviceId: PropTypes.number.isRequired
 };
 

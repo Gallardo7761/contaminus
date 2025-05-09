@@ -2,19 +2,18 @@ import PropTypes from 'prop-types';
 import '@/css/Header.css';
 import { useTheme } from "@/hooks/useTheme";
 
-const Header = (props) => {
+const Header = ({ subtitle }) => {
     const { theme } = useTheme();
 
     return (
         <header className={`justify-content-center text-center mb-4 ${theme}`}>
-            <h1>{props.title}</h1>
-            <p className='subtitle'>{props.subtitle}</p>
+            <img src='/images/logo.png' width={500} />
+            <p className='subtitle'>{subtitle}</p>
         </header>
     );
 }
 
 Header.propTypes = {
-    title: PropTypes.string.isRequired,
     subtitle: PropTypes.string
 }
 

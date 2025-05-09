@@ -39,28 +39,31 @@ const PollutionCircles = ({ data }) => {
   });
 };
 
-const PollutionMap = ({ deviceId }) => {
-  const { config, configLoading, configError } = useConfig();
-  
-  if (configLoading) return <p>Cargando configuración...</p>;
-  if (configError) return <p>Error al cargar configuración: {configError}</p>;
-  if (!config) return <p>Configuración no disponible.</p>;
+const PollutionMap = ({ groupId, deviceId }) => {
+    const { config, configLoading, configError } = useConfig();
 
-  const BASE = config.appConfig.endpoints.LOGIC_URL;
-  const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
-  let endp = ENDPOINT.replace('{0}', deviceId);
+    if (configLoading) return <p>Cargando configuración...</p>;
+    if (configError) return <p>Error al cargar configuración: {configError}</p>;
+    if (!config) return <p>Configuración no disponible.</p>;
 
-  const reqConfig = {
-      baseUrl: `${BASE}${endp}`,
-      params: {}
-  }
+    const BASE = config.appConfig.endpoints.LOGIC_URL;
+    const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
+    const endp = ENDPOINT
+        .replace(':groupId', groupId)
+        .replace(':deviceId', deviceId);
 
-  return (
-    <DataProvider config={reqConfig}>
-      <PollutionMapContent />
-    </DataProvider>
-  );
+    const reqConfig = {
+        baseUrl: `${BASE}${endp}`,
+        params: {}
+    };
+
+    return (
+        <DataProvider config={reqConfig}>
+            <PollutionMapContent />
+        </DataProvider>
+    );
 };
+
 
 const PollutionMapContent = () => {
   const { config, configLoading, configError } = useConfig();
@@ -102,6 +105,7 @@ const mapStyles = {
 };
 
 PollutionMap.propTypes = {
+  groupId: PropTypes.number.isRequired,
   deviceId: PropTypes.number.isRequired
 };
 
