@@ -6,9 +6,9 @@
 
 #define GROUP_ID 1
 
-#define MQ7_ID 1
+#define MQ7_ID 3
 #define BME280_ID 2
-#define GPS_ID 3
+#define GPS_ID 1
 #define MAX7219_ID 1
 
 #define DEBUG

@@ -18,7 +18,7 @@ const HistoryCharts = ({ groupId, deviceId }) => {
     if (configError) return <p>Error al cargar configuración: {configError}</p>;
     if (!config) return <p>Configuración no disponible.</p>;
 
-    const BASE = config.appConfig.endpoints.DATA_URL;
+    const BASE = config.appConfig.endpoints.LOGIC_URL;
     const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_HISTORY;
     const endp = ENDPOINT
         .replace(':groupId', groupId)
