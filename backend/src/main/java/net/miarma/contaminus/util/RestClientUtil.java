@@ -4,136 +4,54 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-import io.vertx.core.Promise;
+import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.WebClient;
 
 public class RestClientUtil {
-	
-	public WebClient client;
-	private Gson gson;
-	
-	public RestClientUtil(WebClient client) {
-		gson = new Gson();
-		this.client = client;
-	}
 
-	/**
-	 * Get request utility
-	 * 
-	 * @param <T>       Type of result enveloped in JSON response
-	 * @param port      Port
-	 * @param host      Host address
-	 * @param resource  URI where resource is provided
-	 * @param classType Type of result enveloped in JSON response
-	 * @param promise   Promise to be executed on call finish
-	 */
-	public <T> void getRequest(Integer port, String host, String resource, Class<T> classType, Promise<T> promise) {
-		client.getAbs(host + ":" + port + resource).send(elem -> {
-			if (elem.succeeded()) {
-				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
-			} else {
-				promise.fail(elem.cause());
-			}
-		});
+    private final WebClient client;
+    private final Gson gson;
 
-	}
+    public RestClientUtil(WebClient client) {
+        this.client = client;
+        this.gson = new Gson();
+    }
 
-	/**
-	 * Get request utility
-	 * 
-	 * @param <T>       Type of result enveloped in JSON response
-	 * @param port      Port
-	 * @param host      Host address
-	 * @param resource  URI where resource is provided
-	 * @param classType Type of result enveloped in JSON response
-	 * @param promise   Promise to be executed on call finish
-	 * @param params    Map with key-value entries for call parameters
-	 */
-	public <T> void getRequestWithParams(Integer port, String host, String resource, Class<T> classType,
-			Promise<T> promise, Map<String, String> params) {
-		HttpRequest<Buffer> httpRequest = client.getAbs(host + ":" + port + "/" + resource);
+    public <T> Future<T> getRequest(int port, String host, String resource, Class<T> classType) {
+        return client.getAbs(host + ":" + port + resource)
+            .send()
+            .map(response -> gson.fromJson(response.bodyAsString(), classType));
+    }
 
-		params.forEach((key, value) -> {
-			httpRequest.addQueryParam(key, value);
-		});
+    public <T> Future<T> getRequestWithParams(int port, String host, String resource, Class<T> classType,
+                                              Map<String, String> params) {
+        HttpRequest<Buffer> httpRequest = client.getAbs(host + ":" + port + "/" + resource);
+        params.forEach(httpRequest::addQueryParam);
 
-		httpRequest.send(elem -> {
-			if (elem.succeeded()) {
-				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
-			} else {
-				promise.fail(elem.cause());
-			}
-		});
+        return httpRequest.send()
+            .map(response -> gson.fromJson(response.bodyAsString(), classType));
+    }
 
-	}
+    public <B, T> Future<T> postRequest(int port, String host, String resource, B body, Class<T> classType) {
+        JsonObject jsonBody = new JsonObject(gson.toJson(body));
+        return client.postAbs(host + ":" + port + "/" + resource)
+            .sendJsonObject(jsonBody)
+            .map(response -> gson.fromJson(response.bodyAsString(), classType));
+    }
 
-	/**
-	 * Post request utility
-	 * 
-	 * @param <B>       Type of body enveloped in JSON request
-	 * @param <T>       Type of result enveloped in JSON response
-	 * @param port      Port
-	 * @param host      Host address
-	 * @param resource  URI where resource is provided
-	 * @param classType Type of result enveloped in JSON response
-	 * @param promise   Promise to be executed on call finish
-	 */
-	public <B, T> void postRequest(Integer port, String host, String resource, Object body, Class<T> classType,
-			Promise<T> promise) {
-		JsonObject jsonBody = new JsonObject(gson.toJson(body));
-		client.postAbs(host + ":" + port + "/" + resource).sendJsonObject(jsonBody, elem -> {
-			if (elem.succeeded()) {
-				Gson gson = new Gson();
-				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
-			} else {
-				promise.fail(elem.cause());
-			}
-		});
-	}
+    public <B, T> Future<T> putRequest(int port, String host, String resource, B body, Class<T> classType) {
+        JsonObject jsonBody = new JsonObject(gson.toJson(body));
+        return client.putAbs(host + ":" + port + "/" + resource)
+            .sendJsonObject(jsonBody)
+            .map(response -> gson.fromJson(response.bodyAsString(), classType));
+    }
 
-	/**
-	 * Put request utility
-	 * 
-	 * @param <B>       Type of body enveloped in JSON request
-	 * @param <T>       Type of result enveloped in JSON response
-	 * @param port      Port
-	 * @param host      Host address
-	 * @param resource  URI where resource is provided
-	 * @param classType Type of result enveloped in JSON response
-	 * @param promise   Promise to be executed on call finish
-	 */
-	public <B, T> void putRequest(Integer port, String host, String resource, Object body, Class<T> classType,
-			Promise<T> promise) {
-		JsonObject jsonBody = new JsonObject(gson.toJson(body));
-		client.putAbs(host + ":" + port + "/" + resource).sendJsonObject(jsonBody, elem -> {
-			if (elem.succeeded()) {
-				Gson gson = new Gson();
-				promise.complete(gson.fromJson(elem.result().bodyAsString(), classType));
-			} else {
-				promise.fail(elem.cause());
-			}
-		});
-	}
-
-	/**
-	 * Delete request utility
-	 * 
-	 * @param port      Port
-	 * @param host      Host address
-	 * @param resource  URI where resource is provided
-	 * @param promise   Promise to be executed on call finish
-	 */
-	public void deleteRequest(Integer port, String host, String resource, Promise<String> promise) {
-		client.deleteAbs(host + ":" + port + "/" + resource).send(elem -> {
-			if (elem.succeeded()) {
-				promise.complete(elem.result().bodyAsString());
-			} else {
-				promise.fail(elem.cause());
-			}
-		});
-
-	}
+    public Future<String> deleteRequest(int port, String host, String resource) {
+        return client.deleteAbs(host + ":" + port + "/" + resource)
+            .send()
+            .map(response -> response.bodyAsString());
+    }
 }

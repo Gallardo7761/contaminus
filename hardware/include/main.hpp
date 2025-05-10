@@ -4,6 +4,8 @@
 #define REST_PORT 443
 #define MQTT_PORT 1883
 
+#define GROUP_ID 1
+
 #define MQ7_ID 1
 #define BME280_ID 2
 #define GPS_ID 3
@@ -48,4 +50,5 @@ void readBME280();
 void readGPS();
 void writeMatrix(const char *message);
 void printAllData();
+void sendSensorData();
 uint32_t getChipID();

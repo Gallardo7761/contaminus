@@ -1,30 +1,34 @@
 #include "JsonTools.hpp"
 
 String serializeSensorValue(
-    int sensorId,
+    int groupId,
     const String &deviceId,
-    const String &sensorType,
-    const String &unit,
-    int sensorStatus,
+    int gpsSensorId,
+    int weatherSensorId,
+    int coSensorId,
     const BME280Data_t &bme,
     const MQ7Data_t &mq7,
-    const GPSData_t &gps,
-    long timestamp)
+    const GPSData_t &gps)
 {
   DynamicJsonDocument doc(1024);
 
-  doc["sensorId"] = sensorId;
+  doc["groupId"] = groupId;
   doc["deviceId"] = deviceId;
-  doc["sensorType"] = sensorType;
-  doc["unit"] = unit;
-  doc["sensorStatus"] = sensorStatus;
-  doc["temperature"] = bme.temperature;
-  doc["humidity"] = bme.humidity;
-  doc["pressure"] = bme.pressure;
-  doc["carbonMonoxide"] = mq7.co;
-  doc["lat"] = gps.lat;
-  doc["lon"] = gps.lon;
-  doc["timestamp"] = timestamp;
+
+  JsonObject gpsObj = doc.createNestedObject("gps");
+  gpsObj["sensorId"] = gpsSensorId;
+  gpsObj["lat"] = gps.lat;
+  gpsObj["lon"] = gps.lon;
+
+  JsonObject weather = doc.createNestedObject("weather");
+  weather["sensorId"] = weatherSensorId;
+  weather["temperature"] = bme.temperature;
+  weather["humidity"] = bme.humidity;
+  weather["pressure"] = bme.pressure;
+
+  JsonObject co = doc.createNestedObject("co");
+  co["sensorId"] = coSensorId;
+  co["value"] = mq7.co;
 
   String output;
   serializeJson(doc, output);
@@ -68,6 +72,7 @@ void deserializeSensorValue(HTTPClient &http, int httpResponseCode)
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
     String responseJson = http.getString();
+
     DynamicJsonDocument doc(ESP.getMaxAllocHeap());
     DeserializationError error = deserializeJson(doc, responseJson);
 
@@ -78,26 +83,35 @@ void deserializeSensorValue(HTTPClient &http, int httpResponseCode)
       return;
     }
 
-    JsonArray array = doc.as<JsonArray>();
-    for (JsonObject sensor : array)
-    {
-      int sensorId = sensor["sensorId"];
-      String deviceId = sensor["deviceId"];
-      String sensorType = sensor["sensorType"];
-      String unit = sensor["unit"];
-      int sensorStatus = sensor["sensorStatus"];
-      float temperature = sensor["temperature"];
-      float humidity = sensor["humidity"];
-      float carbonMonoxide = sensor["carbonMonoxide"];
-      float lat = sensor["lat"];
-      float lon = sensor["lon"];
-      long timestamp = sensor["timestamp"];
+    String groupId = doc["groupId"];
+    String deviceId = doc["deviceId"];
 
-      Serial.println("Sensor deserialized:");
-      Serial.printf("  ID: %d\n  Device: %s\n  Type: %s\n  Unit: %s\n  Status: %d\n  Temp: %.2f\n  Hum: %.2f\n  CO: %.2f\n  Lat: %.6f\n  Lon: %.6f\n  Time: %ld\n\n",
-                    sensorId, deviceId.c_str(), sensorType.c_str(), unit.c_str(), sensorStatus,
-                    temperature, humidity, carbonMonoxide, lat, lon, timestamp);
-    }
+    JsonObject gps = doc["gps"];
+    int gpsId = gps["sensorId"];
+    float lat = gps["lat"];
+    float lon = gps["lon"];
+
+    JsonObject weather = doc["weather"];
+    int weatherId = weather["sensorId"];
+    float temp = weather["temperature"];
+    float hum = weather["humidity"];
+    float pres = weather["pressure"];
+
+    JsonObject co = doc["co"];
+    int coId = co["sensorId"];
+    float coVal = co["value"];
+
+    Serial.println("🛰 GPS:");
+    Serial.printf("  Sensor ID: %d\n  Lat: %.6f  Lon: %.6f\n", gpsId, lat, lon);
+
+    Serial.println("🌤 Weather:");
+    Serial.printf("  Sensor ID: %d\n  Temp: %.2f°C  Hum: %.2f%%  Pressure: %.2f hPa\n", weatherId, temp, hum, pres);
+
+    Serial.println("🧪 CO:");
+    Serial.printf("  Sensor ID: %d\n  CO: %.2f ppm\n", coId, coVal);
+
+    Serial.printf("🧾 Group ID: %s\n", groupId.c_str());
+    Serial.printf("🧾 Device ID: %s\n", deviceId.c_str());
   }
   else
   {

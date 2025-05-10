@@ -10,7 +10,7 @@ public class Constants {
 	public static final String CONTAMINUS_EB = "contaminus.eventbus";
     public static Logger LOGGER = LoggerFactory.getLogger(Constants.APP_NAME);
 	
-	/* API Endpoints */
+	/* API Endpoints */    
 	public static final String GROUPS = RAW_API_PREFIX + "/groups";
 	public static final String GROUP = RAW_API_PREFIX + "/groups/:groupId";
 	
@@ -24,17 +24,19 @@ public class Constants {
 	public static final String SENSOR = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId";
 	public static final String SENSOR_VALUES = API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId/values";
 	
+	public static final String BATCH = API_PREFIX + "/batch";
+	public static final String ADD_GPS_VALUE = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId/gps_values";
+	public static final String ADD_WEATHER_VALUE = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId/weather_values";
+	public static final String ADD_CO_VALUE = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId/co_values";
+	
 	public static final String ACTUATORS = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators";
 	public static final String ACTUATOR = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuator_id";
 	public static final String ACTUATOR_STATUS = API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuator_id/status";
-	
+		
 	public static final String VIEW_LATEST_VALUES = RAW_API_PREFIX + "/v_latest_values";
 	public static final String VIEW_POLLUTION_MAP = RAW_API_PREFIX + "/v_pollution_map";
 	public static final String VIEW_SENSOR_HISTORY = RAW_API_PREFIX + "/v_sensor_history_by_device";
 	public static final String VIEW_SENSOR_VALUES = RAW_API_PREFIX + "/v_sensor_values";
-	public static final String VIEW_CO_BY_DEVICE = RAW_API_PREFIX + "/v_co_by_device";
-	public static final String VIEW_GPS_BY_DEVICE = RAW_API_PREFIX + "/v_gps_by_device";
-	public static final String VIEW_WEATHER_BY_DEVICE = RAW_API_PREFIX + "/v_weather_by_device";
 	
 	private Constants() {
         throw new AssertionError("Utility class cannot be instantiated.");

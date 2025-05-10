@@ -7,15 +7,14 @@
 #include "GPS.hpp"
 
 String serializeSensorValue(
-    int sensorId,
+    int groupId,
     const String &deviceId,
-    const String &sensorType,
-    const String &unit,
-    int sensorStatus,
+    int gpsSensorId,
+    int weatherSensorId,
+    int coSensorId,
     const BME280Data_t &bme,
     const MQ7Data_t &mq7,
-    const GPSData_t &gps,
-    long timestamp);
+    const GPSData_t &gps);
 
 String serializeActuatorStatus(
     int actuatorId,

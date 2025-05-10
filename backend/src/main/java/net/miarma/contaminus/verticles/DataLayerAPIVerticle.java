@@ -36,13 +36,16 @@ import net.miarma.contaminus.db.DatabaseManager;
 import net.miarma.contaminus.db.DatabaseProvider;
 import net.miarma.contaminus.db.QueryBuilder;
 import net.miarma.contaminus.entities.Actuator;
+import net.miarma.contaminus.entities.COValue;
 import net.miarma.contaminus.entities.Device;
+import net.miarma.contaminus.entities.GpsValue;
 import net.miarma.contaminus.entities.Group;
 import net.miarma.contaminus.entities.Sensor;
 import net.miarma.contaminus.entities.ViewLatestValues;
 import net.miarma.contaminus.entities.ViewPollutionMap;
 import net.miarma.contaminus.entities.ViewSensorHistory;
 import net.miarma.contaminus.entities.ViewSensorValue;
+import net.miarma.contaminus.entities.WeatherValue;
 
 
 /*
@@ -119,6 +122,10 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.SENSOR).handler(this::getSensorById);
         router.route(HttpMethod.POST, Constants.SENSORS).handler(this::addSensor);
         router.route(HttpMethod.PUT, Constants.SENSOR).handler(this::updateSensor);
+        router.route(HttpMethod.POST, Constants.ADD_GPS_VALUE).handler(this::addGpsValue);
+        router.route(HttpMethod.POST, Constants.ADD_WEATHER_VALUE).handler(this::addWeatherValue);
+        router.route(HttpMethod.POST, Constants.ADD_CO_VALUE).handler(this::addCoValue);
+
 
         // Actuator Routes
         router.route(HttpMethod.GET, Constants.ACTUATORS).handler(this::getAllActuators);
@@ -185,7 +192,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Group added successfully")));
+					.end(gson.toJson(result, Group.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -200,7 +207,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Group updated successfully")));
+					.end(gson.toJson(result, Group.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -248,7 +255,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Device added successfully")));
+					.end(gson.toJson(result, Device.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -263,7 +270,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Device updated successfully")));
+					.end(gson.toJson(result, Device.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -319,7 +326,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Sensor added successfully")));
+					.end(gson.toJson(result, Sensor.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -334,11 +341,59 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Sensor updated successfully")));
+					.end(gson.toJson(result, Sensor.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
 			});
+	}
+	
+	private void addGpsValue(RoutingContext context) {
+	    JsonObject body = context.body().asJsonObject();
+	    GpsValue gpsValue = gson.fromJson(body.toString(), GpsValue.class);
+	    
+	    gpsValueDAO.insert(gpsValue)
+	        .onSuccess(result -> {
+	            context.response()
+	                .setStatusCode(201)
+	                .putHeader("Content-Type", "application/json")
+	                .end(gson.toJson(result, GpsValue.class));
+	        })
+	        .onFailure(err -> {
+	            context.fail(500, err);
+	        });
+	}
+	
+	private void addWeatherValue(RoutingContext context) {
+	    JsonObject body = context.body().asJsonObject();
+	    WeatherValue weatherValue = gson.fromJson(body.toString(), WeatherValue.class);
+	    
+	    weatherValueDAO.insert(weatherValue)
+	        .onSuccess(result -> {
+	            context.response()
+	                .setStatusCode(201)
+	                .putHeader("Content-Type", "application/json")
+	                .end(gson.toJson(result, WeatherValue.class));
+	        })
+	        .onFailure(err -> {
+	            context.fail(500, err);
+	        });
+	}
+	
+	private void addCoValue(RoutingContext context) {
+	    JsonObject body = context.body().asJsonObject();
+	    COValue coValue = gson.fromJson(body.toString(), COValue.class);
+	    
+	    coValueDAO.insert(coValue)
+	        .onSuccess(result -> {
+	            context.response()
+	                .setStatusCode(201)
+	                .putHeader("Content-Type", "application/json")
+	                .end(gson.toJson(result, COValue.class));
+	        })
+	        .onFailure(err -> {
+	            context.fail(500, err);
+	        });
 	}
 	
 	private void getAllActuators(RoutingContext context) {
@@ -390,7 +445,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Actuator added successfully")));
+					.end(gson.toJson(result, Actuator.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);
@@ -405,7 +460,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onSuccess(result -> {
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
-					.end(gson.toJson(SingleJsonResponse.of("Actuator updated successfully")));
+					.end(gson.toJson(result, Actuator.class));
 			})
 			.onFailure(err -> {
 				context.fail(500, err);

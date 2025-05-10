@@ -9,6 +9,7 @@ TaskTimer matrixTimer{0, 25};
 TaskTimer globalTimer{0, 60000};
 
 extern HTTPClient httpClient;
+String response;
 extern MD_Parola display;
 
 MQ7Data_t mq7Data;
@@ -58,6 +59,8 @@ void loop()
 #ifdef DEBUG
         printAllData();
 #endif
+
+        sendSensorData();
 
         globalTimer.lastRun = now;
     }
@@ -134,6 +137,41 @@ void printAllData()
     Serial.println(mq7Data.co);
     Serial.print("D0: ");
     Serial.println(mq7Data.threshold);
+}
+
+void sendSensorData()
+{
+    const String deviceId = String(DEVICE_ID, HEX);
+
+    // Validaciones básicas (puedes añadir más si quieres)
+    bool gpsValid = gpsData.lat != 0.0f && gpsData.lon != 0.0f;
+    bool weatherValid = bme280Data.temperature != 0.0f &&
+                        bme280Data.humidity != 0.0f &&
+                        bme280Data.pressure != 0.0f;
+    bool coValid = mq7Data.co >= 0.0f;
+
+    if (!gpsValid || !weatherValid || !coValid)
+    {
+#ifdef DEBUG
+        Serial.println("❌ Datos inválidos. No se envía el batch.");
+#endif
+        return;
+    }
+
+    String json = serializeSensorValue(GROUP_ID, deviceId,
+                                       GPS_ID, BME280_ID, MQ7_ID,
+                                       bme280Data, mq7Data, gpsData);
+
+#ifdef DEBUG
+    Serial.println("📤 Enviando datos al servidor...");
+#endif
+
+    postRequest(String(SERVER_IP) + "/batch", json, response);
+
+#ifdef DEBUG
+    Serial.println("📬 Respuesta del servidor:");
+    Serial.println(response);
+#endif
 }
 
 uint32_t getChipID()
