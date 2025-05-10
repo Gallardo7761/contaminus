@@ -13,7 +13,7 @@ export const ConfigProvider = ({ children }) => {
       try {
         const response = import.meta.env.MODE === 'production'
           ? await fetch("/config/settings.prod.json")
-          : await fetch("/config/settings.dev.json");
+          : await fetch("/config/settings.prod.json");
         if (!response.ok) throw new Error("Error al cargar settings.*.json");
         const json = await response.json();
         setConfig(json);

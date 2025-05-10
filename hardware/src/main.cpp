@@ -119,7 +119,7 @@ void printAllData()
     Serial.println(DEVICE_ID, HEX);
 
     Serial.print("Presión: ");
-    Serial.print(bme280Data.pressure / 100);
+    Serial.print(bme280Data.pressure);
     Serial.println(" hPa");
     Serial.print("Temperatura: ");
     Serial.print(bme280Data.temperature);

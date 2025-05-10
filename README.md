@@ -173,48 +173,66 @@ WHERE s.sensorType = 'Temperature & Humidity';
 -- VISTAS AUXILIARES
 
 CREATE OR REPLACE VIEW v_pollution_map AS
-SELECT 
+SELECT
+    d.deviceId AS deviceId,
+    d.deviceName AS deviceName,
+    g.lat AS lat,
+    g.lon AS lon,
+    c.carbonMonoxide AS carbonMonoxide,
+    c.timestamp AS timestamp
+FROM
+    (dad.devices d
+LEFT JOIN dad.v_co_by_device c ON d.deviceId = c.deviceId)
+LEFT JOIN dad.v_gps_by_device g ON d.deviceId = g.deviceId AND (g.timestamp <= c.timestamp OR g.timestamp IS NULL)
+WHERE
+    c.carbonMonoxide IS NOT NULL
+ORDER BY
     d.deviceId,
-    d.deviceName,
-    g.lat,
-    g.lon,
-    c.carbonMonoxide,
-    c.timestamp
-FROM devices d
-LEFT JOIN v_co_by_device c ON d.deviceId = c.deviceId
-LEFT JOIN v_gps_by_device g ON d.deviceId = g.deviceId 
-    AND (g.timestamp <= c.timestamp OR g.timestamp IS NULL)
-WHERE c.carbonMonoxide IS NOT NULL
-ORDER BY d.deviceId, c.timestamp;
+    c.timestamp;
 
 CREATE OR REPLACE VIEW v_sensor_history_by_device AS
-SELECT 
-    d.deviceId,
-    d.deviceName,
+SELECT
+    d.deviceId AS deviceId,
+    d.deviceName AS deviceName,
     w.temperature AS value,
     'temperature' AS valueType,
-    w.timestamp
-FROM devices d
-JOIN v_weather_by_device w ON d.deviceId = w.deviceId
+    w.timestamp AS timestamp
+FROM
+    dad.devices d
+JOIN dad.v_weather_by_device w ON d.deviceId = w.deviceId
 UNION ALL
-SELECT 
-    d.deviceId,
-    d.deviceName,
+SELECT
+    d.deviceId AS deviceId,
+    d.deviceName AS deviceName,
     w.humidity AS value,
     'humidity' AS valueType,
-    w.timestamp
-FROM devices d
-JOIN v_weather_by_device w ON d.deviceId = w.deviceId
+    w.timestamp AS timestamp
+FROM
+    dad.devices d
+JOIN dad.v_weather_by_device w ON d.deviceId = w.deviceId
 UNION ALL
-SELECT 
-    d.deviceId,
-    d.deviceName,
+SELECT
+    d.deviceId AS deviceId,
+    d.deviceName AS deviceName,
+    w.pressure AS value,
+    'pressure' AS valueType,
+    w.timestamp AS timestamp
+FROM
+    dad.devices d
+JOIN dad.v_weather_by_device w ON d.deviceId = w.deviceId
+UNION ALL
+SELECT
+    d.deviceId AS deviceId,
+    d.deviceName AS deviceName,
     c.carbonMonoxide AS value,
     'carbonMonoxide' AS valueType,
-    c.timestamp
-FROM devices d
-JOIN v_co_by_device c ON d.deviceId = c.deviceId
-ORDER BY deviceId, timestamp;
+    c.timestamp AS timestamp
+FROM
+    dad.devices d
+JOIN dad.v_co_by_device c ON d.deviceId = c.deviceId
+ORDER BY
+    deviceId,
+    timestamp;
 
 -- Insertar grupos
 INSERT INTO groups (groupName) VALUES ('Grupo 1');
