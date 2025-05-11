@@ -4,6 +4,9 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+#define USER "contaminus"
+#define MQTT_PASSWORD "contaminus"
+
 void MQTT_OnReceived(char *topic, byte *payload, unsigned int length);
 void MQTT_Init(const char *MQTTServerAddress, uint16_t MQTTServerPort);
 void MQTT_Connect(const char *MQTTClientName);

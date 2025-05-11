@@ -45,7 +45,7 @@ void loop()
 {
     uint32_t now = millis();
 
-    /*if (now - matrixTimer.lastRun >= matrixTimer.interval)
+    if (now - matrixTimer.lastRun >= matrixTimer.interval)
     {
         if (MAX7219_Animate())
         {
@@ -67,7 +67,7 @@ void loop()
         sendSensorData();
 
         globalTimer.lastRun = now;
-    }*/
+    }
 
     if (now - mqttTimer.lastRun >= mqttTimer.interval)
     {
