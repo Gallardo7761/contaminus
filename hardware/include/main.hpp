@@ -1,18 +1,6 @@
-#include <Arduino.h>
+#pragma once
 
-#define SERVER_IP "https://contaminus.miarma.net/api/v1/"
-#define REST_PORT 443
-#define MQTT_PORT 1883
-
-#define GROUP_ID 1
-
-#define MQ7_ID 3
-#define BME280_ID 2
-#define GPS_ID 1
-#define MAX7219_ID 1
-
-#define DEBUG
-
+#include "globals.hpp"
 #include "JsonTools.hpp"
 #include "RestClient.hpp"
 #include "WifiConnection.hpp"

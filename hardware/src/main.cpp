@@ -1,12 +1,15 @@
 #include "main.hpp"
 
 const uint32_t DEVICE_ID = getChipID();
+const int GROUP_ID = 1;
 const char ALL_VEHICLES[] = "Todo tipo de vehiculos";
 const char ELECTRIC_VEHICLES[] = "Solo vehiculos electricos/hibridos";
 const char *currentMessage = nullptr;
+const String id = "CUS-" + String(DEVICE_ID, HEX);
 
 TaskTimer matrixTimer{0, 25};
 TaskTimer globalTimer{0, 60000};
+TaskTimer mqttTimer{0, 5000};
 
 extern HTTPClient httpClient;
 String response;
@@ -24,6 +27,7 @@ void setup()
     Serial.println("Iniciando...");
 
     setupWifi();
+    MQTT_Init(MQTT_URI, MQTT_PORT);
 
     BME280_Init();
     Serial.println("Sensor BME280 inicializado");
@@ -41,7 +45,7 @@ void loop()
 {
     uint32_t now = millis();
 
-    if (now - matrixTimer.lastRun >= matrixTimer.interval)
+    /*if (now - matrixTimer.lastRun >= matrixTimer.interval)
     {
         if (MAX7219_Animate())
         {
@@ -63,6 +67,12 @@ void loop()
         sendSensorData();
 
         globalTimer.lastRun = now;
+    }*/
+
+    if (now - mqttTimer.lastRun >= mqttTimer.interval)
+    {
+        MQTT_Handle(id.c_str());
+        mqttTimer.lastRun = now;
     }
 }
 
@@ -166,7 +176,7 @@ void sendSensorData()
     Serial.println("📤 Enviando datos al servidor...");
 #endif
 
-    postRequest(String(SERVER_IP) + "/batch", json, response);
+    postRequest(String(API_URI) + "/batch", json, response);
 
 #ifdef DEBUG
     Serial.println("📬 Respuesta del servidor:");

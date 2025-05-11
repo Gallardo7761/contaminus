@@ -39,7 +39,7 @@ int setupWifi()
   setupLED();
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID, PASSWORD);
+  WiFi.begin(SSID, WIFI_PASSWORD);
 
 #ifdef DEBUG
   Serial.print("Conectando a la red WiFi: ");

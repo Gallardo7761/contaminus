@@ -1,14 +1,16 @@
 #include "MqttClient.hpp"
 
-// MQTT configuration
-WiFiClient espClient;
-PubSubClient client(espClient);
+extern WiFiClient wifiClient;
 
-void OnMqttReceived(char *topic, byte *payload, unsigned int length)
+PubSubClient client(wifiClient);
+
+void MQTT_OnReceived(char *topic, byte *payload, unsigned int length)
 {
+#ifdef DEBUG
   Serial.print("Received on ");
   Serial.print(topic);
   Serial.print(": ");
+#endif
 
   String content = "";
 
@@ -17,46 +19,46 @@ void OnMqttReceived(char *topic, byte *payload, unsigned int length)
     content.concat((char)payload[i]);
   }
 
-  Serial.print(content);
-  Serial.println();
+#ifdef DEBUG
+  Serial.println(content);
+#endif
 }
 
-void InitMqtt(const char *MQTTServerAddress, uint16_t MQTTServerPort)
+void MQTT_Init(const char *MQTTServerAddress, uint16_t MQTTServerPort)
 {
   client.setServer(MQTTServerAddress, MQTTServerPort);
-  client.setCallback(OnMqttReceived);
+  client.setCallback(MQTT_OnReceived);
 }
 
-// conecta o reconecta al MQTT
-// consigue conectar -> suscribe a topic y publica un mensaje
-// no -> espera 5 segundos
-void ConnectMqtt(const char *MQTTClientName)
+void MQTT_Connect(const char *MQTTClientName)
 {
+#ifdef DEBUG
   Serial.print("Starting MQTT connection...");
-  if (client.connect(MQTTClientName))
+#endif
+  if (client.connect(MQTTClientName, USER, MQTT_PASSWORD))
   {
-    client.subscribe("hello/world");
-    client.publish("hello/world", "connected");
+    String statusTopic = buildTopic(GROUP_ID, String(DEVICE_ID, HEX), "status");
+    client.subscribe(statusTopic.c_str());
+    client.publish(statusTopic.c_str(), "connected");
   }
-  else
-  {
-    Serial.print("Failed MQTT connection, rc=");
-    Serial.print(client.state());
-    Serial.println(" try again in 5 seconds");
-
-    delay(5000);
-  }
+#ifdef DEBUG
+  Serial.print("Failed MQTT connection, rc=");
+  Serial.print(client.state());
+  Serial.println(" try again in 5 seconds");
+#endif
 }
 
-// gestiona la comunicación MQTT
-// comprueba que el cliente está conectado
-// no -> intenta reconectar
-// si -> llama al MQTT loop
-void HandleMqtt(const char *MQTTClientName)
+void MQTT_Handle(const char *MQTTClientName)
 {
   if (!client.connected())
   {
-    ConnectMqtt(MQTTClientName);
+    MQTT_Connect(MQTTClientName);
   }
   client.loop();
+}
+
+String buildTopic(int groupId, const String& deviceId, const String& topic)
+{
+  String topicString = "group/" + String(groupId) + "/device/" + deviceId + "/" + topic;
+  return topicString;
 }
