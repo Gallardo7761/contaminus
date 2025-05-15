@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define SSID "DIGIFIBRA-D2ys"
-#define WIFI_PASSWORD "4EEATsyTcZ"
+#define SSID "iPhone de Álvaro"
+#define WIFI_PASSWORD "alvarito123"
 
 int setupWifi();

@@ -105,7 +105,7 @@ void readBME280()
 
 void readGPS()
 {
-    gpsData = GPS_Read();
+    gpsData = GPS_Read_Fake();
 }
 
 void writeMatrix(const char *message)

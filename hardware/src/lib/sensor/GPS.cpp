@@ -25,3 +25,9 @@ GPSData_t GPS_Read()
 
     return {lat, lon};
 }
+
+GPSData_t GPS_Read_Fake()
+{
+    float rnd = random(-0.005, 0.005);
+    return {37.358201f + rnd, -5.986640f + rnd};
+}

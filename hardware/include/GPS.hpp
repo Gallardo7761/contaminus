@@ -10,3 +10,4 @@ struct GPSData_t
 
 void GPS_Init();
 GPSData_t GPS_Read();
+GPSData_t GPS_Read_Fake();
