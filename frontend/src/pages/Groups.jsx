@@ -60,17 +60,16 @@ const GroupsContent = ({ config }) => {
 
     return (
         <CardContainer
-            links
-            text
             cards={data.map(group => {
                 const groupDevices = devices[group.groupId]?.data;
                 const deviceCount = groupDevices?.length;
 
                 return {
                     title: group.groupName,
+                    link: true,
+                    text: true,
                     status: `ID: ${group.groupId}`,
                     to: `/groups/${group.groupId}`,
-                    styleMode: "override",
                     content: deviceCount != null
                         ? (deviceCount === 1 ? "1 dispositivo" : `${deviceCount} dispositivos`)
                         : "Cargando dispositivos...",

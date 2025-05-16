@@ -8,7 +8,7 @@ const Dashboard = () => {
     const { groupId, deviceId } = useParams();
 
     return (
-        <main className='container justify-content-center'>
+        <main className='container justify-content-center gap-3 d-flex flex-column'>
             <SummaryCards groupId={groupId} deviceId={deviceId} />
             <PollutionMap groupId={groupId} deviceId={deviceId} />
             <HistoryCharts groupId={groupId} deviceId={deviceId} />

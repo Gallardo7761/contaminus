@@ -7,6 +7,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { DataProvider } from "@/context/DataContext.jsx";
 import { useDataContext } from "@/hooks/useDataContext";
 import { useConfig } from "@/hooks/useConfig";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Filler);
 
@@ -54,15 +56,30 @@ const HistoryChartsContent = () => {
     carbonMonoxide: []
   };
 
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const isToday = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    return (
+      date.getUTCFullYear() >= threeDaysAgo.getUTCFullYear() &&
+      date.getUTCMonth() >= threeDaysAgo.getUTCMonth() &&
+      date.getUTCDate() >= threeDaysAgo.getUTCDate()
+    );
+  };
+
   data?.forEach(sensor => {
-    if (sensor.value != null && grouped[sensor.valueType]) {
+    if (
+      sensor.value != null &&
+      grouped[sensor.valueType] &&
+      isToday(sensor.timestamp)
+    ) {
       grouped[sensor.valueType].push({
         timestamp: sensor.timestamp * 1000,
         value: sensor.value
       });
-
     }
   });
+
 
   const sortAndExtract = (entries) => {
     const sorted = entries.sort((a, b) => a.timestamp - b.timestamp);
@@ -75,45 +92,50 @@ const HistoryChartsContent = () => {
       })
     );
 
-const values = sorted.map(e => e.value);
-return { labels, values };
+    const values = sorted.map(e => e.value);
+    return { labels, values };
   };
 
 
-const temp = sortAndExtract(grouped.temperature);
-const hum = sortAndExtract(grouped.humidity);
-const press = sortAndExtract(grouped.pressure);
-const co = sortAndExtract(grouped.carbonMonoxide);
+  const temp = sortAndExtract(grouped.temperature);
+  const hum = sortAndExtract(grouped.humidity);
+  const press = sortAndExtract(grouped.pressure);
+  const co = sortAndExtract(grouped.carbonMonoxide);
 
-const timeLabels = temp.labels.length ? temp.labels : hum.labels.length ? hum.labels : co.labels.length ? co.labels : ["Sin datos"];
+  const timeLabels = temp.labels.length ? temp.labels : hum.labels.length ? hum.labels : co.labels.length ? co.labels : ["Sin datos"];
 
-const historyData = [
-  { title: "🌡️ Temperatura", data: temp.values, borderColor: "#00FF85", backgroundColor: "rgba(0, 255, 133, 0.2)" },
-  { title: "💦 Humedad", data: hum.values, borderColor: "#00D4FF", backgroundColor: "rgba(0, 212, 255, 0.2)" },
-  { title: "⏲ Presión", data: press.values, borderColor: "#B12424", backgroundColor: "rgba(255, 0, 0, 0.2)" },
-  { title: "☁️ Contaminación", data: co.values, borderColor: "#FFA500", backgroundColor: "rgba(255, 165, 0, 0.2)" }
-];
+  const historyData = [
+    { title: "🌡️ Temperatura", data: temp.values, borderColor: "#00FF85", backgroundColor: "rgba(0, 255, 133, 0.2)" },
+    { title: "💦 Humedad", data: hum.values, borderColor: "#00D4FF", backgroundColor: "rgba(0, 212, 255, 0.2)" },
+    { title: "⏲ Presión", data: press.values, borderColor: "#B12424", backgroundColor: "rgba(255, 0, 0, 0.2)" },
+    { title: "☁️ Contaminación", data: co.values, borderColor: "#FFA500", backgroundColor: "rgba(255, 165, 0, 0.2)" }
+  ];
 
-return (
-  <CardContainer
-    cards={historyData.map(({ title, data, borderColor, backgroundColor }) => ({
-      title,
-      content: (
-        <Line style={{ minHeight: "250px" }}
-          data={{
-            labels: timeLabels,
-            datasets: [{ data, borderColor, backgroundColor, fill: true, tension: 0.4 }]
-          }}
-          options={options}
-        />
-      ),
-      styleMode: "override",
-      className: "col-lg-6 col-xxs-12 d-flex flex-column align-items-center p-3 card-container",
-      style: { minHeight: "250px" }
-    }))}
-    className=""
-  />
-);
+  return (
+    <>
+      <CardContainer
+        cards={historyData.map(({ title, data, borderColor, backgroundColor }) => ({
+          title,
+          content: (
+            <Line style={{ minHeight: "250px" }}
+              data={{
+                labels: timeLabels,
+                datasets: [{ data, borderColor, backgroundColor, fill: true, tension: 0.4 }]
+              }}
+              options={options}
+            />
+          ),
+          styleMode: "override",
+          className: "col-lg-6 col-xxs-12 d-flex flex-column align-items-center",
+          style: { minHeight: "250px" }
+        }))}
+      />
+      <span className="m-0 p-0 d-flex align-items-center justify-content-center">
+        <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
+        <p className="m-0 p-0">El historial muestra datos de los últimos 3 días</p>
+      </span>
+    </>
+  );
 };
 
 HistoryCharts.propTypes = {

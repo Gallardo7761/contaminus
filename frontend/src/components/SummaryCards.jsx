@@ -39,11 +39,51 @@ const SummaryCardsContent = () => {
     if (!data) return <p>Datos no disponibles.</p>;
 
     const CardsData = [
-        { id: 1, title: "Temperatura", content: "N/A", status: "Esperando datos...", titleIcon: '🌡 ' },
-        { id: 2, title: "Humedad", content: "N/A", status: "Esperando datos...", titleIcon: '💦 ' },
-        { id: 3, title: "Presión", content: "N/A", status: "Esperando datos...", titleIcon: '⏲ ' },
-        { id: 4, title: "Nivel de CO", content: "N/A", status: "Esperando datos...", titleIcon: '☁ ' }
+        {
+            id: 1,
+            title: "Temperatura",
+            content: "N/A",
+            status: "Esperando datos...",
+            titleIcon: '🌡 ',
+            className: "col-12 col-md-6 col-lg-3",
+            link: false,
+            text: true
+        },
+
+        {
+            id: 2,
+            title: "Humedad",
+            content: "N/A",
+            status: "Esperando datos...",
+            titleIcon: '💦 ',
+            className: "col-12 col-md-6 col-lg-3",
+            link: false,
+            text: true
+        },
+
+        {
+            id: 3,
+            title: "Presión",
+            content: "N/A",
+            status: "Esperando datos...",
+            titleIcon: '⏲ ',
+            className: "col-12 col-md-6 col-lg-3",
+            link: false,
+            text: true
+        },
+
+        {
+            id: 4,
+            title: "Nivel de CO",
+            content: "N/A",
+            status: "Esperando datos...",
+            titleIcon: '☁ ',
+            className: "col-12 col-md-6 col-lg-3",
+            link: false,
+            text: true
+        }
     ];
+
 
     if (data) {
         let coData = data[2];
@@ -61,7 +101,7 @@ const SummaryCardsContent = () => {
     }
 
     return (
-        <CardContainer text cards={CardsData} />
+        <CardContainer cards={CardsData} />
     );
 }
 

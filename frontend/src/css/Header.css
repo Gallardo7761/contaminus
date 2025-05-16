@@ -34,6 +34,21 @@ header > .subtitle {
     animation: fadeIn 2s ease-in-out;
 }
 
+.animated-header {
+    animation: pulseHeader 6s ease-in-out infinite;
+}
+
+@keyframes pulseHeader {
+    0%, 100% {
+        opacity: 0.96;
+        transform: translateY(3px);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
 @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }

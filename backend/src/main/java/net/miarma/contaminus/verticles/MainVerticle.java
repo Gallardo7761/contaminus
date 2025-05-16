@@ -17,7 +17,7 @@ import net.miarma.contaminus.common.Constants;
 public class MainVerticle extends AbstractVerticle {
     private ConfigManager configManager;
 
-    public static void main(String[] args) {    	
+    public static void main(String[] args) {  
     	Launcher.executeCommand("run", MainVerticle.class.getName());
     }
 	

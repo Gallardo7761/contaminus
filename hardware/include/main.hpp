@@ -1,14 +1,29 @@
 #pragma once
 
 #include "globals.hpp"
+
+#define DEVICE_ROLE SENSOR // se cambia entre SENSOR y ACTUATOR
+
+#if DEVICE_ROLE == SENSOR
+  #warning "Compilando firmware para SENSOR"
+#elif DEVICE_ROLE == ACTUATOR
+  #warning "Compilando firmware para ACTUATOR"
+#else
+  #warning "DEVICE_ROLE no definido correctamente"
+#endif
+
 #include "JsonTools.hpp"
 #include "RestClient.hpp"
 #include "WifiConnection.hpp"
 #include "MqttClient.hpp"
+#if DEVICE_ROLE == SENSOR
 #include "BME280.hpp"
 #include "GPS.hpp"
-#include "MAX7219.hpp"
 #include "MQ7v2.hpp"
+#endif
+#if DEVICE_ROLE == ACTUATOR
+#include "MAX7219.hpp"
+#endif
 
 struct TaskTimer
 {

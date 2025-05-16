@@ -1,47 +1,67 @@
 #include "main.hpp"
 
 const uint32_t DEVICE_ID = getChipID();
+const String mqttId = "CUS-" + String(DEVICE_ID, HEX);
 const int GROUP_ID = 1;
-const char *currentMessage = nullptr;
-const String id = "CUS-" + String(DEVICE_ID, HEX);
 
-TaskTimer matrixTimer{0, 25};
 TaskTimer globalTimer{0, 60000};
 TaskTimer mqttTimer{0, 5000};
 
+#if DEVICE_ROLE == ACTUATOR
+TaskTimer matrixTimer{0, 25};
+const char *currentMessage = ALL;
+extern MD_Parola display;
+#endif
+
 extern HTTPClient httpClient;
 String response;
-extern MD_Parola display;
 
+#if DEVICE_ROLE == SENSOR
 MQ7Data_t mq7Data;
 BME280Data_t bme280Data;
 GPSData_t gpsData;
+#endif
 
 void setup()
 {
     Serial.begin(115200);
 
+#ifdef DEBUG
     Serial.println("Iniciando...");
+#endif
 
-    setupWifi();
+    WiFi_Init();
     MQTT_Init(MQTT_URI, MQTT_PORT);
 
-    BME280_Init();
-    Serial.println("Sensor BME280 inicializado");
-    GPS_Init();
-    Serial.println("Sensor GPS inicializado");
-    MQ7_Init();
-    Serial.println("Sensor MQ7 inicializado");
-    MAX7219_Init();
-    Serial.println("Display inicializado");
+    try
+    {
+        
+#if DEVICE_ROLE == SENSOR
+        BME280_Init();
+        Serial.println("Sensor BME280 inicializado");
+        GPS_Init();
+        Serial.println("Sensor GPS inicializado");
+        MQ7_Init();
+        Serial.println("Sensor MQ7 inicializado");
+#endif
 
-    writeMatrix(currentMessage);
+#if DEVICE_ROLE == ACTUATOR
+        MAX7219_Init();
+        Serial.println("Display inicializado");
+        writeMatrix(currentMessage);
+#endif
+    }
+    catch (const char *e)
+    {
+        Serial.println(e);
+    }
 }
 
 void loop()
 {
     uint32_t now = millis();
 
+#if DEVICE_ROLE == ACTUATOR
     if (now - matrixTimer.lastRun >= matrixTimer.interval)
     {
         if (MAX7219_Animate())
@@ -50,9 +70,11 @@ void loop()
         }
         matrixTimer.lastRun = now;
     }
+#endif
 
     if (now - globalTimer.lastRun >= globalTimer.interval)
     {
+#if DEVICE_ROLE == SENSOR
         readBME280();
         readGPS();
         readMQ7();
@@ -62,17 +84,29 @@ void loop()
 #endif
 
         sendSensorData();
-
+#endif
         globalTimer.lastRun = now;
     }
 
     if (now - mqttTimer.lastRun >= mqttTimer.interval)
     {
-        MQTT_Handle(id.c_str());
+        MQTT_Handle(mqttId.c_str());
         mqttTimer.lastRun = now;
     }
 }
 
+#if DEVICE_ROLE == ACTUATOR
+void writeMatrix(const char *message)
+{
+#ifdef DEBUG
+    Serial.println("Escribiendo en el display...");
+#endif
+
+    MAX7219_DisplayText(message, PA_LEFT, 50, 0);
+}
+#endif
+
+#if DEVICE_ROLE == SENSOR
 void readMQ7()
 {
     const float CO_THRESHOLD = 100.0f;
@@ -87,15 +121,6 @@ void readBME280()
 void readGPS()
 {
     gpsData = GPS_Read_Fake();
-}
-
-void writeMatrix(const char *message)
-{
-#ifdef DEBUG
-    Serial.println("Escribiendo en el display...");
-#endif
-
-    MAX7219_DisplayText(message, PA_LEFT, 50, 0);
 }
 
 void printAllData()
@@ -130,7 +155,6 @@ void sendSensorData()
 {
     const String deviceId = String(DEVICE_ID, HEX);
 
-    // Validaciones básicas (puedes añadir más si quieres)
     bool gpsValid = gpsData.lat != 0.0f && gpsData.lon != 0.0f;
     bool weatherValid = bme280Data.temperature != 0.0f &&
                         bme280Data.humidity != 0.0f &&
@@ -156,10 +180,11 @@ void sendSensorData()
     postRequest(String(API_URI) + "/batch", json, response);
 
 #ifdef DEBUG
-    Serial.println("📬 Respuesta del servidor:");
+    Serial.println("📥 Respuesta del servidor:");
     Serial.println(response);
 #endif
 }
+#endif
 
 uint32_t getChipID()
 {

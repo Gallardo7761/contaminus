@@ -46,6 +46,14 @@
     margin-right: 10px;
 }
 
+.card.led marquee > p.card-text {
+    font-family: "LEDBOARD" !important;
+    color: rgb(38, 60, 229) !important;
+    font-size: 2.5em !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
 p.card-text {
     font-size: 2.2em;
     font-weight: 600;

@@ -20,14 +20,16 @@ void MQTT_OnReceived(char *topic, byte *payload, unsigned int length)
     content.concat((char)payload[i]);
   }
 
+#if DEVICE_ROLE == ACTUATOR
   if(content == "ECO")
   {
-    currentMessage = "Solo vehiculos electricos/hibridos";
+    currentMessage = ECO;
   } 
   else
   {
-    currentMessage = "Todo tipo de vehiculos";
+    currentMessage = ALL;
   }
+#endif
 }
 
 void MQTT_Init(const char *MQTTServerAddress, uint16_t MQTTServerPort)

@@ -45,7 +45,12 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     	WebClientOptions options = new WebClientOptions()
     			.setUserAgent("ContaminUS");
     	this.restClient = new RestClientUtil(WebClient.create(Vertx.vertx(), options));
-    	this.mqttClient = MqttClient.create(Vertx.vertx(), new MqttClientOptions().setAutoKeepAlive(true));
+    	this.mqttClient = MqttClient.create(Vertx.vertx(), 
+    			new MqttClientOptions()
+					.setAutoKeepAlive(true)
+					.setUsername("contaminus")
+					.setPassword("contaminus")
+		);
     }   
     
     @Override
@@ -70,11 +75,25 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.HISTORY).handler(this::getDeviceHistory);
         router.route(HttpMethod.GET, Constants.SENSOR_VALUES).handler(this::getSensorValues);
 
-        vertx.createHttpServer()
-	        .requestHandler(router)
-	        .listen(configManager.getLogicApiPort(), configManager.getHost());
-        
-        startPromise.complete();
+        mqttClient.connect(1883, "localhost", ar -> {
+            if (ar.succeeded()) {
+            	Constants.LOGGER.info("🟢 MQTT client connected");
+                vertx.createHttpServer()
+                    .requestHandler(router)
+                    .listen(configManager.getLogicApiPort(), configManager.getHost(), http -> {
+                        if (http.succeeded()) {
+                        	Constants.LOGGER.info("🟢 HTTP server started on port " + configManager.getLogicApiPort());
+                            startPromise.complete();
+                        } else {
+                        	Constants.LOGGER.error("🔴 HTTP server failed to start: " + http.cause());
+                            startPromise.fail(http.cause());
+                        }
+                    });
+            } else {
+            	Constants.LOGGER.error("🔴 MQTT client connection failed: " + ar.cause());
+                startPromise.fail(ar.cause());
+            }
+        });
     }
            
     private void getDeviceLatestValues(RoutingContext context) {
@@ -152,27 +171,18 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         WeatherValue weatherValue = gson.fromJson(weather.toString(), WeatherValue.class);
         COValue coValue = gson.fromJson(co.toString(), COValue.class);
         
+        // MQTT publish =============================
         float coAmount = coValue.getValue();
+        Constants.LOGGER.info("CO amount received: " + coAmount);
         String topic = buildTopic(Integer.parseInt(groupId), deviceId, "matrix");
-        if (coAmount >= 80.0f) {
-        	mqttClient.connect(1883, "miarma.net", ar -> {
-        		if(ar.succeeded()) {
-        			Constants.LOGGER.info("Connected to MQTT broker");
-        			mqttClient.publish(topic, Buffer.buffer("ECO"), MqttQoS.AT_LEAST_ONCE, false, false);
-        		} else {
-        			Constants.LOGGER.error("Error connecting to MQTT broker: " + ar.cause().getMessage());
-        		}
-        	});
-        } else {
-        	mqttClient.connect(1883, "miarma.net", ar -> {
-        		if(ar.succeeded()) {
-        			Constants.LOGGER.info("Connected to MQTT broker");
-        			mqttClient.publish(topic, Buffer.buffer("GAS"), MqttQoS.AT_LEAST_ONCE, false, false);
-				} else {
-					Constants.LOGGER.error("Error connecting to MQTT broker: " + ar.cause().getMessage());
-				}
-        	});
+        Constants.LOGGER.info("Topic: " + topic);
+        if (mqttClient.isConnected()) {
+			Constants.LOGGER.info("🟢 Publishing to MQTT topic: " + topic + " with value: " + coAmount);
+            mqttClient.publish(topic, Buffer.buffer(coAmount >= 80.0f ? "ECO" : "GAS"),
+                MqttQoS.AT_LEAST_ONCE, false, false);
+            Constants.LOGGER.info("🟢 Message published to MQTT topic: " + topic);
         }
+        // ============================================
         
         gpsValue.setDeviceId(deviceId);
         weatherValue.setDeviceId(deviceId);

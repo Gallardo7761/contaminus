@@ -10,7 +10,13 @@
 #define GPS_ID 1
 #define MAX7219_ID 1
 
+#define ECO "Solo vehiculos electricos/hibridos"
+#define ALL "Todo tipo de vehiculos"
+
 #define DEBUG
+
+#define SENSOR 0
+#define ACTUATOR 1
 
 extern const uint32_t DEVICE_ID;
 extern const int GROUP_ID;

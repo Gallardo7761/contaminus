@@ -1,9 +1,22 @@
 import PropTypes from "prop-types";
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import "@/css/Card.css";
 import { useTheme } from "@/hooks/useTheme";
 
-const Card = ({ title, status, children, styleMode, className, titleIcon, style }) => {
+const Card = ({
+    title,
+    status,
+    children,
+    styleMode,
+    className,
+    titleIcon,
+    style,
+    link,
+    to,
+    text,
+    marquee
+}) => {
     const cardRef = useRef(null);
     const [shortTitle, setShortTitle] = useState(title);
     const { theme } = useTheme();
@@ -25,37 +38,59 @@ const Card = ({ title, status, children, styleMode, className, titleIcon, style 
         return () => window.removeEventListener("resize", checkSize);
     }, [title]);
 
-    return (
+    const cardContent = (
         <div
             ref={cardRef}
-            className={styleMode === "override" ? `${className}` : 
-            `col-xl-3 col-sm-6 d-flex flex-column align-items-center p-3 card-container ${className}`}
-            
+            className={`card p-3 w-100 ${theme} ${className ?? ""}`}
+            style={styleMode === "override" ? style : {}}
         >
-            <div className={`card p-3 w-100 ${theme}`} style={styleMode === "override" ? style : {}}>
-                <h3 className="text-center">
-                    {titleIcon}
-                    {shortTitle}
-                </h3>
-                <div className="card-content">{children}</div>
-                {status ? <span className="status text-center mt-2">{status}</span> : null}
+            <h3 className="text-center">
+                {titleIcon}
+                {shortTitle}
+            </h3>
+
+            <div className="card-content">
+                {marquee ? (
+                    <marquee>
+                        <p className="card-text text-center">{children}</p>
+                    </marquee>
+                ) : text ? (
+                    <p className="card-text text-center">{children}</p>
+                ) : (
+                    <div className="my-2">{children}</div>
+                )}
+
             </div>
+
+            {status && <span className="status text-center mt-2">{status}</span>}
         </div>
     );
+
+    return link && to
+        ? <Link to={to} style={{ textDecoration: "none" }}>{cardContent}</Link>
+        : cardContent;
 };
 
 Card.propTypes = {
     title: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
-    styleMode: PropTypes.oneOf(["override", ""]), 
-    className: PropTypes.string, 
+    styleMode: PropTypes.oneOf(["override", ""]),
+    className: PropTypes.string,
     titleIcon: PropTypes.node,
     style: PropTypes.object,
+    link: PropTypes.bool,
+    to: PropTypes.string,
+    text: PropTypes.bool,
 };
 
 Card.defaultProps = {
     styleMode: "",
+    className: "",
+    style: {},
+    link: false,
+    to: "",
+    text: false,
 };
 
 export default Card;

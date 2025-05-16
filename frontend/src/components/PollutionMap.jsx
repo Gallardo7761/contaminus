@@ -72,9 +72,7 @@ const PollutionMapContent = () => {
   if (!data) return <p>Datos no disponibles.</p>;
 
   return (
-    <div className="p-3">
-      <div id="map" className='rounded-4' style={{ height: "60vh" }}></div>
-    </div>
+    <div id="map" className='rounded-4' style={{ height: "60vh" }}></div>
   );
 }
 

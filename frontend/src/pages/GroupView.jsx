@@ -9,8 +9,10 @@ import { useEffect, useState } from "react";
 import { DataProvider } from "@/context/DataContext";
 
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-import L from 'leaflet';
+import L, { map } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import PropTypes from 'prop-types';
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 // Icono de marcador por defecto (porque Leaflet no lo carga bien en algunos setups)
 const markerIcon = new L.Icon({
@@ -18,6 +20,7 @@ const markerIcon = new L.Icon({
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
+
 
 const MiniMap = ({ lat, lon }) => (
     <MapContainer
@@ -33,6 +36,11 @@ const MiniMap = ({ lat, lon }) => (
         <Marker position={[lat, lon]} icon={markerIcon} />
     </MapContainer>
 );
+
+MiniMap.propTypes = {
+    lat: PropTypes.number.isRequired,
+    lon: PropTypes.number.isRequired,
+};
 
 const GroupView = () => {
     const { groupId } = useParams();
@@ -91,21 +99,20 @@ const GroupViewContent = () => {
 
     return (
         <CardContainer
-            links
             cards={data.map(device => {
                 const latest = latestData[device.deviceId];
                 const gpsSensor = latest?.data[0];
-                const mapPreview = gpsSensor?.lat && gpsSensor?.lon
-                    ? <MiniMap lat={gpsSensor.lat} lon={gpsSensor.lon} />
-                    : "Sin posición";
+                const mapPreview = <MiniMap lat={gpsSensor?.lat} lon={gpsSensor?.lon} />;
 
                 return {
                     title: device.deviceName,
                     status: `ID: ${device.deviceId}`,
-                    content: mapPreview,
+                    link: gpsSensor != undefined,
+                    text: gpsSensor == undefined,
+                    marquee: gpsSensor == undefined,
+                    content: gpsSensor == undefined ? "SOLO VEHICULOS ELECTRICOS" : mapPreview,
                     to: `/groups/${groupId}/devices/${device.deviceId}`,
-                    styleMode: "override",
-                    className: "col-12 col-md-6 col-lg-4"
+                    className: `col-12 col-md-6 col-lg-4 ${gpsSensor == undefined ? "led" : ""}`,
                 };
             })}
 

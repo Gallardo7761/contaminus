@@ -34,7 +34,7 @@ void hueCycle(uint8_t pos)
   setColor(r, g, b);
 }
 
-int setupWifi()
+int WiFi_Init()
 {
   setupLED();
 
