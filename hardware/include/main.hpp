@@ -27,12 +27,6 @@ struct SensorInfo
     String type;
 };
 
-enum AirQualityStatus
-{
-    GOOD,
-    BAD
-};
-
 void readMQ7();
 void readBME280();
 void readGPS();

@@ -8,9 +8,11 @@ import java.util.Set;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.netty.handler.codec.mqtt.MqttQoS;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -19,6 +21,8 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.mqtt.MqttClient;
+import io.vertx.mqtt.MqttClientOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.entities.COValue;
@@ -34,12 +38,14 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     private ConfigManager configManager;
     private final Gson gson = new GsonBuilder().serializeNulls().create();
     private RestClientUtil restClient;
+    private MqttClient mqttClient;
 
     public LogicLayerAPIVerticle() {
     	this.configManager = ConfigManager.getInstance();
     	WebClientOptions options = new WebClientOptions()
     			.setUserAgent("ContaminUS");
     	this.restClient = new RestClientUtil(WebClient.create(Vertx.vertx(), options));
+    	this.mqttClient = MqttClient.create(Vertx.vertx(), new MqttClientOptions().setAutoKeepAlive(true));
     }   
     
     @Override
@@ -146,6 +152,28 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         WeatherValue weatherValue = gson.fromJson(weather.toString(), WeatherValue.class);
         COValue coValue = gson.fromJson(co.toString(), COValue.class);
         
+        float coAmount = coValue.getValue();
+        String topic = buildTopic(Integer.parseInt(groupId), deviceId, "matrix");
+        if (coAmount >= 80.0f) {
+        	mqttClient.connect(1883, "miarma.net", ar -> {
+        		if(ar.succeeded()) {
+        			Constants.LOGGER.info("Connected to MQTT broker");
+        			mqttClient.publish(topic, Buffer.buffer("ECO"), MqttQoS.AT_LEAST_ONCE, false, false);
+        		} else {
+        			Constants.LOGGER.error("Error connecting to MQTT broker: " + ar.cause().getMessage());
+        		}
+        	});
+        } else {
+        	mqttClient.connect(1883, "miarma.net", ar -> {
+        		if(ar.succeeded()) {
+        			Constants.LOGGER.info("Connected to MQTT broker");
+        			mqttClient.publish(topic, Buffer.buffer("GAS"), MqttQoS.AT_LEAST_ONCE, false, false);
+				} else {
+					Constants.LOGGER.error("Error connecting to MQTT broker: " + ar.cause().getMessage());
+				}
+        	});
+        }
+        
         gpsValue.setDeviceId(deviceId);
         weatherValue.setDeviceId(deviceId);
         coValue.setDeviceId(deviceId);
@@ -167,5 +195,11 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
                     .end(new JsonObject().put("status", "success").put("inserted", 3).encode());
             })
             .onFailure(err -> context.fail(500, err));
+    }
+    
+    private String buildTopic(int groupId, String deviceId, String topic)
+    {
+      String topicString = "group/" + groupId + "/device/" + deviceId + "/" + topic;
+      return topicString;
     }
 }

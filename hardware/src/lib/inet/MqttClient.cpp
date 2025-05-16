@@ -1,6 +1,7 @@
 #include "MqttClient.hpp"
 
 extern WiFiClient wifiClient;
+extern const char *currentMessage;
 
 PubSubClient client(wifiClient);
 
@@ -19,9 +20,14 @@ void MQTT_OnReceived(char *topic, byte *payload, unsigned int length)
     content.concat((char)payload[i]);
   }
 
-#ifdef DEBUG
-  Serial.println(content);
-#endif
+  if(content == "ECO")
+  {
+    currentMessage = "Solo vehiculos electricos/hibridos";
+  } 
+  else
+  {
+    currentMessage = "Todo tipo de vehiculos";
+  }
 }
 
 void MQTT_Init(const char *MQTTServerAddress, uint16_t MQTTServerPort)
@@ -38,7 +44,9 @@ void MQTT_Connect(const char *MQTTClientName)
   if (client.connect(MQTTClientName, USER, MQTT_PASSWORD))
   {
     String statusTopic = buildTopic(GROUP_ID, String(DEVICE_ID, HEX), "status");
+    String matrixTopic = buildTopic(GROUP_ID, String(DEVICE_ID, HEX), "matrix");
     client.subscribe(statusTopic.c_str());
+    client.subscribe(matrixTopic.c_str());
     client.publish(statusTopic.c_str(), "connected");
   }
 #ifdef DEBUG

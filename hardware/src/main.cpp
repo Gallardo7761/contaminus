@@ -2,8 +2,6 @@
 
 const uint32_t DEVICE_ID = getChipID();
 const int GROUP_ID = 1;
-const char ALL_VEHICLES[] = "Todo tipo de vehiculos";
-const char ELECTRIC_VEHICLES[] = "Solo vehiculos electricos/hibridos";
 const char *currentMessage = nullptr;
 const String id = "CUS-" + String(DEVICE_ID, HEX);
 
@@ -18,7 +16,6 @@ extern MD_Parola display;
 MQ7Data_t mq7Data;
 BME280Data_t bme280Data;
 GPSData_t gpsData;
-AirQualityStatus currentAirStatus = GOOD;
 
 void setup()
 {
@@ -38,7 +35,7 @@ void setup()
     MAX7219_Init();
     Serial.println("Display inicializado");
 
-    writeMatrix(ALL_VEHICLES);
+    writeMatrix(currentMessage);
 }
 
 void loop()
@@ -79,23 +76,7 @@ void loop()
 void readMQ7()
 {
     const float CO_THRESHOLD = 100.0f;
-
     mq7Data = MQ7_Read();
-
-    AirQualityStatus newStatus = (mq7Data.co >= CO_THRESHOLD) ? BAD : GOOD;
-
-    if (newStatus != currentAirStatus)
-    {
-        currentAirStatus = newStatus;
-        if (currentAirStatus == BAD)
-        {
-            writeMatrix(ELECTRIC_VEHICLES);
-        }
-        else
-        {
-            writeMatrix(ALL_VEHICLES);
-        }
-    }
 }
 
 void readBME280()
@@ -110,10 +91,6 @@ void readGPS()
 
 void writeMatrix(const char *message)
 {
-    if (currentMessage == message)
-        return;
-    currentMessage = message;
-
 #ifdef DEBUG
     Serial.println("Escribiendo en el display...");
 #endif
