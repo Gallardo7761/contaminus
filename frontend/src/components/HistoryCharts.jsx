@@ -72,9 +72,6 @@ const HistoryChartsContent = () => {
     }
   });
 
-
-  console.log("Grouped data:", grouped);
-
   const sortAndExtract = (entries) => {
     const sorted = entries.sort((a, b) => a.timestamp - b.timestamp);
 
