@@ -11,57 +11,71 @@ import "leaflet.heat";
 import { useEffect } from 'react';
 
 const PollutionMap = ({ groupId, deviceId }) => {
-    const { config, configLoading, configError } = useConfig();
+  const { config, configLoading, configError } = useConfig();
 
-    if (configLoading) return <p>Cargando configuración...</p>;
-    if (configError) return <p>Error al cargar configuración: {configError}</p>;
-    if (!config) return <p>Configuración no disponible.</p>;
+  if (configLoading) return <p>Cargando configuración...</p>;
+  if (configError) return <p>Error al cargar configuración: {configError}</p>;
+  if (!config) return <p>Configuración no disponible.</p>;
 
-    const BASE = config.appConfig.endpoints.LOGIC_URL;
-    const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
-    const endp = ENDPOINT
-        .replace(':groupId', groupId)
-        .replace(':deviceId', deviceId);
+  const BASE = config.appConfig.endpoints.LOGIC_URL;
+  const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_POLLUTION_MAP;
+  const endp = ENDPOINT
+    .replace(':groupId', groupId)
+    .replace(':deviceId', deviceId);
 
-    const reqConfig = {
-        baseUrl: `${BASE}${endp}`,
-        params: {}
-    };
+  const reqConfig = {
+    baseUrl: `${BASE}${endp}`,
+    params: {}
+  };
 
-    return (
-        <DataProvider config={reqConfig}>
-            <PollutionMapContent />
-        </DataProvider>
-    );
+  return (
+    <DataProvider config={reqConfig}>
+      <PollutionMapContent />
+    </DataProvider>
+  );
 };
 
 const PollutionMapContent = () => {
   const { config, configLoading, configError } = useConfig();
   const { data, dataLoading, dataError } = useDataContext();
-  
+
   useEffect(() => {
-  if (!data || !config) return;
+    if (!data || !config) return;
 
-  const mapContainer = document.getElementById("map");
-  if (!mapContainer) return;
+    const isToday = (timestamp) => {
+      const today = new Date();
+      const date = new Date(timestamp * 1000); // si viene en segundos
 
-  const SEVILLA = config.userConfig.city;
+      return (
+        today.getFullYear() === date.getFullYear() &&
+        today.getMonth() === date.getMonth() &&
+        today.getDate() === date.getDate()
+      );
+    };
 
-  const map = L.map(mapContainer).setView(SEVILLA, 12);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+    const mapContainer = document.getElementById("map");
+    if (!mapContainer) return;
 
-  const points = data.map((p) => [p.lat, p.lon, p.carbonMonoxide]);
+    const SEVILLA = config.userConfig.city;
 
-  L.heatLayer(points, { radius: 25 }).addTo(map);
+    const map = L.map(mapContainer).setView(SEVILLA, 12);
 
-  return () => {
-    map.remove();
-  };
-}, [data, config]);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const points = data
+      .filter(p => isToday(p.timestamp))
+      .map(p => [p.lat, p.lon, p.carbonMonoxide]);
+
+    L.heatLayer(points, { radius: 25 }).addTo(map);
+
+    return () => {
+      map.remove();
+    };
+  }, [data, config]);
 
   if (configLoading) return <p>Cargando configuración...</p>;
   if (configError) return <p>Error al cargar configuración: {configError}</p>;

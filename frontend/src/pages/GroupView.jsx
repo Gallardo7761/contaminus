@@ -110,7 +110,7 @@ const GroupViewContent = () => {
                     link: gpsSensor != undefined,
                     text: gpsSensor == undefined,
                     marquee: gpsSensor == undefined,
-                    content: gpsSensor == undefined ? "SOLO VEHICULOS ELECTRICOS" : mapPreview,
+                    content: gpsSensor == undefined ? "TODO TIPO DE VEHICULOS" : mapPreview,
                     to: `/groups/${groupId}/devices/${device.deviceId}`,
                     className: `col-12 col-md-6 col-lg-4 ${gpsSensor == undefined ? "led" : ""}`,
                 };

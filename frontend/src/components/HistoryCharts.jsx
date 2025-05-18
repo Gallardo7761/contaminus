@@ -23,7 +23,7 @@ const HistoryCharts = ({ groupId, deviceId }) => {
   const ENDPOINT = config.appConfig.endpoints.GET_DEVICE_HISTORY;
   const endp = ENDPOINT
     .replace(':groupId', groupId)
-    .replace(':deviceId', deviceId); // si tu endpoint lo necesita
+    .replace(':deviceId', deviceId);
 
   const reqConfig = {
     baseUrl: `${BASE}${endp}`,
@@ -56,22 +56,14 @@ const HistoryChartsContent = () => {
     carbonMonoxide: []
   };
 
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-  const isToday = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    return (
-      date.getUTCFullYear() >= threeDaysAgo.getUTCFullYear() &&
-      date.getUTCMonth() >= threeDaysAgo.getUTCMonth() &&
-      date.getUTCDate() >= threeDaysAgo.getUTCDate()
-    );
-  };
+  const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000); // hace 3 días en ms
+  const isRecent = (timestamp) => (timestamp * 1000) >= threeDaysAgo;
 
   data?.forEach(sensor => {
     if (
       sensor.value != null &&
       grouped[sensor.valueType] &&
-      isToday(sensor.timestamp)
+      isRecent(sensor.timestamp)
     ) {
       grouped[sensor.valueType].push({
         timestamp: sensor.timestamp * 1000,
@@ -80,6 +72,8 @@ const HistoryChartsContent = () => {
     }
   });
 
+
+  console.log("Grouped data:", grouped);
 
   const sortAndExtract = (entries) => {
     const sorted = entries.sort((a, b) => a.timestamp - b.timestamp);

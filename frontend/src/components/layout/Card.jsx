@@ -82,15 +82,7 @@ Card.propTypes = {
     link: PropTypes.bool,
     to: PropTypes.string,
     text: PropTypes.bool,
-};
-
-Card.defaultProps = {
-    styleMode: "",
-    className: "",
-    style: {},
-    link: false,
-    to: "",
-    text: false,
+    marquee: PropTypes.bool,
 };
 
 export default Card;
