@@ -31,7 +31,7 @@ public class MainVerticle extends AbstractVerticle {
         File baseDir = new File(this.configManager.getBaseDir());
         if (!baseDir.exists()) {
             baseDir.mkdirs();
-        }
+        } 
     }
     
     private void copyDefaultConfig() {

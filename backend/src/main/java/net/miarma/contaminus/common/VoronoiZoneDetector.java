@@ -24,16 +24,16 @@ public class VoronoiZoneDetector {
 
     private static class Zone {
         Polygon polygon;
-        String actuatorId;
+        Integer groupId;
 
-        public Zone(Polygon polygon, String actuatorId) {
+        public Zone(Polygon polygon, Integer groupId) {
             this.polygon = polygon;
-            this.actuatorId = actuatorId;
+            this.groupId = groupId;
         }
     }
 
-    private final List<Zone> zones = new ArrayList<>();
-    private final GeometryFactory geometryFactory = new GeometryFactory();
+    private static final List<Zone> zones = new ArrayList<>();
+    private static final GeometryFactory geometryFactory = new GeometryFactory();
     private final Gson gson = new Gson();
 
     public VoronoiZoneDetector(String geojsonUrl, boolean isUrl) throws Exception {
@@ -54,10 +54,10 @@ public class VoronoiZoneDetector {
         for (int i = 0; i < features.size(); i++) {
             JsonObject feature = features.get(i).getAsJsonObject();
 
-            String actuatorId = feature
+            Integer groupId = feature
                 .getAsJsonObject("properties")
-                .get("actuatorId")
-                .getAsString();
+                .get("groupId")
+                .getAsInt();
 
             JsonObject geometryJson = feature.getAsJsonObject("geometry");
             String geometryStr = gson.toJson(geometryJson);
@@ -65,36 +65,22 @@ public class VoronoiZoneDetector {
             Geometry geometry = reader.read(geometryStr);
 
             if (geometry instanceof Polygon polygon) {
-                zones.add(new Zone(polygon, actuatorId));
+                zones.add(new Zone(polygon, groupId));
             } else {
                 Constants.LOGGER.error("⚠️ Geometría ignorada: no es un polígono");
             }
         }
     }
 
-    public String getZoneForPoint(double lon, double lat) {
+    public static Integer getZoneForPoint(double lon, double lat) {
         Point p = geometryFactory.createPoint(new Coordinate(lon, lat));
 
         for (Zone z : zones) {
             if (z.polygon.covers(p)) {
-                return z.actuatorId;
+                return z.groupId;
             }
         }
 
         return null; // no está dentro de ninguna zona
-    }
-
-    public static void main(String[] args) throws Exception {
-        VoronoiZoneDetector detector = new VoronoiZoneDetector("https://miarma.net/files/voronoi_sevilla_geovoronoi.geojson", true);
-
-        double lon = -5.9752;
-        double lat = 37.3887;
-
-        String actuatorId = detector.getZoneForPoint(lon, lat);
-        if (actuatorId != null) {
-            System.out.println("📍 El punto pertenece al actuator: " + actuatorId);
-        } else {
-            System.out.println("🚫 El punto no pertenece a ninguna zona");
-        }
     }
 }

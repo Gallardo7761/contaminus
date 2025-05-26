@@ -25,7 +25,9 @@ import io.vertx.mqtt.MqttClient;
 import io.vertx.mqtt.MqttClientOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
+import net.miarma.contaminus.common.VoronoiZoneDetector;
 import net.miarma.contaminus.entities.COValue;
+import net.miarma.contaminus.entities.Device;
 import net.miarma.contaminus.entities.GpsValue;
 import net.miarma.contaminus.entities.ViewLatestValues;
 import net.miarma.contaminus.entities.ViewPollutionMap;
@@ -155,7 +157,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
             return;
         }
 
-        String groupId = body.getString("groupId");
+        String groupId = body.getString("groupId");        
         String deviceId = body.getString("deviceId");
 
         JsonObject gps = body.getJsonObject("gps");
@@ -171,29 +173,44 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         WeatherValue weatherValue = gson.fromJson(weather.toString(), WeatherValue.class);
         COValue coValue = gson.fromJson(co.toString(), COValue.class);
         
-        // MQTT publish =============================
-        float coAmount = coValue.getValue();
-        Constants.LOGGER.info("CO amount received: " + coAmount);
-        String topic = buildTopic(Integer.parseInt(groupId), deviceId, "matrix");
-        Constants.LOGGER.info("Topic: " + topic);
-        if (mqttClient.isConnected()) {
-			Constants.LOGGER.info("🟢 Publishing to MQTT topic: " + topic + " with value: " + coAmount);
-            mqttClient.publish(topic, Buffer.buffer(coAmount >= 80.0f ? "ECO" : "GAS"),
-                MqttQoS.AT_LEAST_ONCE, false, false);
-            Constants.LOGGER.info("🟢 Message published to MQTT topic: " + topic);
+        if(!VoronoiZoneDetector.getZoneForPoint(gpsValue.getLat(), gpsValue.getLon())
+        		.equals(Integer.valueOf(groupId))) {
+        	Constants.LOGGER.info("El dispositivo no ha medido en su zona");
+        	return;
         }
-        // ============================================
+
+        String host = "http://" + configManager.getHost();
+        int port = configManager.getDataApiPort();
+        String gpsPath = Constants.ADD_GPS_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+        String weatherPath = Constants.ADD_WEATHER_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+        String coPath = Constants.ADD_CO_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+        String devicesPath = Constants.DEVICES.replace(":groupId", groupId);
+        
+        restClient.getRequest(port, host, devicesPath, Device[].class)
+	        .onSuccess(ar -> {
+	        	Arrays.stream(ar)
+	    			.filter(d -> d.getDeviceRole().equals(Constants.ACTUATOR_ROLE))
+	    			.forEach(d -> {
+	    				float coAmount = coValue.getValue();
+	    		        Constants.LOGGER.info("CO amount received: " + coAmount);
+	    		        String topic = buildTopic(Integer.parseInt(groupId), d.getDeviceId(), "matrix");
+	    		        Constants.LOGGER.info("Topic: " + topic);
+	    				if (mqttClient.isConnected()) {
+	    					Constants.LOGGER.info("🟢 Publishing to MQTT topic: " + topic + " with value: " + coAmount);
+	    		            mqttClient.publish(topic, Buffer.buffer(coAmount >= 80.0f ? "ECO" : "GAS"),
+	    		                MqttQoS.AT_LEAST_ONCE, false, false);
+	    		            Constants.LOGGER.info("🟢 Message published to MQTT topic: " + topic);
+	    		        }
+	    			});
+	        	
+	        })
+	        .onFailure(err -> {
+	        	context.fail(500, err);
+	        });
         
         gpsValue.setDeviceId(deviceId);
         weatherValue.setDeviceId(deviceId);
         coValue.setDeviceId(deviceId);
-
-        String host = "http://" + configManager.getHost();
-        int port = configManager.getDataApiPort();
-
-        String gpsPath = Constants.ADD_GPS_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
-        String weatherPath = Constants.ADD_WEATHER_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
-        String coPath = Constants.ADD_CO_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
 
         restClient.postRequest(port, host, gpsPath, gpsValue, GpsValue.class)
             .compose(_ -> restClient.postRequest(port, host, weatherPath, weatherValue, WeatherValue.class))

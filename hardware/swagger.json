@@ -1,0 +1,694 @@
+{
+    "name": "ContaminUS",
+    "version": "1.0.0",
+    "basePath": "/api",
+    "endpoints": [
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups",
+            "description": "Obtener todos los grupos"
+        },
+        {
+            "method": "POST",
+            "path": "/raw/v1/groups",
+            "description": "Crear un nuevo grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "groupName",
+                    "type": "string",
+                    "description": "Nombre del grupo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/sensors",
+            "description": "Obtener todos los sensores de un dispositivo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/sensors",
+            "description": "Crear un nuevo sensor en un dispositivo",
+            "params": [
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceName",
+                    "type": "string",
+                    "description": "Nombre del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/sensors/:sensorId",
+            "description": "Obtener un sensor específico de un dispositivo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "PUT",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/sensors/:sensorId",
+            "description": "Actualizar un sensor específico de un dispositivo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/sensors/:sensorId/values",
+            "description": "Obtener los valores de un sensor específico de un dispositivo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        
+
+        
+
+
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices",
+            "description": "Obtener todos los dispostivos de un grupo específico",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/raw/v1/groups/:groupId/devices",
+            "description": "Crear un nuevo dispostivo perteneciente a un grupo",
+            "params": [
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceName",
+                    "type": "string",
+                    "description": "Nombre del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId",
+            "description": "Obtener un dispositivo de un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "PUT",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId",
+            "description": "Actualiza un dispositivo de un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/latest-values",
+            "description": "Obtener los últimos valores de un dispositivo perteneciente a un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/latest-values",
+            "description": "Obtener los últimos valores de un dispositivo perteneciente a un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/latest-values",
+            "description": "Obtiene el histórico de valores para un dispositivo de un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/batch",
+            "description": "Añadir los valores de los 3 sensores",
+            "params": [
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "lat",
+                    "type": "float",
+                    "description": "Latitud",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "lon",
+                    "type": "float",
+                    "description": "Longitud",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "temperature",
+                    "type": "float",
+                    "description": "Temperatura",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "humidity",
+                    "type": "float",
+                    "description": "Humedad",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "pressure",
+                    "type": "float",
+                    "description": "Presión",
+                    "in": "body",
+                    "required": true
+                },{
+                    "name": "value",
+                    "type": "float",
+                    "description": "Valor de CO",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "timestamp",
+                    "type": "long",
+                    "description": "Momento en el que se añadió el valor del CO",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/groups/:groupId/devices/:deviceId/sensors/:sensorId/gps_values",
+            "description": "Añadir un valor del GPS",
+            "params": [
+                {
+                    "name": "valueID",
+                    "type": "integer",
+                    "description": "ID del valor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "lat",
+                    "type": "float",
+                    "description": "Latitud",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "lon",
+                    "type": "float",
+                    "description": "Longitud",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "timestamp",
+                    "type": "long",
+                    "description": "Momento en el que se añadió el valor del GPS",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/groups/:groupId/devices/:deviceId/sensors/:sensorId/weather_values",
+            "description": "Añadir un valor del clima",
+            "params": [
+                {
+                    "name": "valueId",
+                    "type": "integer",
+                    "description": "ID del valor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "temperature",
+                    "type": "float",
+                    "description": "Temperatura",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "humidity",
+                    "type": "float",
+                    "description": "Humedad",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "pressure",
+                    "type": "float",
+                    "description": "Presión",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "timestamp",
+                    "type": "long",
+                    "description": "Momento en el que se añadió el valor del clima",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/groups/:groupId/devices/:deviceId/sensors/:sensorId/co_values",
+            "description": "Añadir un valor de CO",
+            "params": [
+                {
+                    "name": "valueId",
+                    "type": "integer",
+                    "description": "ID del valor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "sensorId",
+                    "type": "integer",
+                    "description": "ID del sensor",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "value",
+                    "type": "float",
+                    "description": "Valor de CO",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "timestamp",
+                    "type": "long",
+                    "description": "Momento en el que se añadió el valor del CO",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/actuators",
+            "description": "Obtener todos los actuadores pertenecientes a un dispositivo de un grupo específico",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/actuators",
+            "description": "Añadir un nuevo actuador para un dispositivo perteneciente a un grupo",
+            "params": [
+                {
+                    "name": "actuatorId",
+                    "type": "integer",
+                    "description": "ID del actuador",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "status",
+                    "type": "string",
+                    "description": "Modo del actuador (GAS/ECO)",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "timestamp",
+                    "type": "long",
+                    "description": "Momento en el que se inicializó el actuador",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/actuators/:actuator_id",
+            "description": "Obtener el actuadores perteneciente a un dispositivo de un grupo específico",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "actuator_id",
+                    "type": "integer",
+                    "description": "ID del actuador",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "POST",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/actuators/:actuator_id",
+            "description": "Actualizar un actuador para un dispositivo perteneciente a un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "actuator_id",
+                    "type": "integer",
+                    "description": "ID del actuador",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/groups/:groupId/devices/:deviceId/actuators/:actuator_id/status",
+            "description": "Obtener el estado de un actuador perteneciente a un dispositivo en un grupo",
+            "params": [
+                {
+                    "name": "groupId",
+                    "type": "integer",
+                    "description": "ID del grupo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "deviceId",
+                    "type": "integer",
+                    "description": "ID del dispositivo",
+                    "in": "body",
+                    "required": true
+                },
+                {
+                    "name": "actuator_id",
+                    "type": "integer",
+                    "description": "ID del actuador",
+                    "in": "body",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/v_latest_values",
+            "description": "Obtener la vista de últimos valores",
+            "params": []
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/v_pollution_map",
+            "description": "Obtener la vista de contaminación de un mapa",
+            "params": []
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/v_sensor_history_by_device",
+            "description": "Obtener la vista del historico de sensores por dispositivo",
+            "params": []
+        },
+        {
+            "method": "GET",
+            "path": "/raw/v1/v_sensor_values",
+            "description": "Obtener vista de valores dee sensores",
+            "params": []
+        }
+    ]
+}

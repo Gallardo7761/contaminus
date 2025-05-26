@@ -86,8 +86,8 @@ const SummaryCardsContent = () => {
 
 
     if (data) {
-        let coData = data[1];
-        let tempData = data[2];
+        let coData = data[2];
+        let tempData = data[1];
 
         CardsData[0].content = tempData.temperature + "°C";
         CardsData[0].status = "Temperatura actual";

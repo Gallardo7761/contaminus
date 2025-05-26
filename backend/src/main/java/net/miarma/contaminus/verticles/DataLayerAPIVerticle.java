@@ -474,6 +474,7 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 		
 		dbManager.execute(query, ViewLatestValues.class,
 			onSuccess -> {
+				Constants.LOGGER.info(gson.toJson(onSuccess));
 				context.response()
 					.putHeader("content-type", "application/json; charset=utf-8")
 					.end(gson.toJson(onSuccess));

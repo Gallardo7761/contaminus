@@ -11,6 +11,7 @@ import GroupView from '@/pages/GroupView.jsx'
 
 import { Routes, Route } from 'react-router-dom'
 import ContentWrapper from './components/layout/ContentWrapper'
+import Docs from './pages/Docs'
 
 const App = () => {
 
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/" element={<Groups />} />
           <Route path="/groups/:groupId" element={<GroupView />} />
           <Route path="/groups/:groupId/devices/:deviceId" element={<Dashboard />} />
+          <Route path="/docs" element={<Docs url={"/apidoc.json"} />} />
         </Routes>
       </ContentWrapper>
     </>
