@@ -3,6 +3,7 @@
 #include "globals.hpp"
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include "RestClient.hpp"
 
 #define USER "contaminus"
 #define MQTT_PASSWORD "contaminus"

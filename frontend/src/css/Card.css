@@ -14,7 +14,8 @@
 }
 
 .card.light > span.status {
-    background: #E0E0E0;
+    background: #D0D0D0;
+    color: #505050;
 }
 
 .card.dark {
@@ -27,6 +28,7 @@
 
 .card.dark > span.status {
     background: #505050;
+    color: #D0D0D0;
 }
 
 .card:hover {
@@ -48,10 +50,18 @@
 
 .card.led marquee > p.card-text {
     font-family: "LEDBOARD" !important;
-    color: rgb(38, 60, 229) !important;
-    font-size: 2.5em !important;
+    color: #263ce5 !important;
+    font-size: 6em !important;
     text-transform: uppercase !important;
     letter-spacing: 1px !important;
+}
+
+.contenedor-con-efecto {
+  background-color: #000; /* Fondo oscuro, similar al de la imagen */
+  background-image: radial-gradient(#313131aa 3px, transparent 0.5px); /* Puntos muy sutiles, casi invisibles */
+  background-size: 8px 8px; /* Controla la separación de los puntos */
+  /* Ajusta estos valores para cambiar el tamaño y la densidad de los puntos */
+  /* Los colores de los puntos pueden ser un azul muy oscuro, casi negro, o el mismo negro del fondo para un efecto muy sutil. */
 }
 
 p.card-text {

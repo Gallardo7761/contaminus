@@ -5,6 +5,7 @@
 #include "BME280.hpp"
 #include "MQ7v2.hpp"
 #include "GPS.hpp"
+#include "MAX7219.hpp"
 
 String serializeSensorValue(
     int groupId,
@@ -16,12 +17,4 @@ String serializeSensorValue(
     const MQ7Data_t &mq7,
     const GPSData_t &gps);
 
-String serializeActuatorStatus(
-    int actuatorId,
-    const String &deviceId,
-    int status,
-    long timestamp);
-
-void deserializeSensorValue(HTTPClient &http, int httpResponseCode);
-void deserializeActuatorStatus(HTTPClient &http, int httpResponseCode);
-void deserializeDevice(HTTPClient &http, int httpResponseCode);
+MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode);

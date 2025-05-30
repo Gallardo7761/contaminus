@@ -16,7 +16,9 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "system_error": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "random": "cpp",
+        "limits": "cpp"
     },
     "github.copilot.enable": {
         "*": true,

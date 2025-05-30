@@ -26,6 +26,7 @@ import io.vertx.mqtt.MqttClientOptions;
 import net.miarma.contaminus.common.ConfigManager;
 import net.miarma.contaminus.common.Constants;
 import net.miarma.contaminus.common.VoronoiZoneDetector;
+import net.miarma.contaminus.entities.Actuator;
 import net.miarma.contaminus.entities.COValue;
 import net.miarma.contaminus.entities.Device;
 import net.miarma.contaminus.entities.GpsValue;
@@ -41,6 +42,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     private final Gson gson = new GsonBuilder().serializeNulls().create();
     private RestClientUtil restClient;
     private MqttClient mqttClient;
+    private VoronoiZoneDetector detector;
 
     public LogicLayerAPIVerticle() {
     	this.configManager = ConfigManager.getInstance();
@@ -53,6 +55,7 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
 					.setUsername("contaminus")
 					.setPassword("contaminus")
 		);
+    	this.detector = VoronoiZoneDetector.create("https://miarma.net/files/voronoi_sevilla_geovoronoi.geojson", true);
     }   
     
     @Override
@@ -76,7 +79,9 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.POLLUTION_MAP).handler(this::getDevicePollutionMap);
         router.route(HttpMethod.GET, Constants.HISTORY).handler(this::getDeviceHistory);
         router.route(HttpMethod.GET, Constants.SENSOR_VALUES).handler(this::getSensorValues);
-
+        router.route(HttpMethod.GET, Constants.ACTUATOR_STATUS).handler(this::getActuatorStatus);
+        router.route(HttpMethod.POST, Constants.ACTUATOR_STATUS).handler(this::postActuatorStatus);
+        
         mqttClient.connect(1883, "localhost", ar -> {
             if (ar.succeeded()) {
             	Constants.LOGGER.info("🟢 MQTT client connected");
@@ -152,80 +157,165 @@ public class LogicLayerAPIVerticle extends AbstractVerticle {
     
     private void addBatch(RoutingContext context) {
         JsonObject body = context.body().asJsonObject();
-        if (body == null) {
-            context.response().setStatusCode(400).end("Missing JSON body");
-            return;
-        }
-
-        String groupId = body.getString("groupId");        
+        String groupId = body.getString("groupId");
         String deviceId = body.getString("deviceId");
 
-        JsonObject gps = body.getJsonObject("gps");
-        JsonObject weather = body.getJsonObject("weather");
-        JsonObject co = body.getJsonObject("co");
+        JsonObject gpsJson = body.getJsonObject("gps");
+        JsonObject weatherJson = body.getJsonObject("weather");
+        JsonObject coJson = body.getJsonObject("co");
 
-        if (deviceId == null || gps == null || weather == null || co == null) {
-            context.response().setStatusCode(400).end("Missing required fields");
+        if (groupId == null || deviceId == null || gpsJson == null || weatherJson == null || coJson == null) {
+            sendError(context, 400, "Missing required fields");
             return;
         }
 
-        GpsValue gpsValue = gson.fromJson(gps.toString(), GpsValue.class);
-        WeatherValue weatherValue = gson.fromJson(weather.toString(), WeatherValue.class);
-        COValue coValue = gson.fromJson(co.toString(), COValue.class);
-        
-        if(!VoronoiZoneDetector.getZoneForPoint(gpsValue.getLat(), gpsValue.getLon())
-        		.equals(Integer.valueOf(groupId))) {
-        	Constants.LOGGER.info("El dispositivo no ha medido en su zona");
-        	return;
+        GpsValue gpsValue = gson.fromJson(gpsJson.toString(), GpsValue.class);
+        WeatherValue weatherValue = gson.fromJson(weatherJson.toString(), WeatherValue.class);
+        COValue coValue = gson.fromJson(coJson.toString(), COValue.class);
+
+        if (!isInCorrectZone(gpsValue, groupId)) {
+            sendZoneWarning(context);
+            return;
         }
 
-        String host = "http://" + configManager.getHost();
-        int port = configManager.getDataApiPort();
-        String gpsPath = Constants.ADD_GPS_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
-        String weatherPath = Constants.ADD_WEATHER_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
-        String coPath = Constants.ADD_CO_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
-        String devicesPath = Constants.DEVICES.replace(":groupId", groupId);
-        
-        restClient.getRequest(port, host, devicesPath, Device[].class)
-	        .onSuccess(ar -> {
-	        	Arrays.stream(ar)
-	    			.filter(d -> d.getDeviceRole().equals(Constants.ACTUATOR_ROLE))
-	    			.forEach(d -> {
-	    				float coAmount = coValue.getValue();
-	    		        Constants.LOGGER.info("CO amount received: " + coAmount);
-	    		        String topic = buildTopic(Integer.parseInt(groupId), d.getDeviceId(), "matrix");
-	    		        Constants.LOGGER.info("Topic: " + topic);
-	    				if (mqttClient.isConnected()) {
-	    					Constants.LOGGER.info("🟢 Publishing to MQTT topic: " + topic + " with value: " + coAmount);
-	    		            mqttClient.publish(topic, Buffer.buffer(coAmount >= 80.0f ? "ECO" : "GAS"),
-	    		                MqttQoS.AT_LEAST_ONCE, false, false);
-	    		            Constants.LOGGER.info("🟢 Message published to MQTT topic: " + topic);
-	    		        }
-	    			});
-	        	
-	        })
-	        .onFailure(err -> {
-	        	context.fail(500, err);
-	        });
-        
+        handleActuators(groupId, coValue.getValue());
+
         gpsValue.setDeviceId(deviceId);
         weatherValue.setDeviceId(deviceId);
         coValue.setDeviceId(deviceId);
 
-        restClient.postRequest(port, host, gpsPath, gpsValue, GpsValue.class)
-            .compose(_ -> restClient.postRequest(port, host, weatherPath, weatherValue, WeatherValue.class))
-            .compose(_ -> restClient.postRequest(port, host, coPath, coValue, COValue.class))
-            .onSuccess(_ -> {
-                context.response()
-                    .setStatusCode(201)
-                    .putHeader("Content-Type", "application/json")
-                    .end(new JsonObject().put("status", "success").put("inserted", 3).encode());
-            })
-            .onFailure(err -> context.fail(500, err));
+        storeMeasurements(context, groupId, deviceId, gpsValue, weatherValue, coValue);
     }
     
-    private String buildTopic(int groupId, String deviceId, String topic)
-    {
+    private void getActuatorStatus(RoutingContext context) {
+		String groupId = context.request().getParam("groupId");
+		String deviceId = context.request().getParam("deviceId");
+		String actuatorId = context.request().getParam("actuatorId");
+		
+		String host = "http://" + configManager.getHost();
+		int port = configManager.getDataApiPort();
+		String actuatorPath = Constants.ACTUATOR
+			.replace(":groupId", groupId)
+			.replace(":deviceId", deviceId)
+			.replace(":actuatorId", actuatorId);
+				
+		restClient.getRequest(port, host, actuatorPath, Actuator.class)
+			.onSuccess(actuator -> {
+				String actuatorStatus = actuator.getStatus() == 0 ? "Solo vehiculos electricos/hibridos" : "Todo tipo de vehiculos";
+				
+				context.response()
+					.setStatusCode(200)
+					.putHeader("Content-Type", "application/json")
+					.end(new JsonObject().put("status", "success").put("actuatorStatus", actuatorStatus).encode());
+			})
+			.onFailure(_ -> sendError(context, 500, "Failed to retrieve actuator status"));
+	}
+    
+    private void postActuatorStatus(RoutingContext context) {
+		String groupId = context.request().getParam("groupId");
+		String deviceId = context.request().getParam("deviceId");
+		String actuatorId = context.request().getParam("actuatorId");
+
+		JsonObject body = context.body().asJsonObject();
+		String actuatorStatus = body.getString("status");
+		
+		String host = "http://" + configManager.getHost();
+		int port = configManager.getDataApiPort();
+		String actuatorPath = Constants.ACTUATOR
+			.replace(":groupId", groupId)
+			.replace(":deviceId", deviceId)
+			.replace(":actuatorId", actuatorId);
+
+		Actuator updatedActuator = new Actuator(null, null, Integer.valueOf(actuatorStatus), null); // Assuming status 1 is the desired state
+
+		restClient.putRequest(port, host, actuatorPath, updatedActuator, Actuator.class)
+			.onSuccess(_ -> {
+				context.response()
+					.setStatusCode(200)
+					.putHeader("Content-Type", "application/json")
+					.end(new JsonObject().put("status", "success").put("message", "Actuator status updated").encode());
+			})
+			.onFailure(_ -> sendError(context, 500, "Failed to update actuator status"));
+	}
+    
+    private void sendError(RoutingContext ctx, int status, String msg) {
+        ctx.response().setStatusCode(status).end(msg);
+    }
+
+    private boolean isInCorrectZone(GpsValue gps, String expectedZone) {
+        Integer actualZone = detector.getZoneForPoint(gps.getLon(), gps.getLat());
+        Constants.LOGGER.info(gps.getLat() + ", " + gps.getLon() + " -> Zone: " + actualZone);
+        return actualZone.equals(Integer.valueOf(expectedZone));
+    }
+
+    private void sendZoneWarning(RoutingContext ctx) {
+        Constants.LOGGER.info("El dispositivo no ha medido en su zona");
+        ctx.response()
+            .setStatusCode(200)
+            .putHeader("Content-Type", "application/json")
+            .end(new JsonObject().put("status", "success").put("message", "Device did not measure in its zone").encode());
+    }
+
+    private void handleActuators(String groupId, float coAmount) {
+        String host = "http://" + configManager.getHost();
+        int port = configManager.getDataApiPort();
+        String devicesPath = Constants.DEVICES.replace(":groupId", groupId);
+
+        restClient.getRequest(port, host, devicesPath, Device[].class)
+            .onSuccess(devices -> Arrays.stream(devices)
+                .filter(d -> Constants.ACTUATOR_ROLE.equals(d.getDeviceRole()))
+                .forEach(d -> {
+                    String topic = buildTopic(Integer.parseInt(groupId), d.getDeviceId(), "matrix");
+                    publishMQTT(topic, coAmount);
+
+                    String actuatorsPath = Constants.ACTUATORS
+                        .replace(":groupId", groupId)
+                        .replace(":deviceId", d.getDeviceId());
+
+                    restClient.getRequest(port, host, actuatorsPath, Actuator[].class)
+                        .onSuccess(actuators -> Arrays.stream(actuators).forEach(a -> {
+                            String actuatorPath = Constants.ACTUATOR
+                                .replace(":groupId", groupId)
+                                .replace(":deviceId", d.getDeviceId())
+                                .replace(":actuatorId", String.valueOf(a.getActuatorId()));
+                            Actuator updated = new Actuator(a.getActuatorId(), d.getDeviceId(), coAmount >= 80.0f ? 0 : 1, null);
+                            restClient.putRequest(port, host, actuatorPath, updated, Actuator.class);
+                        }))
+                        .onFailure(err -> Constants.LOGGER.error("Failed to update actuator", err));
+                }))
+            .onFailure(err -> Constants.LOGGER.error("Failed to retrieve devices", err));
+    }
+
+    private void publishMQTT(String topic, float coAmount) {
+        if (mqttClient.isConnected()) {
+            Constants.LOGGER.info("Publishing to MQTT topic: " + topic);
+            mqttClient.publish(topic, Buffer.buffer(coAmount >= 80.0f ? "ECO" : "GAS"),
+                MqttQoS.AT_LEAST_ONCE, false, false);
+        }
+    }
+
+    private void storeMeasurements(RoutingContext ctx, String groupId, String deviceId,
+                                   GpsValue gps, WeatherValue weather, COValue co) {
+
+        String host = "http://" + configManager.getHost();
+        int port = configManager.getDataApiPort();
+
+        String gpsPath = Constants.ADD_GPS_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+        String weatherPath = Constants.ADD_WEATHER_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+        String coPath = Constants.ADD_CO_VALUE.replace(":groupId", groupId).replace(":deviceId", deviceId);
+
+        restClient.postRequest(port, host, gpsPath, gps, GpsValue.class)
+            .compose(_ -> restClient.postRequest(port, host, weatherPath, weather, WeatherValue.class))
+            .compose(_ -> restClient.postRequest(port, host, coPath, co, COValue.class))
+            .onSuccess(_ -> ctx.response()
+                .setStatusCode(201)
+                .putHeader("Content-Type", "application/json")
+                .end(new JsonObject().put("status", "success").put("inserted", 3).encode()))
+            .onFailure(err -> ctx.fail(500, err));
+    }
+
+    
+    private String buildTopic(int groupId, String deviceId, String topic) {
       String topicString = "group/" + groupId + "/device/" + deviceId + "/" + topic;
       return topicString;
     }

@@ -48,7 +48,7 @@ public class DatabaseManager {
 						| InvocationTargetException e) {
 					Constants.LOGGER.error("Error instantiating class: " + e.getMessage());
 				}
-			}
+			} 
 			return results;
 		}).onComplete(ar -> {
 			if (ar.succeeded()) {

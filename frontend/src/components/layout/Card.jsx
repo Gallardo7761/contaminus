@@ -41,7 +41,7 @@ const Card = ({
     const cardContent = (
         <div
             ref={cardRef}
-            className={`card p-3 w-100 ${theme} ${className ?? ""}`}
+            className={`card p-3 w-100 h-100 ${theme} ${className ?? ""}`}
             style={styleMode === "override" ? style : {}}
         >
             <h3 className="text-center">
@@ -49,18 +49,24 @@ const Card = ({
                 {shortTitle}
             </h3>
 
-            <div className="card-content">
-                {marquee ? (
-                    <marquee>
-                        <p className="card-text text-center">{children}</p>
-                    </marquee>
-                ) : text ? (
-                    <p className="card-text text-center">{children}</p>
-                ) : (
-                    <div className="my-2">{children}</div>
-                )}
 
-            </div>
+            {marquee && (
+                <div className="contenedor-con-efecto card-content rounded-4 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: "black"}}>
+                    <marquee scrollamount="30">
+                        <p className="card-text text-center m-0">{children}</p>
+                    </marquee>
+                </div>
+            )}
+
+            {!marquee && (
+                <div className="card-content h-100" >
+                    {text ? (
+                        <p className="card-text text-center">{children}</p>
+                    ) : (
+                        <>{children}</>
+                    )}
+                </div>
+            )}
 
             {status && <span className="status text-center mt-2">{status}</span>}
         </div>

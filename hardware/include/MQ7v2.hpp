@@ -15,3 +15,4 @@ struct MQ7Data_t
 
 void MQ7_Init();
 MQ7Data_t MQ7_Read();
+MQ7Data_t MQ7_Read_Fake();

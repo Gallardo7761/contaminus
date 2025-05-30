@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
 
 import com.google.gson.Gson;
@@ -36,16 +37,21 @@ public class VoronoiZoneDetector {
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private final Gson gson = new Gson();
 
-    public VoronoiZoneDetector(String geojsonUrl, boolean isUrl) throws Exception {
+    private VoronoiZoneDetector(String geojsonUrl, boolean isUrl) {
         String geojsonStr;
 
-        if(isUrl) {
-        	try(InputStream is = URL.of(URI.create(geojsonUrl), null).openStream()) {
-				geojsonStr = new String(is.readAllBytes());
-			}
-		} else {
-			geojsonStr = Files.readString(new File(geojsonUrl).toPath());
-        }
+        try {
+        	if(isUrl) {
+            	try(InputStream is = URL.of(URI.create(geojsonUrl), null).openStream()) {
+    				geojsonStr = new String(is.readAllBytes());
+    			}
+    		} else {
+    			geojsonStr = Files.readString(new File(geojsonUrl).toPath());
+            }
+        } catch (Exception e) {
+			Constants.LOGGER.error("⚠️ Error al cargar el GeoJSON: " + e.getMessage());
+			throw new RuntimeException("Error al cargar el GeoJSON", e);
+		}
         
         JsonObject root = JsonParser.parseString(geojsonStr).getAsJsonObject();
         JsonArray features = root.getAsJsonArray("features");
@@ -62,7 +68,13 @@ public class VoronoiZoneDetector {
             JsonObject geometryJson = feature.getAsJsonObject("geometry");
             String geometryStr = gson.toJson(geometryJson);
 
-            Geometry geometry = reader.read(geometryStr);
+            Geometry geometry = null;
+			try {
+				geometry = reader.read(geometryStr);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             if (geometry instanceof Polygon polygon) {
                 zones.add(new Zone(polygon, groupId));
@@ -71,8 +83,12 @@ public class VoronoiZoneDetector {
             }
         }
     }
+    
+    public static VoronoiZoneDetector create(String geojsonUrl, boolean isUrl) {
+		return new VoronoiZoneDetector(geojsonUrl, isUrl);
+	}
 
-    public static Integer getZoneForPoint(double lon, double lat) {
+    public Integer getZoneForPoint(double lon, double lat) {
         Point p = geometryFactory.createPoint(new Coordinate(lon, lat));
 
         for (Zone z : zones) {
@@ -82,5 +98,19 @@ public class VoronoiZoneDetector {
         }
 
         return null; // no está dentro de ninguna zona
+    }
+    
+    public static void main(String[] args) throws Exception {
+        VoronoiZoneDetector detector = new VoronoiZoneDetector("https://miarma.net/files/voronoi_sevilla_geovoronoi.geojson", true);
+
+        double lon = -5.9752;
+        double lat = 37.3887;
+
+        Integer actuatorId = detector.getZoneForPoint(lon, lat);
+        if (actuatorId != null) {
+            System.out.println("📍 El punto pertenece al actuator: " + actuatorId);
+        } else {
+            System.out.println("🚫 El punto no pertenece a ninguna zona");
+        }
     }
 }

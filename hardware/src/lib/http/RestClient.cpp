@@ -32,3 +32,19 @@ void postRequest(const String url, const String &payload, String &response)
     }
     httpClient.end();
 }
+
+void putRequest(const String url, const String &payload, String &response)
+{
+    httpClient.begin(url);
+    httpClient.addHeader("Content-Type", "application/json");
+    int httpCode = httpClient.PUT(payload);
+    if (httpCode > 0)
+    {
+        response = httpClient.getString();
+    }
+    else
+    {
+        response = "Error: " + String(httpCode);
+    }
+    httpClient.end();
+}

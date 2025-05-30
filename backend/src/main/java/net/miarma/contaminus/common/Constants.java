@@ -10,8 +10,8 @@ public class Constants {
 	public static final String CONTAMINUS_EB = "contaminus.eventbus";
     public static Logger LOGGER = LoggerFactory.getLogger(Constants.APP_NAME);
 	
-    public static final int SENSOR_ROLE = 0;
-    public static final int ACTUATOR_ROLE = 1;
+    public static final Integer SENSOR_ROLE = 0;
+    public static final Integer ACTUATOR_ROLE = 1;
     
 	/* API Endpoints */    
 	public static final String GROUPS = RAW_API_PREFIX + "/groups"; // GET, POST
@@ -33,8 +33,8 @@ public class Constants {
 	public static final String ADD_CO_VALUE = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId/co_values"; // POST
 	
 	public static final String ACTUATORS = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators"; // GET, POST
-	public static final String ACTUATOR = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuator_id"; // GET, PUT
-	public static final String ACTUATOR_STATUS = API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuator_id/status"; // GET
+	public static final String ACTUATOR = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuatorId"; // GET, PUT
+	public static final String ACTUATOR_STATUS = API_PREFIX + "/groups/:groupId/devices/:deviceId/actuators/:actuatorId/status"; // GET, PUT
 		
 	public static final String VIEW_LATEST_VALUES = RAW_API_PREFIX + "/v_latest_values"; // GET
 	public static final String VIEW_POLLUTION_MAP = RAW_API_PREFIX + "/v_pollution_map"; // GET

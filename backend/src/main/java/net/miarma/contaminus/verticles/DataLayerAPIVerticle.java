@@ -418,10 +418,10 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 		Integer groupId = Integer.parseInt(context.request().getParam("groupId"));
 		String deviceId = context.request().getParam("deviceId");	
 		Integer actuatorId = Integer.parseInt(context.request().getParam("actuatorId"));
-		
+				
 		deviceDAO.getByIdAndGroupId(deviceId, groupId).compose(device -> {
 			if (device == null) {
-				return Future.succeededFuture(null);
+				return Future.failedFuture(new RuntimeException("Dispositivo no encontrado"));
 			}
 			return actuatorDAO.getByIdAndDeviceId(actuatorId, device.getDeviceId());
 		}).onSuccess(actuator -> {

@@ -183,7 +183,7 @@ paths:
       responses:
         "200":
           description: Operación exitosa
-  /api/raw/v1/groups/{groupId}/devices/{deviceId}/actuators/{actuator_id}:
+  /api/raw/v1/groups/{groupId}/devices/{deviceId}/actuators/{actuatorId}:
     get:
       summary: Información de un actuador
       parameters:
@@ -197,7 +197,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: actuator_id
+        - name: actuatorId
           in: path
           required: true
           schema:
@@ -205,7 +205,7 @@ paths:
       responses:
         "200":
           description: Operación exitosa
-  /api/v1/groups/{groupId}/devices/{deviceId}/actuators/{actuator_id}/status:
+  /api/v1/groups/{groupId}/devices/{deviceId}/actuators/{actuatorId}/status:
     get:
       summary: Estado de un actuador
       parameters:
@@ -219,7 +219,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: actuator_id
+        - name: actuatorId
           in: path
           required: true
           schema:

@@ -2,8 +2,6 @@
 
 #include "globals.hpp"
 
-#define DEVICE_ROLE SENSOR // se cambia entre SENSOR y ACTUATOR
-
 #if DEVICE_ROLE == SENSOR
   #warning "Compilando firmware para SENSOR"
 #elif DEVICE_ROLE == ACTUATOR

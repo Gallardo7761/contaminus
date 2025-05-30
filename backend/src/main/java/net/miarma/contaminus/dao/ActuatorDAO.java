@@ -66,7 +66,7 @@ public class ActuatorDAO implements DataAccessObject<Actuator, Integer>{
 		return promise.future();
 	}
 	
-	public Future<Actuator> getByIdAndDeviceId(Integer actuatorId, String deviceId) {
+	public Future<Actuator> getByIdAndDeviceId(Integer actuatorId, String deviceId) {	
 		Promise<Actuator> promise = Promise.promise();
 		Actuator actuator = new Actuator();
 		actuator.setDeviceId(deviceId);
@@ -102,6 +102,7 @@ public class ActuatorDAO implements DataAccessObject<Actuator, Integer>{
 	public Future<Actuator> update(Actuator t) {
 		Promise<Actuator> promise = Promise.promise();
 		String query = QueryBuilder.update(t).build();
+		System.out.println();
 		
 		db.execute(query, Actuator.class,
 			list -> promise.complete(list.isEmpty() ? null : list.get(0)),

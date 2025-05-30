@@ -18,3 +18,19 @@ MQ7Data_t MQ7_Read()
 
     return {ppm, d0};
 }
+
+MQ7Data_t MQ7_Read_Fake()
+{
+    float ppm;
+    bool d0;
+
+    if (random(0, 100) < 50) {
+        ppm = random(80, 500);  // valores entre 101 y 500 ppm
+        d0 = true;
+    } else {
+        ppm = random(10, 79);   // valores entre 10 y 99 ppm
+        d0 = false;
+    }
+
+    return {ppm, d0};
+}

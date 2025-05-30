@@ -28,10 +28,10 @@
       "GET_SENSOR_VALUES": "/groups/:groupId/devices/:deviceId/sensors/:sensorId/values",
 
       "GET_ACTUATORS": "/groups/:groupId/devices/:deviceId/actuators",
-      "GET_ACTUATOR_BY_ID": "/groups/:groupId/devices/:deviceId/actuators/:actuator_id",
+      "GET_ACTUATOR_BY_ID": "/groups/:groupId/devices/:deviceId/actuators/:actuatorId",
       "POST_ACTUATORS": "/groups/:groupId/devices/:deviceId/actuators",
-      "PUT_ACTUATOR_BY_ID": "/groups/:groupId/devices/:deviceId/actuators/:actuator_id",
-      "GET_ACTUATOR_STATUS": "/groups/:groupId/devices/:deviceId/actuators/:actuator_id/status",
+      "PUT_ACTUATOR_BY_ID": "/groups/:groupId/devices/:deviceId/actuators/:actuatorId",
+      "GET_ACTUATOR_STATUS": "/groups/:groupId/devices/:deviceId/actuators/:actuatorId/status",
 
       "VIEW_LATEST_VALUES": "/v_latest_values",
       "VIEW_POLLUTION_MAP": "/v_pollution_map",

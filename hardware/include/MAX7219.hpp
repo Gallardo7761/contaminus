@@ -10,6 +10,12 @@
 #define CS_PIN 18
 #define CLK_PIN 17
 
+struct MAX7219Status_t
+{
+    String status;
+    String actuatorStatus;
+};
+
 void MAX7219_Init();
 void MAX7219_DisplayText(const char *text, textPosition_t align, uint16_t speed, uint16_t pause);
 bool MAX7219_Animate();

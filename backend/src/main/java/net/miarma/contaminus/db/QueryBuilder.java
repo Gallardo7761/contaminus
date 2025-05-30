@@ -216,7 +216,7 @@ public class QueryBuilder {
                 String fieldName = field.getName();
                 Object value = extractValue(fieldValue);
 
-                if (fieldName.endsWith("_id")) {
+                if (fieldName.endsWith("Id")) {
                     idField = field;
                     whereJoiner.add(fieldName + " = " + (value instanceof String
                     		|| value instanceof LocalDateTime ? "'" + value + "'" : value));
@@ -258,7 +258,7 @@ public class QueryBuilder {
                 String fieldName = field.getName();
                 Object fieldValue = field.get(object);
 
-                if (fieldName.endsWith("_id")) {
+                if (fieldName.endsWith("Id")) {
                     idField = field;
                     Object value = extractValue(fieldValue);
                     whereJoiner.add(fieldName + " = " + (value instanceof String || value instanceof LocalDateTime ? "'" + value + "'" : value));

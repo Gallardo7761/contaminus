@@ -9,7 +9,9 @@ TaskTimer mqttTimer{0, 5000};
 
 #if DEVICE_ROLE == ACTUATOR
 TaskTimer matrixTimer{0, 25};
-const char *currentMessage = ALL;
+TaskTimer displayTimer{0, 1000};
+String currentMessage = "";
+String lastMessage = "";
 extern MD_Parola display;
 #endif
 
@@ -35,7 +37,7 @@ void setup()
 
     try
     {
-        
+
 #if DEVICE_ROLE == SENSOR
         BME280_Init();
         Serial.println("Sensor BME280 inicializado");
@@ -48,7 +50,12 @@ void setup()
 #if DEVICE_ROLE == ACTUATOR
         MAX7219_Init();
         Serial.println("Display inicializado");
-        writeMatrix(currentMessage);
+        writeMatrix(currentMessage.c_str());
+
+        String url = String(API_URI) + "groups/" + GROUP_ID + "/devices/" + String(DEVICE_ID, HEX) + "/actuators/" + MAX7219_ID + "/status";
+        getRequest(url, response);
+        MAX7219Status_t statusData = deserializeActuatorStatus(httpClient, httpClient.GET());
+        currentMessage = statusData.actuatorStatus;
 #endif
     }
     catch (const char *e)
@@ -69,6 +76,19 @@ void loop()
             MAX7219_ResetAnimation();
         }
         matrixTimer.lastRun = now;
+    }
+
+    if (now - displayTimer.lastRun >= displayTimer.interval)
+    {
+        if (currentMessage != lastMessage)
+        {
+            writeMatrix(currentMessage.c_str());
+            lastMessage = currentMessage;
+#ifdef DEBUG
+            Serial.println("Display actualizado");
+#endif
+        }
+        displayTimer.lastRun = now;
     }
 #endif
 
@@ -99,9 +119,8 @@ void loop()
 void writeMatrix(const char *message)
 {
 #ifdef DEBUG
-    Serial.println("Escribiendo en el display...");
+    Serial.println("Escribiendo mensaje: "); Serial.print(message);
 #endif
-
     MAX7219_DisplayText(message, PA_LEFT, 50, 0);
 }
 #endif
@@ -110,7 +129,7 @@ void writeMatrix(const char *message)
 void readMQ7()
 {
     const float CO_THRESHOLD = 100.0f;
-    mq7Data = MQ7_Read();
+    mq7Data = MQ7_Read_Fake();
 }
 
 void readBME280()

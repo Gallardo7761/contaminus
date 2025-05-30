@@ -76,7 +76,7 @@ public class DeviceDAO implements DataAccessObject<Device, String> {
 				.select(Device.class)
 				.where(device)
 				.build();
-		
+				
 		db.execute(query, Device.class,
 			list -> promise.complete(list.isEmpty() ? null : list.get(0)),
 			promise::fail

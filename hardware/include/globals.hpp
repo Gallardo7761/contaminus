@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#define DEVICE_ROLE ACTUATOR // se cambia entre SENSOR y ACTUATOR
+
 #define MQTT_URI "miarma.net"
 #define API_URI "https://contaminus.miarma.net/api/v1/"
 #define REST_PORT 443
@@ -10,13 +12,11 @@
 #define GPS_ID 1
 #define MAX7219_ID 1
 
-#define ECO "Solo vehiculos electricos/hibridos"
-#define ALL "Todo tipo de vehiculos"
-
-#define DEBUG
-
 #define SENSOR 0
 #define ACTUATOR 1
 
+#define DEBUG
+
 extern const uint32_t DEVICE_ID;
 extern const int GROUP_ID;
+extern String currentMessage;

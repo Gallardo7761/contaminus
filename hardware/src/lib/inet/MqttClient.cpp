@@ -1,7 +1,7 @@
 #include "MqttClient.hpp"
 
 extern WiFiClient wifiClient;
-extern const char *currentMessage;
+extern HTTPClient httpClient;
 
 PubSubClient client(wifiClient);
 
@@ -20,14 +20,20 @@ void MQTT_OnReceived(char *topic, byte *payload, unsigned int length)
     content.concat((char)payload[i]);
   }
 
+  content.trim();
+
+#ifdef DEBUG
+  Serial.println(content);
+#endif
+
 #if DEVICE_ROLE == ACTUATOR
-  if(content == "ECO")
+  if (content.equals("ECO"))
   {
-    currentMessage = ECO;
-  } 
-  else
+    currentMessage = "Vehiculos electricos/hibridos";
+  }
+  else if (content.equals("GAS"))
   {
-    currentMessage = ALL;
+    currentMessage = "Todo tipo de vehiculos";
   }
 #endif
 }
@@ -67,7 +73,7 @@ void MQTT_Handle(const char *MQTTClientName)
   client.loop();
 }
 
-String buildTopic(int groupId, const String& deviceId, const String& topic)
+String buildTopic(int groupId, const String &deviceId, const String &topic)
 {
   String topicString = "group/" + String(groupId) + "/device/" + deviceId + "/" + topic;
   return topicString;
