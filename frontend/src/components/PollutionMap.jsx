@@ -39,9 +39,9 @@ const PollutionMapContent = () => {
   const { config, configLoading, configError } = useConfig();
   const { data, dataLoading, dataError } = useDataContext();
 
-  const mapRef = useRef(null);           // Referencia al mapa
-  const voronoiLayerRef = useRef(null);  // Referencia al layer de Voronoi
-  const [showVoronoi, setShowVoronoi] = useState(true);
+  const mapRef = useRef(null);         
+  const voronoiLayerRef = useRef(null); 
+  const [showVoronoi, setShowVoronoi] = useState(false);
 
   useEffect(() => {
     if (!data || !config) return;
@@ -80,6 +80,12 @@ const PollutionMapContent = () => {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    const points = data
+      .filter(p => isToday(p.timestamp))
+      .map(p => [p.lat, p.lon, p.carbonMonoxide]);
+
+    L.heatLayer(points, { radius: 25 }).addTo(map);
+
     fetch("/voronoi_sevilla_geovoronoi.geojson")
       .then(res => res.json())
       .then(geojson => {
@@ -105,18 +111,11 @@ const PollutionMapContent = () => {
         console.error("Error cargando el GeoJSON:", err);
       });
 
-    const points = data
-      .filter(p => isToday(p.timestamp))
-      .map(p => [p.lat, p.lon, p.carbonMonoxide]);
-
-    L.heatLayer(points, { radius: 25 }).addTo(map);
-
     return () => {
       map.remove();
     };
   }, [data, config]);
 
-  // Esta parte gestiona el toggle del voronoi
   const toggleVoronoi = () => {
     const map = mapRef.current;
     const voronoiLayer = voronoiLayerRef.current;

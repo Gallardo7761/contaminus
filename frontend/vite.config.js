@@ -5,7 +5,7 @@ import cleanPlugin from 'vite-plugin-clean'
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    host: "localhost",
+    host: "0.0.0.0",
     port: 3000,
   },
   resolve: {

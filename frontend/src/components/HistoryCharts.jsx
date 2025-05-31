@@ -108,22 +108,23 @@ const HistoryChartsContent = () => {
         cards={historyData.map(({ title, data, borderColor, backgroundColor }) => ({
           title,
           content: (
-            <Line style={{ minHeight: "250px" }}
+            <Line
               data={{
                 labels: timeLabels,
                 datasets: [{ data, borderColor, backgroundColor, fill: true, tension: 0.4 }]
               }}
               options={options}
+              style={{  minHeight: "250px", width: '100%'}}
             />
           ),
           styleMode: "override",
           className: "col-lg-6 col-xxs-12 d-flex flex-column align-items-center",
-          style: { minHeight: "250px" }
+          style: { minHeight: "250px", width: '100%' }
         }))}
       />
       <span className="m-0 p-0 d-flex align-items-center justify-content-center">
         <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
-        <p className="m-0 p-0">El historial muestra datos de los últimos 3 días</p>
+        <p className="m-0 p-0">El historial muestra datos de los últimos 3 días, el mapa del día actual, y arriba del todo los datos son los últimos recogidos independientemente de la fecha</p>
       </span>
     </>
   );

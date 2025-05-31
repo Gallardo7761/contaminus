@@ -6,12 +6,12 @@ const ApiDocs = ({ json }) => {
   if (!json) return <p className="text-muted">No hay documentación disponible.</p>;
 
   const renderEndpoints = (endpoints) => (
-    <Accordion>
+    <Accordion className='overflow-auto'>
       {endpoints.map((ep, index) => (
         <Accordion.Item eventKey={index.toString()} key={index}>
-          <Accordion.Header>
+          <Accordion.Header className='d-flex align-items-center flex-wrap'>
             <span className={`badge bg-${getMethodColor(ep.method)} me-2 text-uppercase`}>{ep.method}</span>
-            <code>{ep.path}</code>
+            <code className='text-break flex-grow-1'>{ep.path}</code>
           </Accordion.Header>
           <Accordion.Body>
             {ep.description && <p className="mb-2">{ep.description}</p>}
