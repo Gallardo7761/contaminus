@@ -39,8 +39,8 @@ const PollutionMapContent = () => {
   const { config, configLoading, configError } = useConfig();
   const { data, dataLoading, dataError } = useDataContext();
 
-  const mapRef = useRef(null);         
-  const voronoiLayerRef = useRef(null); 
+  const mapRef = useRef(null);
+  const voronoiLayerRef = useRef(null);
   const [showVoronoi, setShowVoronoi] = useState(false);
 
   useEffect(() => {
@@ -60,12 +60,29 @@ const PollutionMapContent = () => {
     if (!mapContainer) return;
 
     const getFillColor = (feature) => {
-      const index = feature.properties.index || Math.floor(Math.random() * 10);
+      const index = feature.properties.groupId || Math.floor(Math.random() * 10);
       const colors = [
-        "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9",
-        "#C5CAE9", "#B3E5FC", "#B2DFDB", "#DCEDC8",
-        "#FFF9C4", "#FFE0B2"
+        "#EF5350", // rojo coral
+        "#EC407A", // rosa fucsia
+        "#AB47BC", // púrpura
+        "#7E57C2", // violeta oscuro
+        "#5C6BC0", // azul medio
+        "#42A5F5", // azul claro
+        "#29B6F6", // celeste intenso
+        "#26C6DA", // azul verdoso
+        "#26A69A", // verde azulado
+        "#66BB6A", // verde hoja
+        "#9CCC65", // verde lima
+        "#D4E157", // lima amarillenta
+        "#FFEE58", // amarillo mostaza
+        "#FFCA28", // amarillo dorado
+        "#FFA726", // naranja quemado
+        "#FF7043", // naranja rojizo
+        "#8D6E63", // marrón topo
+        "#78909C"  // gris azulado
       ];
+
+
       return colors[index % colors.length];
     };
 

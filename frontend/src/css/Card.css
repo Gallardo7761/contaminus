@@ -57,11 +57,9 @@
 }
 
 .contenedor-con-efecto {
-  background-color: #000; /* Fondo oscuro, similar al de la imagen */
-  background-image: radial-gradient(#313131aa 3px, transparent 0.5px); /* Puntos muy sutiles, casi invisibles */
-  background-size: 8px 8px; /* Controla la separación de los puntos */
-  /* Ajusta estos valores para cambiar el tamaño y la densidad de los puntos */
-  /* Los colores de los puntos pueden ser un azul muy oscuro, casi negro, o el mismo negro del fondo para un efecto muy sutil. */
+  background-color: #000;
+  background-image: radial-gradient(#313131aa 3px, transparent 0.5px);
+  background-size: 8px 8px;
 }
 
 p.card-text {

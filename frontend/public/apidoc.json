@@ -190,6 +190,34 @@
           "required": true
         }
       ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/groups/:groupId/devices/:deviceId/actuators/:actuatorId/status",
+      "description": "Crear un nuevo dispositivo en un grupo",
+      "params": [
+        {
+          "name": "groupId",
+          "type": "integer",
+          "description": "ID del grupo",
+          "in": "body",
+          "required": true
+        },
+        {
+          "name": "deviceId",
+          "type": "integer",
+          "description": "ID del dispositivo",
+          "in": "body",
+          "required": true
+        },
+        {
+          "name": "actuatorId",
+          "type": "string",
+          "description": "ID del actuador",
+          "in": "body",
+          "required": true
+        }
+      ]
     }
   ],
   "raw_api": [
