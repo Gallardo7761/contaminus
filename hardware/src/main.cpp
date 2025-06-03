@@ -25,6 +25,8 @@ BME280Data_t bme280Data;
 GPSData_t gpsData;
 #endif
 
+static bool mqttStarted = false;
+
 void setup()
 {
     Serial.begin(115200);
@@ -33,16 +35,11 @@ void setup()
     Serial.println("Iniciando...");
 #endif
 
-    while(WiFi_Init() != WL_CONNECTED)
-    {
-        Serial.println("Esperando conexión WiFi...");
-        delay(1000);
-    }
-    MQTT_Init(MQTT_URI, MQTT_PORT);
-
+    WiFi_Init();
+        
     try
     {
-
+        
 #if DEVICE_ROLE == SENSOR
         GROUP_ID = getGroupId(DEVICE_ID);
         BME280_Init();
@@ -72,6 +69,22 @@ void setup()
 
 void loop()
 {
+    WiFi_Handle();
+
+    if(!WiFi_IsConnected())
+    {
+        return;
+    }
+
+    if (!mqttStarted)
+    {
+        MQTT_Init(MQTT_SERVER, MQTT_PORT);
+        mqttStarted = true;
+#ifdef DEBUG
+        Serial.println("Iniciando conexión MQTT...");
+#endif
+    }
+
     uint32_t now = millis();
 
 #if DEVICE_ROLE == ACTUATOR
