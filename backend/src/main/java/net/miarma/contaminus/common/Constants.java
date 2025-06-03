@@ -22,6 +22,7 @@ public class Constants {
 	public static final String LATEST_VALUES = API_PREFIX + "/groups/:groupId/devices/:deviceId/latest-values"; // GET
 	public static final String POLLUTION_MAP = API_PREFIX + "/groups/:groupId/devices/:deviceId/pollution-map"; // GET
 	public static final String HISTORY = API_PREFIX + "/groups/:groupId/devices/:deviceId/history"; // GET
+	public static final String DEVICE_GROUP_ID = RAW_API_PREFIX + "/devices/:deviceId/my-group"; // GET
 	
 	public static final String SENSORS = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors"; // GET, POST
 	public static final String SENSOR = RAW_API_PREFIX + "/groups/:groupId/devices/:deviceId/sensors/:sensorId"; // GET, PUT

@@ -116,7 +116,8 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
         router.route(HttpMethod.GET, Constants.DEVICE).handler(this::getDeviceById);
         router.route(HttpMethod.POST, Constants.DEVICES).handler(this::addDevice);
         router.route(HttpMethod.PUT, Constants.DEVICE).handler(this::updateDevice);
-
+        router.route(HttpMethod.GET, Constants.DEVICE_GROUP_ID).handler(this::getDeviceGroupId);
+        
         // Sensor Routes
         router.route(HttpMethod.GET, Constants.SENSORS).handler(this::getAllSensors);
         router.route(HttpMethod.GET, Constants.SENSOR).handler(this::getSensorById);
@@ -245,6 +246,26 @@ public class DataLayerAPIVerticle extends AbstractVerticle {
 			.onFailure(err -> {
 				context.fail(500, err);
 			});
+	}
+	
+	private void getDeviceGroupId(RoutingContext context) {
+		String deviceId = context.request().getParam("deviceId");
+		
+		deviceDAO.getById(deviceId)
+		    .onSuccess(device -> {
+		        if (device != null) {
+		            Integer groupId = device.getGroupId();
+		            SingleJsonResponse<Integer> response = SingleJsonResponse.of(groupId);
+		            context.response()
+		                .putHeader("content-type", "application/json; charset=utf-8")
+		                .end(gson.toJson(response));
+		        } else {
+		            context.response().setStatusCode(404).end("Device not found");
+		        }
+		    })
+		    .onFailure(err -> {
+		        context.fail(500, err);
+		    });
 	}
 	
 	private void addDevice(RoutingContext context) {
