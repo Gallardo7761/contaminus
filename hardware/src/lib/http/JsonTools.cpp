@@ -1,5 +1,6 @@
 #include "JsonTools.hpp"
 
+#if DEVICE_ROLE == SENSOR
 String serializeSensorValue(
     int groupId,
     const String &deviceId,
@@ -39,6 +40,7 @@ String serializeSensorValue(
 #endif
   return output;
 }
+#endif
 
 #if DEVICE_ROLE == ACTUATOR
 MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode)
