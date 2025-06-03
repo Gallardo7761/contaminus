@@ -8,7 +8,7 @@ PubSubClient client(wifiClient);
 void MQTT_OnReceived(char *topic, byte *payload, unsigned int length)
 {
 #ifdef DEBUG
-  Serial.print("Received on ");
+  Serial.print("📥 Received on ");
   Serial.print(topic);
   Serial.print(": ");
 #endif
@@ -47,7 +47,7 @@ void MQTT_Init(const char *MQTTServerAddress, uint16_t MQTTServerPort)
 void MQTT_Connect(const char *MQTTClientName)
 {
 #ifdef DEBUG
-  Serial.print("Starting MQTT connection...");
+  Serial.println("🔌 Starting MQTT connection...");
 #endif
   if (client.connect(MQTTClientName, USER, MQTT_PASSWORD))
   {
@@ -58,9 +58,7 @@ void MQTT_Connect(const char *MQTTClientName)
     client.publish(statusTopic.c_str(), "connected");
   }
 #ifdef DEBUG
-  Serial.print("Failed MQTT connection, rc=");
-  Serial.print(client.state());
-  Serial.println(" try again in 5 seconds");
+  Serial.println("❌ Failed MQTT connection, trying again in 5 seconds");
 #endif
 }
 

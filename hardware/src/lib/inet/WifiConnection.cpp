@@ -1,10 +1,8 @@
 #include <WifiConnection.hpp>
 
-
-
 WiFiClient wifiClient;
-static bool wifiConnected = false;
-static TaskTimer wifiTimer{0, 500};
+bool wifiConnected = false;
+TaskTimer_t wifiTimer{0, 1000};
 
 void setColor(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -39,7 +37,7 @@ void WiFi_Init()
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, WIFI_PASSWORD);
 #ifdef DEBUG
-  Serial.print("🟡 Intentando conectar a WiFi: ");
+  Serial.print("🟡 Trying to connect to WiFi: ");
   Serial.println(SSID);
 #endif
 }
@@ -64,9 +62,10 @@ void WiFi_Handle()
     if (!wifiConnected)
     {
 #ifdef DEBUG
-      Serial.println("🟢 Conectado a la red WiFi");
-      Serial.print("IP: ");
-      Serial.println(WiFi.localIP());
+      Serial.print("🟢 Connected to WiFi. IP: ");  
+      Serial.print(WiFi.localIP());
+      Serial.print(" | SSID: ");
+      Serial.println(SSID);
 #endif
       setColor(0, 255, 0);
       wifiConnected = true;
@@ -74,13 +73,13 @@ void WiFi_Handle()
     return;
   }
 
-  if (now - wifiRetryTimer.lastRun >= wifiRetryTimer.interval)
+  if (now - wifiTimer.lastRun >= wifiTimer.interval)
   {
 #ifdef DEBUG
-    Serial.println("🔁 Reintentando conexión WiFi...");
+    Serial.println("🔁 Retrying WiFi connection...");
 #endif
     WiFi.disconnect(true);
     WiFi.begin(SSID, WIFI_PASSWORD);
-    wifiRetryTimer.lastRun = now;
+    wifiTimer.lastRun = now;
   }
 }

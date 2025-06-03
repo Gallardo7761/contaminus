@@ -2,15 +2,14 @@
 
 const uint32_t DEVICE_ID = getChipID();
 const String mqttId = "CUS-" + String(DEVICE_ID, HEX);
-int GROUP_ID;
+int GROUP_ID = -1;
 
-TaskTimer globalTimer{0, 10000};
-TaskTimer mqttTimer{0, 5000};
-TaskTimer wifiTimer{0, 5000};
+TaskTimer_t globalTimer{0, 30000};
+TaskTimer_t mqttTimer{0, 2000};
 
 #if DEVICE_ROLE == ACTUATOR
-TaskTimer matrixTimer{0, 25};
-TaskTimer displayTimer{0, 1000};
+TaskTimer_t matrixTimer{0, 25};
+TaskTimer_t displayTimer{0, 1000};
 String currentMessage = "";
 String lastMessage = "";
 extern MD_Parola display;
@@ -41,7 +40,6 @@ void setup()
     {
         
 #if DEVICE_ROLE == SENSOR
-        GROUP_ID = getGroupId(DEVICE_ID);
         BME280_Init();
         Serial.println("Sensor BME280 inicializado");
         GPS_Init();
@@ -76,13 +74,15 @@ void loop()
         return;
     }
 
-    if (!mqttStarted)
+    if(GROUP_ID == -1)
     {
-        MQTT_Init(MQTT_SERVER, MQTT_PORT);
+        GROUP_ID = getGroupId(DEVICE_ID);
+    } 
+
+    if (!mqttStarted && GROUP_ID != -1)
+    {
+        MQTT_Init(MQTT_URI, MQTT_PORT);
         mqttStarted = true;
-#ifdef DEBUG
-        Serial.println("Iniciando conexión MQTT...");
-#endif
     }
 
     uint32_t now = millis();
@@ -113,6 +113,7 @@ void loop()
 
     if (now - globalTimer.lastRun >= globalTimer.interval)
     {
+
 #if DEVICE_ROLE == SENSOR
         readBME280();
         readGPS();
@@ -124,6 +125,7 @@ void loop()
 
         sendSensorData();
 #endif
+
         globalTimer.lastRun = now;
     }
 
@@ -159,11 +161,13 @@ void readBME280()
 
 void readGPS()
 {
-    gpsData = GPS_Read();
+    gpsData = GPS_Read_Fake();
 }
 
 void printAllData()
 {
+    Serial.println("---------------------");
+    Serial.println("📦 Batch medida:");
     Serial.println("---------------------");
 
     Serial.print("ID: ");
@@ -188,6 +192,8 @@ void printAllData()
     Serial.println(mq7Data.co);
     Serial.print("D0: ");
     Serial.println(mq7Data.threshold);
+
+    Serial.println("---------------------");
 }
 
 void sendSensorData()

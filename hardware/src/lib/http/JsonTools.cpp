@@ -32,7 +32,11 @@ String serializeSensorValue(
 
   String output;
   serializeJson(doc, output);
+#ifdef JSON_PRINTS
+  Serial.println("📜 JSON generado:"); 
+  Serial.print("\t");
   Serial.println(output);
+#endif
   return output;
 }
 
@@ -41,7 +45,7 @@ MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode
 {
   if (httpResponseCode > 0)
   {
-#ifdef DEBUG
+#ifdef JSON_PRINTS
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
 #endif
@@ -52,39 +56,36 @@ MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode
 
     if (error)
     {
-#ifdef DEBUG
+#ifdef JSON_PRINTS
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
 #endif
       return {
-        .status = "error",
-        .actuatorStatus = "Error"
-      };
+          .status = "error",
+          .actuatorStatus = "Error"};
     }
 
     String status = doc["status"] | "error";
     String actuatorStatus = doc["actuatorStatus"] | "Unknown";
 
-#ifdef DEBUG
+#ifdef JSON_PRINTS
     Serial.println("Actuator status deserialized:");
     Serial.printf("  Status: %s\n  Actuator Status: %s\n\n", status.c_str(), actuatorStatus.c_str());
 #endif
 
     return {
-      .status = status,
-      .actuatorStatus = actuatorStatus
-    };
+        .status = status,
+        .actuatorStatus = actuatorStatus};
   }
   else
   {
-#ifdef DEBUG
+#ifdef JSON_PRINTS
     Serial.print("Error code: ");
     Serial.println(httpResponseCode);
 #endif
     return {
-      .status = "error",
-      .actuatorStatus = "HTTP error"
-    };
+        .status = "error",
+        .actuatorStatus = "HTTP error"};
   }
 }
 #endif
@@ -93,24 +94,30 @@ int deserializeGroupId(HTTPClient &http, int httpResponseCode)
 {
   if (httpResponseCode > 0)
   {
-#ifdef DEBUG
+#ifdef JSON_PRINTS
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
 #endif
     String responseJson = http.getString();
+#ifdef JSON_PRINTS
+    Serial.println("Response JSON: " + responseJson);
+#endif
     DynamicJsonDocument doc(ESP.getMaxAllocHeap());
     DeserializationError error = deserializeJson(doc, responseJson);
 
     if (error)
     {
-#ifdef DEBUG
+#ifdef JSON_PRINTS
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
 #endif
       return -1;
     }
 
-    return (int)doc["message"] | -1;
+    if(doc["message"].isNull())
+      return -1;
+
+    return doc["message"].as<int>();
   }
   return -1;
 }

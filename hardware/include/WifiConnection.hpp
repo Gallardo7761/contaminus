@@ -1,5 +1,6 @@
 #pragma once
 
+#include "globals.hpp"
 #include <WiFi.h>
 #include <PubSubClient.h>
 

@@ -23,17 +23,6 @@
 #include "MAX7219.hpp"
 #endif
 
-struct TaskTimer
-{
-    uint32_t lastRun = 0;
-    uint32_t interval = 1000;
-
-    TaskTimer() = default;
-
-    TaskTimer(uint32_t last, uint32_t interval)
-        : lastRun(last), interval(interval) {}
-};
-
 struct SensorInfo
 {
     int id;

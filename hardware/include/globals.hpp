@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 
 #define DEVICE_ROLE SENSOR // se cambia entre SENSOR y ACTUATOR
@@ -17,6 +19,18 @@
 #define ACTUATOR 1
 
 #define DEBUG
+//#define JSON_PRINTS
+
+struct TaskTimer_t
+{
+    uint32_t lastRun = 0;
+    uint32_t interval = 1000;
+
+    TaskTimer_t() = default;
+
+    TaskTimer_t(uint32_t last, uint32_t interval)
+        : lastRun(last), interval(interval) {}
+};
 
 extern const uint32_t DEVICE_ID;
 extern int GROUP_ID;
