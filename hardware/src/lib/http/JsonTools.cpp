@@ -36,6 +36,7 @@ String serializeSensorValue(
   return output;
 }
 
+#if DEVICE_ROLE == ACTUATOR
 MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode)
 {
   if (httpResponseCode > 0)
@@ -85,4 +86,31 @@ MAX7219Status_t deserializeActuatorStatus(HTTPClient &http, int httpResponseCode
       .actuatorStatus = "HTTP error"
     };
   }
+}
+#endif
+
+int deserializeGroupId(HTTPClient &http, int httpResponseCode)
+{
+  if (httpResponseCode > 0)
+  {
+#ifdef DEBUG
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+#endif
+    String responseJson = http.getString();
+    DynamicJsonDocument doc(ESP.getMaxAllocHeap());
+    DeserializationError error = deserializeJson(doc, responseJson);
+
+    if (error)
+    {
+#ifdef DEBUG
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+#endif
+      return -1;
+    }
+
+    return (int)doc["message"] | -1;
+  }
+  return -1;
 }

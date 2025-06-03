@@ -4,6 +4,7 @@
 
 #define MQTT_URI "miarma.net"
 #define API_URI "https://contaminus.miarma.net/api/v1/"
+#define RAW_API_URI "https://contaminus.miarma.net/api/raw/v1/"
 #define REST_PORT 443
 #define MQTT_PORT 1883
 

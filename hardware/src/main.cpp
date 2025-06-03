@@ -5,7 +5,8 @@ const String mqttId = "CUS-" + String(DEVICE_ID, HEX);
 int GROUP_ID;
 
 TaskTimer globalTimer{0, 10000};
-TaskTimer mqttTimer{0, 2500};
+TaskTimer mqttTimer{0, 5000};
+TaskTimer wifiTimer{0, 5000};
 
 #if DEVICE_ROLE == ACTUATOR
 TaskTimer matrixTimer{0, 25};
@@ -32,7 +33,11 @@ void setup()
     Serial.println("Iniciando...");
 #endif
 
-    WiFi_Init();
+    while(WiFi_Init() != WL_CONNECTED)
+    {
+        Serial.println("Esperando conexión WiFi...");
+        delay(1000);
+    }
     MQTT_Init(MQTT_URI, MQTT_PORT);
 
     try
@@ -223,8 +228,7 @@ uint32_t getChipID()
 
 int getGroupId(int deviceId)
 {
-    String url = String(API_URI) + "groups/" + GROUP_ID + "/devices/" + String(DEVICE_ID, HEX) + "/actuators/" + MAX7219_ID + "/status";
+    String url = String(RAW_API_URI) + "devices/" + String(DEVICE_ID, HEX) + "/my-group";
     getRequest(url, response);
-    MAX7219Status_t statusData = deserializeActuatorStatus(httpClient, httpClient.GET());
-    currentMessage = statusData.actuatorStatus;
+    return deserializeGroupId(httpClient, httpClient.GET());
 }
