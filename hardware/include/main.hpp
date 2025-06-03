@@ -47,3 +47,4 @@ void writeMatrix(const char *message);
 void printAllData();
 void sendSensorData();
 uint32_t getChipID();
+int getGroupId(int deviceId);

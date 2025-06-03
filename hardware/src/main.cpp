@@ -2,10 +2,10 @@
 
 const uint32_t DEVICE_ID = getChipID();
 const String mqttId = "CUS-" + String(DEVICE_ID, HEX);
-const int GROUP_ID = 1;
+int GROUP_ID;
 
-TaskTimer globalTimer{0, 60000};
-TaskTimer mqttTimer{0, 5000};
+TaskTimer globalTimer{0, 10000};
+TaskTimer mqttTimer{0, 2500};
 
 #if DEVICE_ROLE == ACTUATOR
 TaskTimer matrixTimer{0, 25};
@@ -39,6 +39,7 @@ void setup()
     {
 
 #if DEVICE_ROLE == SENSOR
+        GROUP_ID = getGroupId(DEVICE_ID);
         BME280_Init();
         Serial.println("Sensor BME280 inicializado");
         GPS_Init();
@@ -119,7 +120,8 @@ void loop()
 void writeMatrix(const char *message)
 {
 #ifdef DEBUG
-    Serial.println("Escribiendo mensaje: "); Serial.print(message);
+    Serial.println("Escribiendo mensaje: ");
+    Serial.print(message);
 #endif
     MAX7219_DisplayText(message, PA_LEFT, 50, 0);
 }
@@ -139,7 +141,7 @@ void readBME280()
 
 void readGPS()
 {
-    gpsData = GPS_Read_Fake();
+    gpsData = GPS_Read();
 }
 
 void printAllData()
@@ -217,4 +219,12 @@ uint32_t getChipID()
     Serial.println(chipId, HEX);
 #endif
     return chipId;
+}
+
+int getGroupId(int deviceId)
+{
+    String url = String(API_URI) + "groups/" + GROUP_ID + "/devices/" + String(DEVICE_ID, HEX) + "/actuators/" + MAX7219_ID + "/status";
+    getRequest(url, response);
+    MAX7219Status_t statusData = deserializeActuatorStatus(httpClient, httpClient.GET());
+    currentMessage = statusData.actuatorStatus;
 }

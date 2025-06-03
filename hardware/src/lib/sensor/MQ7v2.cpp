@@ -1,5 +1,7 @@
 #include "MQ7v2.hpp"
 
+uint8_t flag = 0;
+
 void MQ7_Init()
 {
     pinMode(MQ7_A0, INPUT);
@@ -24,12 +26,14 @@ MQ7Data_t MQ7_Read_Fake()
     float ppm;
     bool d0;
 
-    if (random(0, 100) < 50) {
-        ppm = random(80, 500);  // valores entre 101 y 500 ppm
+    if (flag == 0) {
+        ppm = 100.0f;  // valores entre 101 y 500 ppm
         d0 = true;
+        flag = 1;
     } else {
-        ppm = random(10, 79);   // valores entre 10 y 99 ppm
+        ppm = 10.0f;   // valores entre 10 y 99 ppm
         d0 = false;
+        flag = 0;
     }
 
     return {ppm, d0};
