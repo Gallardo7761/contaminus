@@ -4,8 +4,8 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define SSID "DIGIFIBRA-D2ys"
-#define WIFI_PASSWORD "4EEATsyTcZ"
+#define SSID "iPhone de Jose"
+#define WIFI_PASSWORD "bombardeenlaus"
 
 #define PIN_R 12
 #define PIN_G 13

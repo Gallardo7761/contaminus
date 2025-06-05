@@ -34,7 +34,7 @@ String serializeSensorValue(
   String output;
   serializeJson(doc, output);
 #ifdef JSON_PRINTS
-  Serial.println("📜 JSON generado:"); 
+  Serial.println("📜 Generated JSON:"); 
   Serial.print("\t");
   Serial.println(output);
 #endif

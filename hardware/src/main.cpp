@@ -31,32 +31,27 @@ void setup()
     Serial.begin(115200);
 
 #ifdef DEBUG
-    Serial.println("Iniciando...");
+    Serial.println("Starting...");
 #endif
 
     WiFi_Init();
-        
+
     try
     {
-        
+
 #if DEVICE_ROLE == SENSOR
         BME280_Init();
-        Serial.println("Sensor BME280 inicializado");
+        Serial.println("BME280 initialized");
         GPS_Init();
-        Serial.println("Sensor GPS inicializado");
+        Serial.println("GPS initialized");
         MQ7_Init();
-        Serial.println("Sensor MQ7 inicializado");
+        Serial.println("MQ7 initialized");
 #endif
 
 #if DEVICE_ROLE == ACTUATOR
         MAX7219_Init();
-        Serial.println("Display inicializado");
+        Serial.println("Display initialized");
         writeMatrix(currentMessage.c_str());
-
-        String url = String(API_URI) + "groups/" + GROUP_ID + "/devices/" + String(DEVICE_ID, HEX) + "/actuators/" + MAX7219_ID + "/status";
-        getRequest(url, response);
-        MAX7219Status_t statusData = deserializeActuatorStatus(httpClient, httpClient.GET());
-        currentMessage = statusData.actuatorStatus;
 #endif
     }
     catch (const char *e)
@@ -69,21 +64,31 @@ void loop()
 {
     WiFi_Handle();
 
-    if(!WiFi_IsConnected())
+    if (!WiFi_IsConnected())
     {
         return;
     }
 
-    if(GROUP_ID == -1)
+    if (GROUP_ID == -1)
     {
         GROUP_ID = getGroupId(DEVICE_ID);
-    } 
+    }
 
     if (!mqttStarted && GROUP_ID != -1)
     {
         MQTT_Init(MQTT_URI, MQTT_PORT);
         mqttStarted = true;
     }
+
+#if DEVICE_ROLE == ACTUATOR
+    if (currentMessage.isEmpty() && GROUP_ID != -1)
+    {
+        String url = String(API_URI) + "groups/" + GROUP_ID + "/devices/" + String(DEVICE_ID, HEX) + "/actuators/" + MAX7219_ID + "/status";
+        getRequest(url, response);
+        MAX7219Status_t statusData = deserializeActuatorStatus(httpClient, httpClient.GET());
+        currentMessage = statusData.actuatorStatus;
+    }
+#endif
 
     uint32_t now = millis();
 
@@ -104,7 +109,7 @@ void loop()
             writeMatrix(currentMessage.c_str());
             lastMessage = currentMessage;
 #ifdef DEBUG
-            Serial.println("Display actualizado");
+            Serial.println("Display has been updated");
 #endif
         }
         displayTimer.lastRun = now;
@@ -140,8 +145,8 @@ void loop()
 void writeMatrix(const char *message)
 {
 #ifdef DEBUG
-    Serial.println("Escribiendo mensaje: ");
-    Serial.print(message);
+    Serial.print("Writing message: ");
+    Serial.println(message);
 #endif
     MAX7219_DisplayText(message, PA_LEFT, 50, 0);
 }
@@ -167,25 +172,25 @@ void readGPS()
 void printAllData()
 {
     Serial.println("---------------------");
-    Serial.println("📦 Batch medida:");
+    Serial.println("📦 Measured batch:");
     Serial.println("---------------------");
 
     Serial.print("ID: ");
     Serial.println(DEVICE_ID, HEX);
 
-    Serial.print("Presión: ");
+    Serial.print("Pressure: ");
     Serial.print(bme280Data.pressure);
     Serial.println(" hPa");
-    Serial.print("Temperatura: ");
+    Serial.print("Temperature: ");
     Serial.print(bme280Data.temperature);
     Serial.println(" °C");
-    Serial.print("Humedad: ");
+    Serial.print("Humidity: ");
     Serial.print(bme280Data.humidity);
     Serial.println(" %");
 
-    Serial.print("Latitud: ");
+    Serial.print("Latitude: ");
     Serial.println(gpsData.lat);
-    Serial.print("Longitud: ");
+    Serial.print("Longitude: ");
     Serial.println(gpsData.lon);
 
     Serial.print("CO: ");
@@ -209,7 +214,7 @@ void sendSensorData()
     if (!gpsValid || !weatherValid || !coValid)
     {
 #ifdef DEBUG
-        Serial.println("❌ Datos inválidos. No se envía el batch.");
+        Serial.println("❌ Invalid batch. Won't be stored.");
 #endif
         return;
     }
@@ -219,13 +224,13 @@ void sendSensorData()
                                        bme280Data, mq7Data, gpsData);
 
 #ifdef DEBUG
-    Serial.println("📤 Enviando datos al servidor...");
+    Serial.println("📤 Sending batch to server...");
 #endif
 
     postRequest(String(API_URI) + "/batch", json, response);
 
 #ifdef DEBUG
-    Serial.println("📥 Respuesta del servidor:");
+    Serial.println("📥 Server response:");
     Serial.println(response);
 #endif
 }

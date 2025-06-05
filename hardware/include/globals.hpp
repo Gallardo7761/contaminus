@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define DEVICE_ROLE ACTUATOR // se cambia entre SENSOR y ACTUATOR
+#define DEVICE_ROLE SENSOR // se cambia entre SENSOR y ACTUATOR
 
 #define MQTT_URI "miarma.net"
 #define API_URI "https://contaminus.miarma.net/api/v1/"

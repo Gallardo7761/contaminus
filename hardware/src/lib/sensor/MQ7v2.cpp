@@ -27,11 +27,11 @@ MQ7Data_t MQ7_Read_Fake()
     bool d0;
 
     if (flag == 0) {
-        ppm = 100.0f;  // valores entre 101 y 500 ppm
+        ppm = 100.0f;
         d0 = true;
         flag = 1;
     } else {
-        ppm = 10.0f;   // valores entre 10 y 99 ppm
+        ppm = 10.0f;
         d0 = false;
         flag = 0;
     }
